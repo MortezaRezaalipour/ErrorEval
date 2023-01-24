@@ -8,7 +8,7 @@ This project contains three translators, a testbench generator, and a verifier.
 5) **Testbench generator**
 6) **Verify z3py representation**
 
-## Description:
+
 
 ## Setting up:
 
