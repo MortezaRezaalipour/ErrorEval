@@ -20,7 +20,7 @@ def main():
     # 3) create z3py script
     z3py_obj = Z3solver(args.benchmark_name)
     z3py_obj.set_samples(rand_array)
-    z3py_obj.convert_gv_to_z3pyscript()
+    z3py_obj.convert_gv_to_z3pyscript_Maxerror()
     z3py_obj.export_z3pyscript()
 
     # 4) run z3py script and store the results

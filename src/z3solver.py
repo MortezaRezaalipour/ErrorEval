@@ -100,7 +100,7 @@ class Z3solver:
     def import_z3_expression(self):
         pass
 
-    def convert_gv_to_z3pyscript(self):
+    def convert_gv_to_z3pyscript_Maxerror(self):
         import_string = self.create_imports()
         abs_function = self.create_abs_function()
         exact_circuit_declaration = self.declare_exact_circuit()
@@ -112,6 +112,12 @@ class Z3solver:
         store_results = self.store_results()
         self.set_z3pyscript(import_string + abs_function + exact_circuit_declaration + exact_circuit_expression +
                             output_declaration + exact_function + solver + sample_expression + store_results)
+
+    def convert_gv_to_z3pyscript_BF(self):
+        pass
+
+    #TODO
+    # for other back-ends as well
 
     def export_z3pyscript(self):
         with open(self.out_path, 'w') as z:
