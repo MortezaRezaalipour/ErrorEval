@@ -1,5 +1,12 @@
 # translators
 
+This project contains four different translators:
+
+1) **Verilog to Verilog:**
+2) **Verilog to GraphViz**
+3) **GraphViz to z3py**
+4) ****
+
 # Description:
 
 # Setup:
