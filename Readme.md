@@ -12,16 +12,16 @@ create a virtual environment:
 
 activate the environment
 
-`source venv/bin/activate`
+`$ source venv/bin/activate`
 
 
 install requirements
 
-`make requirements`
+`$ make requirements`
 
-from the main/ directory execute the following in your terminal:
-from main/ update PYTHONPATH
-export PYTHONPATH="$PWD"
+
+
+`$ export PYTHONPATH="$PWD"`
 
 # How to use:
 
