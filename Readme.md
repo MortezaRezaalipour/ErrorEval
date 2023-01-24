@@ -8,7 +8,7 @@ Head to the main/ directory
 
 create a virtual environment:
 
-`make setup`
+`$ make setup`
 
 activate the environment
 
