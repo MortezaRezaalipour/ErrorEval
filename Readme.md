@@ -6,7 +6,7 @@
 Head to the main/ directory
 
 1) create a virtual environment
-$ make setup
+ `$ make setup`
 
 2) activate the environment
 $ source venv/bin/activate
