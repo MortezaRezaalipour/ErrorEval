@@ -8,9 +8,9 @@ This project contains three translators, testbench generator, and a verifier.
 5) **Verilog to Testbench**
 6) **Verify z3py representation**
 
-# Description:
+## Description:
 
-# Setup:
+## Setup:
 
 Head to the **main/** directory
 
@@ -32,7 +32,7 @@ add he current directory to your `PYTHONPATH`:
 
 `$ export PYTHONPATH="$PWD"`
 
-# How to use:
+## How to use:
 
 Head to the **script/** directory and launch the desired script:
 
