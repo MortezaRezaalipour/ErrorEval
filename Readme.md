@@ -54,6 +54,7 @@ Head to the **script/** directory and launch the desired script:
 `$ python3 v2tb.py benchmark-name -s num-of-mc-samples`
 
 5) **Verify z3py representation**
+
 `$ python3 verify_z3.py benchmark-name`
 
 
