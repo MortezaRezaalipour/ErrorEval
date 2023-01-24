@@ -18,7 +18,7 @@ clone the repository:
 
 head to the **main/** directory
 
-create a virtual environment:
+install `virtualenv` and create a virtual environment:
 
 `$ make setup`
 
@@ -32,9 +32,12 @@ install requirements:
 `$ make requirements`
 
 
-add he current directory to your `PYTHONPATH`:
+add the current directory to your `PYTHONPATH`:
 
 `$ export PYTHONPATH="$PWD"`
+
+
+
 
 ## How to use:
 
