@@ -10,9 +10,13 @@ This project contains three translators, a testbench generator, and a verifier.
 
 ## Description:
 
-## Setup:
+## Setting up:
 
-Head to the **main/** directory
+clone the repository:
+
+`$ git clone https://github.com/Laura-Pozzi-research-group/translators-morteza.git`
+
+head to the **main/** directory
 
 create a virtual environment:
 
