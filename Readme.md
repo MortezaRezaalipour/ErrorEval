@@ -1,6 +1,6 @@
 # translators
 
-This project contains three translators, testbench generator, and a verifier.
+This project contains three translators, a testbench generator, and a verifier.
 
 1) **Verilog to Verilog:**
 2) **Verilog to GraphViz**
