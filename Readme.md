@@ -1,6 +1,8 @@
 # translators
 
+# Description:
 
+# Setup:
 Head to the main/ directory
 
 1) create a virtual environment
@@ -16,3 +18,6 @@ $ make requirements
 from the main/ directory execute the following in your terminal:
 4) from main/ update PYTHONPATH
 export PYTHONPATH="$PWD"
+
+# How to use:
+
