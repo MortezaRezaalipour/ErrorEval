@@ -8,14 +8,16 @@ Head to the main/ directory
 
 create a virtual environment:
 
-`$ make setup`
+`make setup`
 
 activate the environment
-$ source venv/bin/activate
+
+`source venv/bin/activate`
 
 
 install requirements
-$ make requirements
+
+`make requirements`
 
 from the main/ directory execute the following in your terminal:
 from main/ update PYTHONPATH
