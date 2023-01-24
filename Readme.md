@@ -2,10 +2,10 @@
 
 This project contains three translators, a testbench generator, and a verifier.
 
-1) **Verilog to Verilog:**
-2) **Verilog to GraphViz**
-3) **GraphViz to z3py**
-5) **Verilog to Testbench**
+1) **Verilog to Verilog translator**
+2) **Verilog to GraphViz translator**
+3) **GraphViz to z3py translator**
+5) **Testbench generator**
 6) **Verify z3py representation**
 
 ## Description:
