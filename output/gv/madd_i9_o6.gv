@@ -1,0 +1,502 @@
+strict digraph "" {
+	node [label="\N"];
+	in8	[label=in8,
+		shape=circle];
+	g14	[label=and,
+		shape=invhouse];
+	in8 -> g14;
+	g0	[label=not,
+		shape=invhouse];
+	in8 -> g0;
+	in7	[label=in7,
+		shape=circle];
+	g20	[label=and,
+		shape=invhouse];
+	in7 -> g20;
+	g1	[label=not,
+		shape=invhouse];
+	in7 -> g1;
+	in6	[label=in6,
+		shape=circle];
+	g24	[label=and,
+		shape=invhouse];
+	in6 -> g24;
+	g2	[label=not,
+		shape=invhouse];
+	in6 -> g2;
+	in5	[label=in5,
+		shape=circle];
+	g9	[label=and,
+		shape=invhouse];
+	in5 -> g9;
+	g6	[label=and,
+		shape=invhouse];
+	in5 -> g6;
+	g3	[label=and,
+		shape=invhouse];
+	in5 -> g3;
+	in4	[label=in4,
+		shape=circle];
+	g10	[label=and,
+		shape=invhouse];
+	in4 -> g10;
+	g7	[label=and,
+		shape=invhouse];
+	in4 -> g7;
+	g4	[label=and,
+		shape=invhouse];
+	in4 -> g4;
+	in3	[label=in3,
+		shape=circle];
+	g11	[label=and,
+		shape=invhouse];
+	in3 -> g11;
+	g8	[label=and,
+		shape=invhouse];
+	in3 -> g8;
+	g5	[label=and,
+		shape=invhouse];
+	in3 -> g5;
+	in2	[label=in2,
+		shape=circle];
+	in2 -> g5;
+	in2 -> g3;
+	in2 -> g4;
+	in1	[label=in1,
+		shape=circle];
+	in1 -> g8;
+	in1 -> g7;
+	in1 -> g6;
+	in0	[label=in0,
+		shape=circle];
+	in0 -> g10;
+	in0 -> g11;
+	in0 -> g9;
+	g91	[label=not,
+		shape=invhouse];
+	g103	[label=and,
+		shape=invhouse];
+	g91 -> g103;
+	g92	[label=and,
+		shape=invhouse];
+	out1	[label=out1,
+		shape=doublecircle];
+	g92 -> out1;
+	g93	[label=not,
+		shape=invhouse];
+	g96	[label=and,
+		shape=invhouse];
+	g93 -> g96;
+	g95	[label=and,
+		shape=invhouse];
+	g99	[label=not,
+		shape=invhouse];
+	g95 -> g99;
+	g128	[label=and,
+		shape=invhouse];
+	g95 -> g128;
+	g97	[label=not,
+		shape=invhouse];
+	g101	[label=and,
+		shape=invhouse];
+	g97 -> g101;
+	g100	[label=not,
+		shape=invhouse];
+	g102	[label=and,
+		shape=invhouse];
+	g100 -> g102;
+	g94	[label=and,
+		shape=invhouse];
+	g94 -> g97;
+	g98	[label=not,
+		shape=invhouse];
+	g94 -> g98;
+	g98 -> g102;
+	g101 -> g103;
+	g104	[label=not,
+		shape=invhouse];
+	g101 -> g104;
+	g96 -> g100;
+	g125	[label=and,
+		shape=invhouse];
+	g99 -> g125;
+	g106	[label=and,
+		shape=invhouse];
+	g102 -> g106;
+	g105	[label=not,
+		shape=invhouse];
+	g102 -> g105;
+	g32	[label=and,
+		shape=invhouse];
+	g41	[label=not,
+		shape=invhouse];
+	g32 -> g41;
+	g63	[label=and,
+		shape=invhouse];
+	g68	[label=not,
+		shape=invhouse];
+	g63 -> g68;
+	g64	[label=not,
+		shape=invhouse];
+	g69	[label=and,
+		shape=invhouse];
+	g64 -> g69;
+	g33	[label=not,
+		shape=invhouse];
+	g61	[label=and,
+		shape=invhouse];
+	g33 -> g61;
+	g37	[label=not,
+		shape=invhouse];
+	g46	[label=and,
+		shape=invhouse];
+	g37 -> g46;
+	g65	[label=and,
+		shape=invhouse];
+	g71	[label=and,
+		shape=invhouse];
+	g65 -> g71;
+	g70	[label=not,
+		shape=invhouse];
+	g65 -> g70;
+	g66	[label=not,
+		shape=invhouse];
+	g72	[label=and,
+		shape=invhouse];
+	g66 -> g72;
+	g83	[label=not,
+		shape=invhouse];
+	g89	[label=and,
+		shape=invhouse];
+	g83 -> g89;
+	g84	[label=not,
+		shape=invhouse];
+	g84 -> g95;
+	g76	[label=not,
+		shape=invhouse];
+	g69 -> g76;
+	g75	[label=not,
+		shape=invhouse];
+	g69 -> g75;
+	g74	[label=and,
+		shape=invhouse];
+	g69 -> g74;
+	g85	[label=and,
+		shape=invhouse];
+	g90	[label=not,
+		shape=invhouse];
+	g85 -> g90;
+	g131	[label=and,
+		shape=invhouse];
+	g89 -> g131;
+	g90 -> g95;
+	g124	[label=and,
+		shape=invhouse];
+	out3	[label=out3,
+		shape=doublecircle];
+	g124 -> out3;
+	g61 -> g66;
+	g73	[label=and,
+		shape=invhouse];
+	g61 -> g73;
+	g62	[label=and,
+		shape=invhouse];
+	g67	[label=not,
+		shape=invhouse];
+	g62 -> g67;
+	g62 -> g72;
+	g114	[label=not,
+		shape=invhouse];
+	g116	[label=and,
+		shape=invhouse];
+	g114 -> g116;
+	g34	[label=not,
+		shape=invhouse];
+	g45	[label=and,
+		shape=invhouse];
+	g34 -> g45;
+	g35	[label=and,
+		shape=invhouse];
+	g42	[label=not,
+		shape=invhouse];
+	g35 -> g42;
+	g36	[label=not,
+		shape=invhouse];
+	g77	[label=and,
+		shape=invhouse];
+	g36 -> g77;
+	g133	[label=not,
+		shape=invhouse];
+	g131 -> g133;
+	g81	[label=not,
+		shape=invhouse];
+	g88	[label=and,
+		shape=invhouse];
+	g81 -> g88;
+	g82	[label=not,
+		shape=invhouse];
+	g82 -> g88;
+	out5	[label=out5,
+		shape=doublecircle];
+	g133 -> out5;
+	g87	[label=not,
+		shape=invhouse];
+	g87 -> g92;
+	g88 -> g93;
+	g88 -> g94;
+	g60	[label=not,
+		shape=invhouse];
+	g60 -> g65;
+	g31	[label=and,
+		shape=invhouse];
+	g31 -> g74;
+	g40	[label=not,
+		shape=invhouse];
+	g31 -> g40;
+	g51	[label=and,
+		shape=invhouse];
+	g10 -> g51;
+	g22	[label=not,
+		shape=invhouse];
+	g10 -> g22;
+	g80	[label=not,
+		shape=invhouse];
+	g80 -> g101;
+	g86	[label=and,
+		shape=invhouse];
+	g86 -> g91;
+	g108	[label=and,
+		shape=invhouse];
+	g86 -> g108;
+	g123	[label=and,
+		shape=invhouse];
+	g123 -> g125;
+	g126	[label=not,
+		shape=invhouse];
+	g123 -> g126;
+	g113	[label=not,
+		shape=invhouse];
+	g115	[label=and,
+		shape=invhouse];
+	g113 -> g115;
+	g130	[label=not,
+		shape=invhouse];
+	g132	[label=and,
+		shape=invhouse];
+	g130 -> g132;
+	out4	[label=out4,
+		shape=doublecircle];
+	g132 -> out4;
+	g58	[label=not,
+		shape=invhouse];
+	g58 -> g62;
+	g59	[label=and,
+		shape=invhouse];
+	g59 -> g63;
+	g59 -> g64;
+	g29	[label=not,
+		shape=invhouse];
+	g29 -> g89;
+	g78	[label=not,
+		shape=invhouse];
+	g109	[label=and,
+		shape=invhouse];
+	g78 -> g109;
+	g79	[label=not,
+		shape=invhouse];
+	g79 -> g92;
+	out0	[label=out0,
+		shape=doublecircle];
+	g122	[label=not,
+		shape=invhouse];
+	g122 -> g124;
+	g56	[label=not,
+		shape=invhouse];
+	g56 -> g61;
+	g57	[label=not,
+		shape=invhouse];
+	g57 -> g65;
+	g129	[label=not,
+		shape=invhouse];
+	g129 -> g131;
+	g76 -> g86;
+	g77 -> g87;
+	g55	[label=and,
+		shape=invhouse];
+	g55 -> g60;
+	g112	[label=not,
+		shape=invhouse];
+	g112 -> g123;
+	g75 -> g85;
+	g127	[label=not,
+		shape=invhouse];
+	g125 -> g127;
+	g121	[label=not,
+		shape=invhouse];
+	g121 -> g124;
+	g27	[label=not,
+		shape=invhouse];
+	g43	[label=and,
+		shape=invhouse];
+	g27 -> g43;
+	g28	[label=and,
+		shape=invhouse];
+	g39	[label=not,
+		shape=invhouse];
+	g28 -> g39;
+	g128 -> g130;
+	g128 -> g129;
+	g68 -> g86;
+	g53	[label=not,
+		shape=invhouse];
+	g53 -> g59;
+	g24 -> g37;
+	g24 -> g36;
+	g24 -> g71;
+	g30	[label=not,
+		shape=invhouse];
+	g44	[label=and,
+		shape=invhouse];
+	g30 -> g44;
+	g73 -> g82;
+	g74 -> g83;
+	g74 -> g84;
+	g54	[label=not,
+		shape=invhouse];
+	g54 -> g62;
+	g67 -> g73;
+	g11 -> g24;
+	g23	[label=not,
+		shape=invhouse];
+	g11 -> g23;
+	g25	[label=and,
+		shape=invhouse];
+	g38	[label=not,
+		shape=invhouse];
+	g25 -> g38;
+	g26	[label=not,
+		shape=invhouse];
+	g26 -> g59;
+	g127 -> g132;
+	g71 -> g78;
+	g71 -> g79;
+	g71 -> g106;
+	g72 -> g81;
+	g72 -> g80;
+	g51 -> g56;
+	g51 -> g57;
+	g52	[label=and,
+		shape=invhouse];
+	g52 -> g58;
+	g50	[label=not,
+		shape=invhouse];
+	g50 -> g55;
+	g19	[label=not,
+		shape=invhouse];
+	g8 -> g19;
+	g8 -> g20;
+	g9 -> g94;
+	g21	[label=not,
+		shape=invhouse];
+	g9 -> g21;
+	g111	[label=not,
+		shape=invhouse];
+	g106 -> g111;
+	g118	[label=and,
+		shape=invhouse];
+	g106 -> g118;
+	g110	[label=not,
+		shape=invhouse];
+	g106 -> g110;
+	g111 -> g116;
+	g70 -> g77;
+	g120	[label=not,
+		shape=invhouse];
+	g120 -> g123;
+	g107	[label=not,
+		shape=invhouse];
+	g103 -> g107;
+	g48	[label=and,
+		shape=invhouse];
+	g7 -> g48;
+	g17	[label=not,
+		shape=invhouse];
+	g7 -> g17;
+	g18	[label=not,
+		shape=invhouse];
+	g7 -> g18;
+	g16	[label=and,
+		shape=invhouse];
+	g7 -> g16;
+	g22 -> g55;
+	g126 -> g128;
+	g48 -> g53;
+	g48 -> g54;
+	g49	[label=not,
+		shape=invhouse];
+	g49 -> g63;
+	g105 -> g109;
+	g119	[label=and,
+		shape=invhouse];
+	g119 -> g122;
+	g46 -> out0;
+	g47	[label=not,
+		shape=invhouse];
+	g47 -> g52;
+	g5 -> g14;
+	g13	[label=not,
+		shape=invhouse];
+	g5 -> g13;
+	g45 -> g51;
+	g45 -> g50;
+	g115 -> g118;
+	g117	[label=not,
+		shape=invhouse];
+	g115 -> g117;
+	g118 -> g121;
+	g118 -> g120;
+	g38 -> g43;
+	g39 -> g44;
+	g43 -> g48;
+	g43 -> g47;
+	g44 -> g69;
+	g44 -> g49;
+	g19 -> g32;
+	g23 -> g35;
+	g117 -> g119;
+	g41 -> g45;
+	g42 -> g46;
+	g20 -> g33;
+	g20 -> g34;
+	g21 -> g96;
+	g40 -> g85;
+	g110 -> g119;
+	out2	[label=out2,
+		shape=doublecircle];
+	g116 -> out2;
+	g17 -> g31;
+	g18 -> g52;
+	g109 -> g114;
+	g15	[label=not,
+		shape=invhouse];
+	g15 -> g28;
+	g16 -> g29;
+	g16 -> g30;
+	g14 -> g27;
+	g14 -> g26;
+	g107 -> g115;
+	g108 -> g113;
+	g108 -> g112;
+	g12	[label=not,
+		shape=invhouse];
+	g12 -> g28;
+	g13 -> g25;
+	g2 -> g35;
+	g6 -> g15;
+	g3 -> g31;
+	g3 -> g16;
+	g4 -> g12;
+	g1 -> g32;
+	g104 -> g108;
+	g0 -> g25;
+}
