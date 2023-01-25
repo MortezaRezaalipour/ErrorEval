@@ -1,4 +1,5 @@
 from numpy import random
+import numpy as np
 from src.argument import Arguments
 from src.verilog import Verilog
 from src.z3solver import Z3solver
@@ -10,8 +11,18 @@ def main():
 
     # 1) create testbench and samples
     verilog_obj = Verilog(args.benchmark_name)
+
     my_max = 2 ** verilog_obj.num_inputs - 1
-    rand_array = random.randint(0, my_max, size=args.num_samples)
+    if 2 ** verilog_obj.num_inputs < args.num_samples:
+        print(f'Exhaustive Simulation...')
+        rand_array = np.array(range(my_max))
+    else:
+        print(f'Monte Carlo Simulation...')
+        rand_array = random.randint(0, my_max, size=args.num_samples)
+
+
+
+
     verilog_obj.set_samples(rand_array)
     verilog_obj.create_test_bench()
     # 2) run testbench on the samples and store the results

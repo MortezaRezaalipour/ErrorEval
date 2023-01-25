@@ -38,8 +38,6 @@ class Graph:
 
         self.__input_dict = self.extract_inputs()
         self.__output_dict = self.extract_outputs()
-        print(f'{self.input_dict = }')
-        print(f'{self.output_dict = }')
 
 
     @property
@@ -119,7 +117,7 @@ class Graph:
         self.__sorted_node_list = sorted_node_list
 
     def extract_inputs(self):
-        print(f'Extracting inputs...')
+        # print(f'Extracting inputs...')
         input_dict = {}
         for n in self.graph.nodes():
             if self.is_pi(n):
@@ -129,7 +127,7 @@ class Graph:
 
 
     def extract_outputs(self):
-        print(f'Extracting outputs...')
+        # print(f'Extracting outputs...')
         output_dict = {}
         for n in self.graph.nodes():
             if self.is_po(n):
