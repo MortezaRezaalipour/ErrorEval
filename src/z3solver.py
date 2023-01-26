@@ -6,7 +6,7 @@ from src.graph import *
 
 
 class Z3solver:
-    def __init__(self, benchmark_name: str, samples: list = []):
+    def __init__(self, benchmark_name: str, approximate_benchmark_name: str = None, samples: list = []):
         self.__circuit_name = get_pure_name(benchmark_name)
         folder, extension = OUTPUT_PATH['gv']
         self.__graph_in_path = f'{folder}/{benchmark_name}.{extension}'
@@ -22,6 +22,8 @@ class Z3solver:
         folder, extension = LOG_PATH['z3']
         self.__z3_log_path = f'{folder}/{benchmark_name}_{Z3}_{LOG}.{extension}'
 
+        folder, extension = INPUT_PATH['app_ver']
+        self.__approximate_verilog_in_path = f'{folder}/{approximate_benchmark_name}.{extension}'
 
         self.__samples = samples
         self.__sample_results = None
@@ -53,6 +55,10 @@ class Z3solver:
     def set_z3pyscript(self, this_script):
         self.__z3pyscript = this_script
 
+    def append_z3pyscript(self, that_script):
+        self.__z3pyscript = f'{self.z3pyscript}\n' \
+                            f'{that_script}'
+
     @property
     def z3string(self):
         return self.__z3string
@@ -72,7 +78,7 @@ class Z3solver:
         self.__sample_results = results
 
     def import_results(self):
-        print(f'importing results...')
+        # print(f'importing results...')
         arr = []
         with open(self.pyscript_results_out_path, 'r') as f:
             lines = f.readlines()
@@ -100,21 +106,29 @@ class Z3solver:
     def import_z3_expression(self):
         pass
 
-    def convert_gv_to_z3pyscript_Maxerror(self):
+    def convert_gv_to_z3pyscript_test(self):
         import_string = self.create_imports()
         abs_function = self.create_abs_function()
-        exact_circuit_declaration = self.declare_exact_circuit()
-        exact_circuit_expression = self.express_exact_circuit()
-        output_declaration = self.declare_exact_output()
-        exact_function = self.declare_exact_function()
+        exact_circuit_declaration = self.declare_original_circuit()
+        exact_circuit_expression = self.express_original_circuit()
+        output_declaration = self.declare_original_output()
+        exact_function = self.declare_original_function()
         solver = self.declare_solver()
         sample_expression = self.express_samples()
         store_results = self.store_results()
         self.set_z3pyscript(import_string + abs_function + exact_circuit_declaration + exact_circuit_expression +
                             output_declaration + exact_function + solver + sample_expression + store_results)
 
-    def convert_gv_to_z3pyscript_BF(self):
+    def convert_gv_to_z3pyscript_maxerror_qor(self):
         pass
+
+    def convert_gv_to_z3pyscript_maxerror_labelling(self):
+        pass
+
+    def convert_gv_to_z3pyscript_xpat(self):
+        pass
+
+
 
     #TODO
     # for other back-ends as well
@@ -143,7 +157,7 @@ class Z3solver:
                        f'\n'
         return abs_function
 
-    def declare_exact_circuit(self):
+    def declare_original_circuit(self):
         exact_circuit_declaration = ''
         # inputs
         for n in self.graph.graph.nodes:
@@ -163,16 +177,59 @@ class Z3solver:
                                             f'{self.declare_gate(n)}\n'
         return exact_circuit_declaration
 
+    def declare_approximate_circuit(self):
+        exact_circuit_declaration = ''
+        # inputs
+        for n in self.graph.graph.nodes:
+            if re.search(r'in\d+', self.graph.graph.nodes[n]['label']):
+                exact_circuit_declaration = f'{exact_circuit_declaration}' \
+                                            f'{self.declare_gate(n)}\n'
+        exact_circuit_declaration += f'\n'
+        # gates
+        for n in self.graph.graph.nodes:
+            if re.search(r'g\d+', n):
+                exact_circuit_declaration = f'{exact_circuit_declaration}' \
+                                            f'{self.declare_gate(n)}\n'
+        # outputs
+        for n in self.graph.graph.nodes:
+            if re.search(r'out\d+', self.graph.graph.nodes[n]['label']):
+                exact_circuit_declaration = f'{exact_circuit_declaration}' \
+                                            f'{self.declare_gate(n)}\n'
+        return exact_circuit_declaration
+
+
     def declare_gate(self, this_key: str):
         declaration = f"{this_key} = {Z3BOOL}('{this_key}')"
         return declaration
 
-    def express_exact_circuit(self):
+    def express_original_circuit(self):
+        # print(f'expressing the original circuit')
         exact_circuit_function = ''
         for n in self.graph.graph.nodes:
-            exact_circuit_function += f'{self.express_gate(n)}\n'
+            if self.is_gate(n):
+                exact_circuit_function += f'{self.express_gate(n)}\n'
+            elif self.graph.is_constant(n):
+                exact_circuit_function += f'{self.express_constant(n)}\n'
+            elif self.is_po(n):
+                exact_circuit_function += f'{self.express_output(n)}\n'
         exact_circuit_function += f'\n'
         return exact_circuit_function
+
+    def express_approximate_circuit(self):
+        pass
+
+    def express_output(self, this_key):
+        cur_node = ''
+        predecessor = list(self.graph.graph.predecessors(this_key))[0]
+        cur_node = f'{this_key} = {predecessor}\n'
+
+        return cur_node
+
+    def express_constant(self, this_key):
+        cur_node = ''
+        this_constant = re.search(r'TRUE|FALSE', self.graph.graph.nodes[this_key][LABEL]).group()
+        cur_node += f'{this_key} = {Z3_GATES_DICTIONARY[this_constant]}\n'
+        return cur_node
 
     def express_gate(self, this_key: str):
         # sth like this: g110 = Not(And(g108, g109))
@@ -216,9 +273,8 @@ class Z3solver:
         else:
             return False
 
-    def declare_exact_output(self):
+    def declare_original_output(self):
         output_declaration = ''
-
 
         for i in range(self.graph.num_outputs):
             output_declaration += f"exact_out{i}=Int('exact_out{i}')\n"
@@ -235,7 +291,17 @@ class Z3solver:
         output_declaration += f'\n'
         return output_declaration
 
-    def declare_exact_function(self):
+    def declare_approximate_output(self):
+        pass
+
+    def declare_original_function(self):
+        exact_function = ''
+        exact_function += f'results = []\n'
+        exact_function += f"f_exact = Function('f', IntSort(), IntSort())"
+        exact_function += f'\n'
+        return exact_function
+
+    def declare_approximate_function(self):
         exact_function = ''
         exact_function += f'results = []\n'
         exact_function += f"f_exact = Function('f', IntSort(), IntSort())"
@@ -284,7 +350,7 @@ class Z3solver:
         return store_results
 
     def run_z3pyscript(self):
-        print(f'{self.out_path = }')
+        # print(f'{self.out_path = }')
         with open(self.z3_log_path, 'w') as f:
             subprocess.call([PYTHON3, self.out_path], stdout=f)
         self.set_sample_results(self.import_results())

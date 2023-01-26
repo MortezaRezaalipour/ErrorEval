@@ -44,9 +44,14 @@ class Arguments:
                                default=100,
                                type=int,
                                help='number-of-monte-carlo-samples')
+        my_parser.add_argument('--approximate_benchmark', '-app',
+                               type=str,
+                               default=None,
+                               help='approximate-benchmark-name in gv/verilog format')
         my_parser.add_argument('--clean',
                                type=bool,
                                default=False)
+
         tmp_args = my_parser.parse_args()
 
         return Arguments(tmp_args)

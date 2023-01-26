@@ -3,7 +3,8 @@ INPUT_PATH = {
     'gv': ('input/gv', 'gv'),
     'aig': ('input/aig', 'aig'),
     'dot': ('input/gv', 'dot'),
-
+    'app_ver': ('input/ver', 'v'),
+    'app_gv': ('input/gv', 'gv')
 }
 OUTPUT_PATH = {
     'ver': ('output/ver', 'v'),
@@ -11,6 +12,7 @@ OUTPUT_PATH = {
     'aig': ('output/aig', 'aig'),
     'dot': ('output/gv', 'dot'),
     'z3': ('output/z3', 'py')
+
 }
 
 TEST_PATH = {

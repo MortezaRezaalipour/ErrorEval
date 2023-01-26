@@ -13,6 +13,7 @@ def v2gv():
     graph_obj = Graph(args.benchmark_name)
     print(f'{graph_obj = }')
 
+
     graph_obj.export_graph()
 
 

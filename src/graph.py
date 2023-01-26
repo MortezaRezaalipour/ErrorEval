@@ -25,20 +25,21 @@ class Graph:
 
         self.__graph = self.import_graph()
 
-        self.__num_inputs = -1
-        self.__num_outputs = -1
-        self.__num_gates = -1
         self.__sorted_node_list = None
 
         self.__is_clean = is_clean
         if not self.is_clean:
             self.clean_graph()
-        self.count_iog()
+        # self.count_iog()
         self.sort_graph()
 
         self.__input_dict = self.extract_inputs()
         self.__output_dict = self.extract_outputs()
+        self.__gate_dict = self.extract_gates()
 
+        self.__num_inputs = len(self.__input_dict)
+        self.__num_outputs = len(self.__output_dict)
+        self.__num_gates = len(self.__gate_dict)
 
     @property
     def name(self):
@@ -125,7 +126,6 @@ class Graph:
                 input_dict[int(idx)] = n
         return input_dict
 
-
     def extract_outputs(self):
         # print(f'Extracting outputs...')
         output_dict = {}
@@ -134,6 +134,9 @@ class Graph:
                 idx = re.search('\d+', n).group()
                 output_dict[int(idx)] = n
         return output_dict
+
+    def extract_gates(self):
+        return []
 
     # methods
     def create_sort_map(self) -> 'dict[str, str]':
@@ -170,6 +173,8 @@ class Graph:
         self.set_graph(tmp_graph)
         # print(f'{tmp_graph.nodes = }')
 
+    # TODO
+    # Deprecated
     def count_iog(self):
         """
         counts the number of primary inputs and outputs, and gates and sets the corresponding fields
@@ -207,6 +212,7 @@ class Graph:
         self.clean_output_labels()
         self.clean_wire_labels()
         self.clean_gate_labels()
+        self.clean_constant_labels()
         self.merge_buffers_into_gates()
         self.merge_wires_into_gates()
         self.relabel_nodes()
@@ -252,6 +258,15 @@ class Graph:
                     cur_gate = re.search(POSSIBLE_GATES, self.graph.nodes[n]['label']).group()
                     self.graph.nodes[n]['label'] = cur_gate
                     self.graph.nodes[n]['shape'] = 'invhouse'
+
+    def clean_constant_labels(self):
+        # g16[label = "F", shape = circle, fillcolor = white]
+        for n in self.graph.nodes:
+            if self.is_constant(n):
+                const_value = re.search(f'{CONST_0}|{CONST_1}', self.graph.nodes[n][LABEL]).group()
+                self.graph.nodes[n][LABEL] = f"{'FALSE' if const_value == CONST_0 else 'TRUE'}"
+                self.graph.nodes[n][SHAPE] = f'square'
+
 
     def merge_buffers_into_gates(self):
         tmp_graph = self.graph.copy(as_view=False)
@@ -310,55 +325,97 @@ class Graph:
 
                 mapping = {old_name: new_name}
                 tmp_graph = nx.relabel_nodes(tmp_graph, mapping)
+            elif self.is_constant(n):
+                old_name = n
+                new_name = f'g{gate_idx}'
+                gate_idx += 1
+                # print(old_name)
+
+                mapping = {old_name: new_name}
+                tmp_graph = nx.relabel_nodes(tmp_graph, mapping)
             else:
-                print(f'{n = }')
                 print('WARNING! No mapping needed!')
         self.set_graph(tmp_graph)
 
     def is_pi(self, node):
-        if re.search(r'pi\d+|in\d+', self.graph.nodes[node]['label']):
-            return True
+        if not self.is_constant(node):
+            if re.search(r'pi\d+|in\d+', self.graph.nodes[node]['label']):
+                # print(f'{node} is and input')
+                return True
+            else:
+                return False
         else:
             return False
 
     def is_po(self, node):
-        if re.search(r'po\d+|out\d+', self.graph.nodes[node]['label']):
-            return True
+        if not self.is_constant(node):
+            if re.search(r'po\d+|out\d+', self.graph.nodes[node]['label']):
+                return True
+            else:
+                return False
         else:
             return False
 
     def is_wire(self, node):
-        if (not self.is_pi(node) and not self.is_po(node) and not self.is_gate(node) and
-                re.search('diamond', self.graph.nodes[node]['shape'])):
-            return True
+        if not self.is_constant(node):
+            if (not self.is_pi(node) and not self.is_po(node) and not self.is_gate(node) and
+                    re.search('diamond', self.graph.nodes[node]['shape'])):
+                return True
+            else:
+                return False
         else:
             return False
 
     def is_cleaned_gate(self, node):
-        if (re.search('invhouse', self.graph.nodes[node]['shape']) and
-                'contraction' not in self.graph.nodes[node].keys() and 'contractions' not in self.graph.nodes[node]):
+        if not self.is_constant(node):
+            if (re.search('invhouse', self.graph.nodes[node]['shape']) and
+                    'contraction' not in self.graph.nodes[node].keys() and 'contractions' not in self.graph.nodes[node]):
+                return True
+            else:
+                return False
+        else:
+            return False
+
+    def is_constant(self, node):
+        if (SHAPE not in self.graph.nodes[node] and
+                LABEL in self.graph.nodes[node] and
+                re.search(f'{CONST_0}|{CONST_1}', self.graph.nodes[node][LABEL])):
+            return True
+        elif re.search(r'(TRUE|FALSE)', self.graph.nodes[node][LABEL]):
+            regex_constant = re.search(f'', self.graph.nodes[node][LABEL]).group()
+            # print(f'{node = }, {self.graph.nodes[node] = } is a {regex_constant = }')
             return True
         else:
             return False
 
+
     def is_gate(self, node):
-        if re.search('record', self.graph.nodes[node]['shape']):
-            return True
+        if not self.is_constant(node):
+            if re.search('record', self.graph.nodes[node]['shape']):
+                return True
+            else:
+                return False
         else:
             return False
 
     def is_buff(self, node):
-        if (re.search('BUF', self.graph.nodes[node]['label']) and
-                re.search('box', self.graph.nodes[node]['shape'])):
-            return True
+        if not self.is_constant(node):
+            if (re.search('BUF', self.graph.nodes[node]['label']) and
+                    re.search('box', self.graph.nodes[node]['shape'])):
+                return True
+            else:
+                return False
         else:
             return False
 
     def is_merged_gate(self, node):
-        if (re.search(POSSIBLE_GATES, self.graph.nodes[node]['label']) and
-                re.search('invhouse', self.graph.nodes[node]['shape']) and
-                ('contraction' in self.graph.nodes[node].keys() or 'contractions' in self.graph.nodes[node].keys())):
-            return True
+        if not self.is_constant(node):
+            if (re.search(POSSIBLE_GATES, self.graph.nodes[node]['label']) and
+                    re.search('invhouse', self.graph.nodes[node]['shape']) and
+                    ('contraction' in self.graph.nodes[node].keys() or 'contractions' in self.graph.nodes[node].keys())):
+                return True
+            else:
+                return False
         else:
             return False
 
@@ -379,9 +436,17 @@ class Graph:
     def export_node(self, n, file_handler: 'class _io.TextIOWrapper'):
         # in3	[label=in3,shape=circle];
         if self.is_pi(n) or self.is_po(n):
+
             line = f"{n} [label=\"{self.graph.nodes[n]['label']}\", shape={self.graph.nodes[n]['shape']}];\n"
-        else:
+        elif self.is_cleaned_gate(n):
+
             line = f"{n} [label=\"{self.graph.nodes[n]['label']}\\n{n}\", shape={self.graph.nodes[n]['shape']}];\n"
+        elif self.is_constant(n):
+
+            line = f"{n} [label=\"{self.graph.nodes[n]['label']}\\n{n}\", shape={self.graph.nodes[n]['shape']}];\n"
+        else:
+            print('WARNING!!! found a node that is not a PI, PO, WIRE, CONSTANT, GATE')
+
 
         file_handler.write(line)
 
