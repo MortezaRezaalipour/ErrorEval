@@ -23,20 +23,20 @@
 
 
 -- Running command `
-        read_verilog output/ver/adder_i8_o5.v
-        show -prefix output/gv/adder_i8_o5 -format gv
+        read_verilog output/ver/madd_8_app3.v
+        show -prefix output/gv/madd_8_app3 -format gv
         ' --
 
-1. Executing Verilog-2005 frontend: output/ver/adder_i8_o5.v
-Parsing Verilog input from `output/ver/adder_i8_o5.v' to AST representation.
-Generating RTLIL representation for module `\adder_i8_o5'.
+1. Executing Verilog-2005 frontend: output/ver/madd_8_app3.v
+Parsing Verilog input from `output/ver/madd_8_app3.v' to AST representation.
+Generating RTLIL representation for module `\madd_8_app3'.
 Successfully finished Verilog frontend.
 
 2. Generating Graphviz representation of design.
-Writing dot description to `output/gv/adder_i8_o5.dot'.
-Dumping module adder_i8_o5 to page 1.
-Exec: dot -Tgv 'output/gv/adder_i8_o5.dot' > 'output/gv/adder_i8_o5.gv.new' && mv 'output/gv/adder_i8_o5.gv.new' 'output/gv/adder_i8_o5.gv'
+Writing dot description to `output/gv/madd_8_app3.dot'.
+Dumping module madd_8_app3 to page 1.
+Exec: dot -Tgv 'output/gv/madd_8_app3.dot' > 'output/gv/madd_8_app3.gv.new' && mv 'output/gv/madd_8_app3.gv.new' 'output/gv/madd_8_app3.gv'
 
-End of script. Logfile hash: 76a7ec7e40, CPU: user 0.00s system 0.00s, MEM: 24.09 MB peak
+End of script. Logfile hash: afc5281fdb, CPU: user 0.04s system 0.01s, MEM: 17.63 MB peak
 Yosys 0.9+4052 (git sha1 a5adb007, gcc 9.3.0-17ubuntu1~20.04 -fPIC -Os)
-Time spent: 95% 1x show (0 sec), 4% 2x read_verilog (0 sec)
+Time spent: 98% 1x show (2 sec), 1% 2x read_verilog (0 sec)

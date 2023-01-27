@@ -22,8 +22,18 @@ class Z3solver:
         folder, extension = LOG_PATH['z3']
         self.__z3_log_path = f'{folder}/{benchmark_name}_{Z3}_{LOG}.{extension}'
 
-        folder, extension = INPUT_PATH['app_ver']
-        self.__approximate_verilog_in_path = f'{folder}/{approximate_benchmark_name}.{extension}'
+        self.__approximate_verilog_in_path = None
+        self.__approximate_graph = None
+
+        if approximate_benchmark_name:
+            folder, extension = INPUT_PATH['app_gv']
+            self.__approximate_verilog_in_path = f'{folder}/{approximate_benchmark_name}.{extension}'
+            self.__approximate_graph = Graph(approximate_benchmark_name, True)
+            self.relabel_approximate_graph()
+            self.approximate_graph.set_input_dict(self.approximate_graph.extract_inputs())
+            self.approximate_graph.set_output_dict(self.approximate_graph.extract_outputs())
+            self.approximate_graph.set_gate_dict(self.approximate_graph.extract_gates())
+            self.approximate_graph.set_constant_dict(self.approximate_graph.extract_constants())
 
         self.__samples = samples
         self.__sample_results = None
@@ -47,6 +57,10 @@ class Z3solver:
     @property
     def z3_log_path(self):
         return self.__z3_log_path
+
+    @property
+    def approximate_in_path(self):
+        return self.__approximate_verilog_in_path
 
     @property
     def z3pyscript(self):
@@ -103,8 +117,26 @@ class Z3solver:
     def graph(self):
         return self.__graph
 
+    @property
+    def approximate_graph(self):
+        return self.__approximate_graph
+
     def import_z3_expression(self):
         pass
+
+    def relabel_approximate_graph(self):
+        gate_mapping = {}
+        constant_mapping = {}
+        output_mapping = {}
+        for key in self.approximate_graph.gate_dict.keys():
+            gate_mapping[self.approximate_graph.gate_dict[key]] = f'app_{self.approximate_graph.gate_dict[key]}'
+        for key in self.approximate_graph.constant_dict.keys():
+            constant_mapping[self.approximate_graph.constant_dict[key]] = f'app_{self.approximate_graph.constant_dict[key]}'
+        for key in self.approximate_graph.output_dict.keys():
+            output_mapping[self.approximate_graph.output_dict[key]] = f'app_{self.approximate_graph.output_dict[key]}'
+        self.approximate_graph.set_graph(nx.relabel_nodes(self.approximate_graph.graph, gate_mapping))
+        self.approximate_graph.set_graph(nx.relabel_nodes(self.approximate_graph.graph, constant_mapping))
+        self.approximate_graph.set_graph(nx.relabel_nodes(self.approximate_graph.graph, output_mapping))
 
     def convert_gv_to_z3pyscript_test(self):
         import_string = self.create_imports()
@@ -120,7 +152,24 @@ class Z3solver:
                             output_declaration + exact_function + solver + sample_expression + store_results)
 
     def convert_gv_to_z3pyscript_maxerror_qor(self):
-        pass
+
+        import_string = self.create_imports()
+        abs_function = self.create_abs_function()
+
+        # exact_part
+        original_circuit_declaration = self.declare_original_circuit()
+        original_circuit_expression = self.express_original_circuit()
+        original_output_declaration = self.declare_original_output()
+
+        # approximate_part
+        approximate_circuit_declaration = self.declare_approximate_circuit()
+        approximate_circuit_expression = self.express_approximate_circuit()
+        approximate_output_declaration = self.declare_approximate_output()
+
+
+        self.set_z3pyscript(import_string + abs_function + original_circuit_declaration + original_circuit_expression +
+                            original_output_declaration + approximate_circuit_declaration + approximate_circuit_expression +
+                            approximate_output_declaration)
 
     def convert_gv_to_z3pyscript_maxerror_labelling(self):
         pass
@@ -128,9 +177,7 @@ class Z3solver:
     def convert_gv_to_z3pyscript_xpat(self):
         pass
 
-
-
-    #TODO
+    # TODO
     # for other back-ends as well
 
     def export_z3pyscript(self):
@@ -178,27 +225,30 @@ class Z3solver:
         return exact_circuit_declaration
 
     def declare_approximate_circuit(self):
+        # for n in self.approximate_graph.graph.nodes:
+        #     print(f'{n = }, {self.approximate_graph.graph.nodes[n]= }')
         exact_circuit_declaration = ''
         # inputs
-        for n in self.graph.graph.nodes:
-            if re.search(r'in\d+', self.graph.graph.nodes[n]['label']):
+        for n in self.approximate_graph.graph.nodes:
+            if re.search(r'in\d+', self.approximate_graph.graph.nodes[n]['label']):
                 exact_circuit_declaration = f'{exact_circuit_declaration}' \
                                             f'{self.declare_gate(n)}\n'
         exact_circuit_declaration += f'\n'
         # gates
-        for n in self.graph.graph.nodes:
+        for n in self.approximate_graph.graph.nodes:
             if re.search(r'g\d+', n):
                 exact_circuit_declaration = f'{exact_circuit_declaration}' \
                                             f'{self.declare_gate(n)}\n'
         # outputs
-        for n in self.graph.graph.nodes:
-            if re.search(r'out\d+', self.graph.graph.nodes[n]['label']):
+        for n in self.approximate_graph.graph.nodes:
+            if re.search(r'out\d+', self.approximate_graph.graph.nodes[n]['label']):
                 exact_circuit_declaration = f'{exact_circuit_declaration}' \
                                             f'{self.declare_gate(n)}\n'
         return exact_circuit_declaration
 
-
     def declare_gate(self, this_key: str):
+        if re.search('out', this_key):
+            print(f'{this_key = }')
         declaration = f"{this_key} = {Z3BOOL}('{this_key}')"
         return declaration
 
@@ -206,35 +256,45 @@ class Z3solver:
         # print(f'expressing the original circuit')
         exact_circuit_function = ''
         for n in self.graph.graph.nodes:
-            if self.is_gate(n):
-                exact_circuit_function += f'{self.express_gate(n)}\n'
-            elif self.graph.is_constant(n):
-                exact_circuit_function += f'{self.express_constant(n)}\n'
-            elif self.is_po(n):
-                exact_circuit_function += f'{self.express_output(n)}\n'
+            if self.graph.is_cleaned_gate(n):
+                exact_circuit_function += f'{self.express_exact_gate(n)}\n'
+            elif self.graph.is_cleaned_constant(n):
+                exact_circuit_function += f'{self.express_exact_constant(n)}\n'
+            elif self.graph.is_cleaned_po(n):
+                exact_circuit_function += f'{self.express_exact_output(n)}\n'
         exact_circuit_function += f'\n'
         return exact_circuit_function
 
     def express_approximate_circuit(self):
-        pass
+        approximate_circuit_function = ''
+        for n in self.approximate_graph.graph.nodes:
+            if self.approximate_graph.is_cleaned_gate(n):
+                approximate_circuit_function += f'{self.express_approximate_gate(n)}\n'
+            elif self.approximate_graph.is_cleaned_constant(n):
+                print(f'{self.approximate_graph.constant_dict = }')
+                approximate_circuit_function += f'{self.express_approximate_constant(n)}\n'
+            elif self.approximate_graph.is_cleaned_po(n):
+                approximate_circuit_function += f'{self.express_approximate_output(n)}\n'
+        approximate_circuit_function += f'\n'
+        return approximate_circuit_function
 
-    def express_output(self, this_key):
+    def express_exact_output(self, this_key):
         cur_node = ''
         predecessor = list(self.graph.graph.predecessors(this_key))[0]
         cur_node = f'{this_key} = {predecessor}\n'
 
         return cur_node
 
-    def express_constant(self, this_key):
+    def express_exact_constant(self, this_key):
         cur_node = ''
         this_constant = re.search(r'TRUE|FALSE', self.graph.graph.nodes[this_key][LABEL]).group()
         cur_node += f'{this_key} = {Z3_GATES_DICTIONARY[this_constant]}\n'
         return cur_node
 
-    def express_gate(self, this_key: str):
+    def express_exact_gate(self, this_key: str):
         # sth like this: g110 = Not(And(g108, g109))
         cur_node = ''
-        if self.is_gate(this_key):
+        if self.graph.is_cleaned_gate(this_key):
             this_gate = re.search(POSSIBLE_GATES, self.graph.graph.nodes[this_key]['label']).group()
             cur_gate = Z3_GATES_DICTIONARY[this_gate]
             predecessor_list = list(self.graph.graph.predecessors(this_key))
@@ -246,32 +306,71 @@ class Z3solver:
                 else:
                     cur_node += f','
 
-        elif self.is_pi(this_key):
+        elif self.graph.is_cleaned_pi(this_key):
             pass
-        elif self.is_po(this_key):
+        elif self.graph.is_cleaned_po(this_key):
             cur_node = f'{this_key}='
             predecessor_list = list(self.graph.graph.predecessors(this_key))
             for idx, u in enumerate(predecessor_list):
                 cur_node += f'{u}'
         return cur_node
 
-    def is_gate(self, this_key):
-        if re.search(r'g\d+', this_key) and re.search(POSSIBLE_GATES, self.graph.graph.nodes[this_key]['label']):
-            return True
-        else:
-            return False
+    def express_approximate_output(self, this_key):
+        cur_node = ''
+        predecessor = list(self.approximate_graph.graph.predecessors(this_key))[0]
+        cur_node = f'{this_key} = {predecessor}\n'
 
-    def is_pi(self, this_key):
-        if re.search(r'in\d+', this_key) and re.search(r'in\d+', self.graph.graph.nodes[this_key]['label']):
-            return True
-        else:
-            return False
+        return cur_node
 
-    def is_po(self, this_key):
-        if re.search(r'out\d+', this_key) and re.search(r'out\d+', self.graph.graph.nodes[this_key]['label']):
-            return True
-        else:
-            return False
+    def express_approximate_constant(self, this_key):
+        cur_node = ''
+        this_constant = re.search(r'TRUE|FALSE', self.approximate_graph.graph.nodes[this_key][LABEL]).group()
+        cur_node += f'{this_key} = {Z3_GATES_DICTIONARY[this_constant]}\n'
+        return cur_node
+
+    def express_approximate_gate(self, this_key: str):
+        # sth like this: g110 = Not(And(g108, g109))
+        cur_node = ''
+        if self.approximate_graph.is_cleaned_gate(this_key):
+            this_gate = re.search(POSSIBLE_GATES, self.approximate_graph.graph.nodes[this_key]['label']).group()
+            cur_gate = Z3_GATES_DICTIONARY[this_gate]
+            predecessor_list = list(self.approximate_graph.graph.predecessors(this_key))
+            cur_node = f"{this_key}={cur_gate}("
+            for idx, u in enumerate(predecessor_list):
+                cur_node += f'{u}'
+                if idx == len(predecessor_list) - 1:
+                    cur_node += f')'
+                else:
+                    cur_node += f','
+
+        elif self.approximate_graph.is_cleaned_pi(this_key):
+            pass
+        elif self.approximate_graph.is_cleaned_po(this_key):
+            cur_node = f'{this_key}='
+            predecessor_list = list(self.approximate_graph.graph.predecessors(this_key))
+            for idx, u in enumerate(predecessor_list):
+                cur_node += f'{u}'
+        return cur_node
+
+    #TODO
+    # Deprecated: Not useful
+    # def is_gate(self, this_key):
+    #     if re.search(r'g\d+', this_key) and re.search(POSSIBLE_GATES, self.graph.graph.nodes[this_key]['label']):
+    #         return True
+    #     else:
+    #         return False
+    #
+    # def is_pi(self, this_key):
+    #     if re.search(r'in\d+', this_key) and re.search(r'in\d+', self.graph.graph.nodes[this_key]['label']):
+    #         return True
+    #     else:
+    #         return False
+    #
+    # def is_po(self, this_key):
+    #     if re.search(r'out\d+', this_key) and re.search(r'out\d+', self.graph.graph.nodes[this_key]['label']):
+    #         return True
+    #     else:
+    #         return False
 
     def declare_original_output(self):
         output_declaration = ''
@@ -292,7 +391,22 @@ class Z3solver:
         return output_declaration
 
     def declare_approximate_output(self):
-        pass
+        output_declaration = ''
+
+        for i in range(self.approximate_graph.num_outputs):
+            output_declaration += f"approx_out{i}=Int('approx_out{i}')\n"
+            output_declaration += f"approx_out{i}={self.approximate_graph.output_dict[i]}*{2 ** i}\n"
+
+        output_declaration += f"approx_out = Int('approx_out')\n"
+        output_declaration += f'approx_out='
+        for i in range(self.approximate_graph.num_outputs):
+            if i == self.approximate_graph.num_outputs - 1:
+                output_declaration += f'approx_out{i}'
+            else:
+                output_declaration += f'approx_out{i}+'
+
+        output_declaration += f'\n'
+        return output_declaration
 
     def declare_original_function(self):
         exact_function = ''
@@ -322,7 +436,7 @@ class Z3solver:
             sample_expression += f's.push()\n'
             s_expression = [True if i == '1' else False for i in list(f'{s:0{self.graph.num_inputs}b}')]
             # a 1101 is considered as in3,in2,in1,in0 => in3=1, in2=1, in1=0, in0=1
-            s_expression.reverse() # to keep it consistent with the verilog testbench
+            s_expression.reverse()  # to keep it consistent with the verilog testbench
             sample_expression += f's.add('
             for idx, e in enumerate(s_expression):
                 if idx == len(s_expression) - 1:

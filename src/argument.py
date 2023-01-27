@@ -5,15 +5,21 @@ from src.utils import *
 
 class Arguments:
     def __init__(self, tmp_args):
-        benchmark = tmp_args.benchmark
-        benchmark = get_pure_name(benchmark)
+
+        benchmark = get_pure_name(tmp_args.benchmark)
+        approximate_benchmark = get_pure_name(tmp_args.approximate_benchmark)
         self.__benchmark_name = benchmark
+        self.__approximate_benchmark = approximate_benchmark
         self.__mc_samples = tmp_args.samples
         self.__clean = tmp_args.clean
 
     @property
     def benchmark_name(self):
         return self.__benchmark_name
+
+    @property
+    def approximate_benchmark(self):
+        return self.__approximate_benchmark
 
     @property
     def num_samples(self):
@@ -26,6 +32,7 @@ class Arguments:
     def __repr__(self):
         return f'An object of class Arguments\n' \
                f'{self.benchmark_name = }\n' \
+               f'{self.approximate_benchmark = }\n' \
                f'{self.num_samples = }\n' \
                f'{self.clean = }\n' \
 

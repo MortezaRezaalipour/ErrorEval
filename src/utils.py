@@ -4,6 +4,8 @@ from .config.path import *
 from .config.config import *
 
 def get_pure_name(file_name: str) -> str:
+    if file_name is None:
+        return file_name
     name = file_name
     if re.search('/', file_name):
         name = file_name.split('/')[-1]
