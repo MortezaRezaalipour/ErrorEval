@@ -490,6 +490,9 @@ int_app_out = w_app_o0 + w_app_o1 + w_app_o2 + w_app_o3 + w_app_o4 + w_app_o5 + 
 
 f = Function('f', IntSort(), IntSort(), IntSort())
 foundWCE = False
+
+
+stats: dict = {}
 WCE      = 0
 ET       = 0
 num_sats = 0

@@ -11,7 +11,6 @@ def gv2z3():
     print(f'{args = }')
 
     z3py_obj = Z3solver(args.benchmark_name, args.approximate_benchmark)
-    print(f'{z3py_obj.graph.num_inputs = }')
     mymax = 2 ** z3py_obj.graph.num_inputs - 1
     rand_array = random.randint(0, mymax, size=args.num_samples)
     z3py_obj.set_samples(rand_array)

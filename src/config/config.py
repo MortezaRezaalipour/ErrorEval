@@ -45,3 +45,11 @@ PYTHON3 = 'python3'
 Z3 = 'z3py'
 SHAPE = 'shape'
 LABEL = 'label'
+TAB = '\t'
+
+# strategies
+MONOTONIC = 'monotonic'
+BISECTION = 'bisection'
+MC = 'mc'
+DEFAULT_STRATEGY = MONOTONIC
+

@@ -35,12 +35,18 @@ class Z3solver:
             self.approximate_graph.set_gate_dict(self.approximate_graph.extract_gates())
             self.approximate_graph.set_constant_dict(self.approximate_graph.extract_constants())
 
+        folder, extension = OUTPUT_PATH['report']
+        self.__z3_report = f'{folder}/{benchmark_name}.{extension}'
+        print(f'{self.z3_report = }')
+
         self.__samples = samples
         self.__sample_results = None
 
         self.__z3string = None
 
         self.__z3pyscript = None
+
+        self.__strategy = DEFAULT_STRATEGY
 
     @property
     def name(self):
@@ -66,12 +72,24 @@ class Z3solver:
     def z3pyscript(self):
         return self.__z3pyscript
 
-    def set_z3pyscript(self, this_script):
-        self.__z3pyscript = this_script
+    @property
+    def strategy(self):
+        return self.__strategy
 
-    def append_z3pyscript(self, that_script):
-        self.__z3pyscript = f'{self.z3pyscript}\n' \
-                            f'{that_script}'
+    def set_strategy(self, strategy: str):
+        self.__strategy = strategy
+
+    @property
+    def z3_report(self):
+        return self.__z3_report
+
+
+    # TODO
+    # Deprecated
+    #
+    # def append_z3pyscript(self, that_script):
+    #     self.__z3pyscript = f'{self.z3pyscript}\n' \
+    #                         f'{that_script}'
 
     @property
     def z3string(self):
@@ -121,8 +139,13 @@ class Z3solver:
     def approximate_graph(self):
         return self.__approximate_graph
 
+    # TODO
+    # Deprecated
     def import_z3_expression(self):
         pass
+
+    def set_z3pyscript(self, this_script):
+        self.__z3pyscript = this_script
 
     def relabel_approximate_graph(self):
         gate_mapping = {}
@@ -131,7 +154,8 @@ class Z3solver:
         for key in self.approximate_graph.gate_dict.keys():
             gate_mapping[self.approximate_graph.gate_dict[key]] = f'app_{self.approximate_graph.gate_dict[key]}'
         for key in self.approximate_graph.constant_dict.keys():
-            constant_mapping[self.approximate_graph.constant_dict[key]] = f'app_{self.approximate_graph.constant_dict[key]}'
+            constant_mapping[
+                self.approximate_graph.constant_dict[key]] = f'app_{self.approximate_graph.constant_dict[key]}'
         for key in self.approximate_graph.output_dict.keys():
             output_mapping[self.approximate_graph.output_dict[key]] = f'app_{self.approximate_graph.output_dict[key]}'
         self.approximate_graph.set_graph(nx.relabel_nodes(self.approximate_graph.graph, gate_mapping))
@@ -166,10 +190,15 @@ class Z3solver:
         approximate_circuit_expression = self.express_approximate_circuit()
         approximate_output_declaration = self.declare_approximate_output()
 
+        # error distance function
+        declare_error_distance_function = self.declare_error_distance_function()
+        # strategy
+
+        strategy = self.express_strategy()
 
         self.set_z3pyscript(import_string + abs_function + original_circuit_declaration + original_circuit_expression +
                             original_output_declaration + approximate_circuit_declaration + approximate_circuit_expression +
-                            approximate_output_declaration)
+                            approximate_output_declaration + declare_error_distance_function + strategy)
 
     def convert_gv_to_z3pyscript_maxerror_labelling(self):
         pass
@@ -179,6 +208,121 @@ class Z3solver:
 
     # TODO
     # for other back-ends as well
+
+    def declare_error_distance_function(self):
+        ed_function = ''
+        ed_function += f"f_exact = Function('f_exact', IntSort(), IntSort())\n" \
+                       f"f_approx = Function('f_approx', IntSort(), IntSort())\n"
+        ed_function += f"f_error = Function('f_error', IntSort(), IntSort(), IntSort())\n"
+        ed_function += f'\n'
+        return ed_function
+
+    def express_strategy(self, metric: str = None):
+        strategy_expressed = ''
+        if re.search(MONOTONIC, self.strategy):
+            strategy_expressed += self.express_monotonic_strategy()
+        elif re.search(BISECTION, self.strategy):
+            strategy_expressed += self.express_bisection_strategy()
+        elif re.search(MC, self.strategy):
+            strategy_expressed += self.express_mc_strategy()
+        else:
+            print(f'ERROR!!! no strategy is specified!')
+            exit()
+        return strategy_expressed
+
+    def declare_stats(self):
+        stats = ''
+        stats = f'foundWCE = False\n' \
+                f'stats: dict = {{}}\n' \
+                f"stats['wce'] = 0\n" \
+                f"stats['et'] = 0\n" \
+                f"stats['num_sats'] = 0\n" \
+                f"stats['num_unsats'] = 0\n" \
+                f"stats['sat_runtime'] = 0.0\n" \
+                f"stats['unsat_runtime'] = 0.0\n" \
+                f"stats['jumps'] = []\n"
+        return stats
+
+    def express_monotonic_while_loop(self):
+        loop = ''
+
+        loop += f'start_whole = time.time()\n' \
+                f's = Solver()\n' \
+                f"stats['jumps'].append(stats['et'])\n" \
+                f'while(not foundWCE):\n' \
+                f'{TAB}start_iteration = time.time()\n' \
+                f'{TAB}s.push()\n' \
+                f'{TAB}s.add(f_exact(exact_out) == exact_out)\n' \
+                f'{TAB}s.add(f_approx(approx_out) == approx_out)\n' \
+                f'{TAB}s.add(f_error(exact_out, approx_out) == exact_out - approx_out)\n' \
+                f"{TAB}s.add(z3_abs(f_error(exact_out, approx_out)) > stats['et'])\n" \
+                f"{TAB}response = s.check()\n"
+
+        loop += self.express_monotonic_while_loop_sat()
+        loop += self.express_monotonic_while_loop_unsat()
+
+        loop += f"end_whole = time.time()\n" \
+                f"with open('{self.z3_report}', 'w') as f:\n" \
+                f"{TAB}csvwriter = csv.writer(f)\n" \
+                f"{TAB}header = ['field', 'value']\n" \
+                f"{TAB}csvwriter.writerow(['Experiment', 'qor-evaluation'])\n" \
+                f"{TAB}csvwriter.writerow(['WCE', stats['wce']])\n" \
+                f"{TAB}csvwriter.writerow(['Total Runtime', stats['sat_runtime'] + stats['unsat_runtime']])\n" \
+                f"{TAB}csvwriter.writerow(['SAT Runtime', stats['sat_runtime']])\n" \
+                f"{TAB}csvwriter.writerow(['UNSAT Runtime', stats['unsat_runtime']])\n" \
+                f"{TAB}csvwriter.writerow(['Number of SAT calls', stats['num_sats']])\n" \
+                f"{TAB}csvwriter.writerow(['Number of UNSAT calls', stats['num_unsats']])\n"
+
+
+        return loop
+
+    def express_monotonic_while_loop_sat(self):
+        if_sat = ''
+        if_sat +=   f"{TAB}if response == sat:\n" \
+                    f"{TAB}{TAB}print(f'sat')\n" \
+                    f"{TAB}{TAB}returned_model = s.model()\n" \
+                    f"{TAB}{TAB}print(f'{{returned_model = }}')\n" \
+                    f"{TAB}{TAB}print(f\"{{returned_model[f_exact].else_value() = }}\")\n" \
+                    f"{TAB}{TAB}print(f\"{{returned_model[f_approx].else_value() = }}\")\n" \
+                    f"{TAB}{TAB}print(f\"{{returned_model[f_error].else_value() = }}\")\n" \
+                    f"{TAB}{TAB}returned_value = abs(int(returned_model[f_error].else_value().as_long()))\n" \
+                    f"{TAB}{TAB}returned_value_reval = abs(int(returned_model.evaluate(f_error(exact_out, approx_out)).as_long()))\n" \
+                    f"{TAB}{TAB}if returned_value == returned_value_reval:\n" \
+                    f"{TAB}{TAB}{TAB}print(f'double-check is passed!')\n" \
+                    f"{TAB}{TAB}else:\n" \
+                    f"{TAB}{TAB}{TAB}print(f'ERROR!!! double-check failed! exiting...')\n" \
+                    f"{TAB}{TAB}{TAB}exit()\n" \
+                    f"{TAB}{TAB}end_iteration = time.time()\n" \
+                    f"{TAB}{TAB}stats['et'] = returned_value\n" \
+                    f"{TAB}{TAB}stats['num_sats'] += 1\n" \
+                    f"{TAB}{TAB}stats['sat_runtime'] += (end_iteration - start_iteration)\n" \
+                    f"{TAB}{TAB}stats['jumps'].append(returned_value)\n"
+        return if_sat
+
+    def express_monotonic_while_loop_unsat(self):
+        if_unsat = ''
+        if_unsat += f"\n" \
+                    f"{TAB}if response == unsat:\n" \
+                    f"{TAB}{TAB}print('unsat')\n" \
+                    f"{TAB}{TAB}end_iteration = time.time()\n" \
+                    f"{TAB}{TAB}foundWCE = True\n" \
+                    f"{TAB}{TAB}stats['num_unsats'] += 1\n" \
+                    f"{TAB}{TAB}stats['unsat_runtime'] += (end_iteration - start_iteration)\n" \
+                    f"{TAB}{TAB}stats['wce'] = stats['et']\n"
+        return if_unsat
+
+
+    def express_monotonic_strategy(self):
+        monotonic_strategy = ''
+        monotonic_strategy += self.declare_stats()
+        monotonic_strategy += self.express_monotonic_while_loop()
+        return monotonic_strategy
+
+    def express_mc_strategy(self):
+        pass
+
+    def express_bisection_strategy(self):
+        pass
 
     def export_z3pyscript(self):
         with open(self.out_path, 'w') as z:
@@ -199,7 +343,7 @@ class Z3solver:
         return import_string
 
     def create_abs_function(self):
-        abs_function = f'def abs(x):\n' \
+        abs_function = f'def z3_abs(x):\n' \
                        f'\treturn If(x >= 0, x, -x)\n' \
                        f'\n'
         return abs_function
@@ -247,8 +391,6 @@ class Z3solver:
         return exact_circuit_declaration
 
     def declare_gate(self, this_key: str):
-        if re.search('out', this_key):
-            print(f'{this_key = }')
         declaration = f"{this_key} = {Z3BOOL}('{this_key}')"
         return declaration
 
@@ -271,7 +413,6 @@ class Z3solver:
             if self.approximate_graph.is_cleaned_gate(n):
                 approximate_circuit_function += f'{self.express_approximate_gate(n)}\n'
             elif self.approximate_graph.is_cleaned_constant(n):
-                print(f'{self.approximate_graph.constant_dict = }')
                 approximate_circuit_function += f'{self.express_approximate_constant(n)}\n'
             elif self.approximate_graph.is_cleaned_po(n):
                 approximate_circuit_function += f'{self.express_approximate_output(n)}\n'
@@ -351,26 +492,6 @@ class Z3solver:
             for idx, u in enumerate(predecessor_list):
                 cur_node += f'{u}'
         return cur_node
-
-    #TODO
-    # Deprecated: Not useful
-    # def is_gate(self, this_key):
-    #     if re.search(r'g\d+', this_key) and re.search(POSSIBLE_GATES, self.graph.graph.nodes[this_key]['label']):
-    #         return True
-    #     else:
-    #         return False
-    #
-    # def is_pi(self, this_key):
-    #     if re.search(r'in\d+', this_key) and re.search(r'in\d+', self.graph.graph.nodes[this_key]['label']):
-    #         return True
-    #     else:
-    #         return False
-    #
-    # def is_po(self, this_key):
-    #     if re.search(r'out\d+', this_key) and re.search(r'out\d+', self.graph.graph.nodes[this_key]['label']):
-    #         return True
-    #     else:
-    #         return False
 
     def declare_original_output(self):
         output_declaration = ''

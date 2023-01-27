@@ -3,7 +3,7 @@ import sys
 import time
 import csv
 
-def abs(x):
+def z3_abs(x):
 	return If(x >= 0, x, -x)
 
 in23 = Bool('in23')
@@ -4951,3 +4951,65 @@ approx_out15=Int('approx_out15')
 approx_out15=app_out15*32768
 approx_out = Int('approx_out')
 approx_out=approx_out0+approx_out1+approx_out2+approx_out3+approx_out4+approx_out5+approx_out6+approx_out7+approx_out8+approx_out9+approx_out10+approx_out11+approx_out12+approx_out13+approx_out14+approx_out15
+f_exact = Function('f_exact', IntSort(), IntSort())
+f_approx = Function('f_approx', IntSort(), IntSort())
+f_error = Function('f_error', IntSort(), IntSort(), IntSort())
+
+foundWCE = False
+stats: dict = {}
+stats['wce'] = 0
+stats['et'] = 0
+stats['num_sats'] = 0
+stats['num_unsats'] = 0
+stats['sat_runtime'] = 0.0
+stats['unsat_runtime'] = 0.0
+stats['jumps'] = []
+start_whole = time.time()
+s = Solver()
+stats['jumps'].append(stats['et'])
+while(not foundWCE):
+	start_iteration = time.time()
+	s.push()
+	s.add(f_exact(exact_out) == exact_out)
+	s.add(f_approx(approx_out) == approx_out)
+	s.add(f_error(exact_out, approx_out) == exact_out - approx_out)
+	s.add(z3_abs(f_error(exact_out, approx_out)) > stats['et'])
+	response = s.check()
+	if response == sat:
+		print(f'sat')
+		returned_model = s.model()
+		print(f'{returned_model = }')
+		print(f"{returned_model[f_exact].else_value() = }")
+		print(f"{returned_model[f_approx].else_value() = }")
+		print(f"{returned_model[f_error].else_value() = }")
+		returned_value = abs(int(returned_model[f_error].else_value().as_long()))
+		returned_value_reval = abs(int(returned_model.evaluate(f_error(exact_out, approx_out)).as_long()))
+		if returned_value == returned_value_reval:
+			print(f'double-check is passed!')
+		else:
+			print(f'ERROR!!! double-check failed! exiting...')
+			exit()
+		end_iteration = time.time()
+		stats['et'] = returned_value
+		stats['num_sats'] += 1
+		stats['sat_runtime'] += (end_iteration - start_iteration)
+		stats['jumps'].append(returned_value)
+
+	if response == unsat:
+		print('unsat')
+		end_iteration = time.time()
+		foundWCE = True
+		stats['num_unsats'] += 1
+		stats['unsat_runtime'] += (end_iteration - start_iteration)
+		stats['wce'] = stats['et']
+end_whole = time.time()
+with open('output/report/madd_8.csv', 'w') as f:
+	csvwriter = csv.writer(f)
+	header = ['field', 'value']
+	csvwriter.writerow(['Experiment', 'qor-evaluation'])
+	csvwriter.writerow(['WCE', stats['wce']])
+	csvwriter.writerow(['Total Runtime', stats['sat_runtime'] + stats['unsat_runtime']])
+	csvwriter.writerow(['SAT Runtime', stats['sat_runtime']])
+	csvwriter.writerow(['UNSAT Runtime', stats['unsat_runtime']])
+	csvwriter.writerow(['Number of SAT calls', stats['num_sats']])
+	csvwriter.writerow(['Number of UNSAT calls', stats['num_unsats']])

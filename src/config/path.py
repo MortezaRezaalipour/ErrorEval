@@ -11,7 +11,8 @@ OUTPUT_PATH = {
     'gv': ('output/gv', 'gv'),
     'aig': ('output/aig', 'aig'),
     'dot': ('output/gv', 'dot'),
-    'z3': ('output/z3', 'py')
+    'z3': ('output/z3', 'py'),
+    'report': ('output/report', 'csv')
 
 }
 
