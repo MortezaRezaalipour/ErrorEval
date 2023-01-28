@@ -291,6 +291,8 @@ class Graph:
                     cur_gate = re.search(POSSIBLE_GATES, self.graph.nodes[n]['label']).group()
                     self.graph.nodes[n]['label'] = cur_gate
                     self.graph.nodes[n]['shape'] = 'invhouse'
+        for n in self.graph.nodes:
+            print(f'{n = }')
 
     def clean_constant_labels(self):
         # g16[label = "F", shape = circle, fillcolor = white]
@@ -319,12 +321,11 @@ class Graph:
                 tmp_graph = nx.contracted_nodes(tmp_graph, src_node, des_node, self_loops=False)
         self.set_graph(tmp_graph)
 
-
     def relabel_nodes(self):
         tmp_graph = self.graph.copy()
         gate_idx = 0
         for n in self.graph.nodes:
-            if self.is_pi(n):
+            if self.is_cleaned_pi(n):
                 # print(f"{self.graph.nodes[n]['label'] = } is a PI")
                 old_name = n
                 new_name = self.graph.nodes[n]['label']
@@ -332,7 +333,7 @@ class Graph:
 
                 mapping = {old_name: new_name}
                 tmp_graph = nx.relabel_nodes(tmp_graph, mapping)
-            elif self.is_po(n):
+            elif self.is_cleaned_po(n):
                 # print(f"{self.graph.nodes[n]['label'] = } is a PO")
                 old_name = n
                 new_name = self.graph.nodes[n]['label']
@@ -368,7 +369,11 @@ class Graph:
                 tmp_graph = nx.relabel_nodes(tmp_graph, mapping)
             else:
                 print('WARNING! No mapping needed!')
+
         self.set_graph(tmp_graph)
+
+        for n in self.graph.nodes:
+            print(f'{n = }, {self.graph.nodes[n] = }')
 
     def is_cleaned_pi(self, node):
         if not self.is_constant(node):
@@ -419,8 +424,11 @@ class Graph:
 
     def is_cleaned_gate(self, node):
         if not self.is_constant(node):
-            if (re.search('invhouse', self.graph.nodes[node][SHAPE]) and re.search(r'g\d+',
-                                                                                   self.graph.nodes[node][LABEL]) and
+            if (re.search('invhouse', self.graph.nodes[node][SHAPE]) and
+                    'contraction' not in self.graph.nodes[node].keys() and 'contractions' not in self.graph.nodes[
+                        node]):
+                return True
+            elif (re.search('invhouse', self.graph.nodes[node][SHAPE]) and re.search(r'g\d+', node) and
                     'contraction' not in self.graph.nodes[node].keys() and 'contractions' not in self.graph.nodes[
                         node]):
                 return True
@@ -494,17 +502,18 @@ class Graph:
 
     def export_node(self, n, file_handler: 'class _io.TextIOWrapper'):
         # in3	[label=in3,shape=circle];
-        if self.is_pi(n) or self.is_po(n):
+        if self.is_cleaned_pi(n) or self.is_cleaned_po(n):
 
             line = f"{n} [label=\"{self.graph.nodes[n]['label']}\", shape={self.graph.nodes[n]['shape']}];\n"
         elif self.is_cleaned_gate(n):
 
             line = f"{n} [label=\"{self.graph.nodes[n]['label']}\\n{n}\", shape={self.graph.nodes[n]['shape']}];\n"
-        elif self.is_constant(n):
+        elif self.is_cleaned_constant(n):
 
             line = f"{n} [label=\"{self.graph.nodes[n]['label']}\\n{n}\", shape={self.graph.nodes[n]['shape']}];\n"
         else:
             print('WARNING!!! found a node that is not a PI, PO, WIRE, CONSTANT, GATE')
+            print(f'{n = }, {self.graph.nodes[n] = }')
 
         file_handler.write(line)
 

@@ -37,7 +37,6 @@ class Z3solver:
 
         folder, extension = OUTPUT_PATH['report']
         self.__z3_report = f'{folder}/{benchmark_name}.{extension}'
-        print(f'{self.z3_report = }')
 
         self.__samples = samples
         self.__sample_results = None

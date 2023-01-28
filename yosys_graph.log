@@ -23,20 +23,20 @@
 
 
 -- Running command `
-        read_verilog output/ver/madd_8_app3.v
-        show -prefix output/gv/madd_8_app3 -format gv
+        read_verilog output/ver/abs_diff_i4_o3_app1.v
+        show -prefix output/gv/abs_diff_i4_o3_app1 -format gv
         ' --
 
-1. Executing Verilog-2005 frontend: output/ver/madd_8_app3.v
-Parsing Verilog input from `output/ver/madd_8_app3.v' to AST representation.
-Generating RTLIL representation for module `\madd_8_app3'.
+1. Executing Verilog-2005 frontend: output/ver/abs_diff_i4_o3_app1.v
+Parsing Verilog input from `output/ver/abs_diff_i4_o3_app1.v' to AST representation.
+Generating RTLIL representation for module `\abs_diff_i4_o3_app1'.
 Successfully finished Verilog frontend.
 
 2. Generating Graphviz representation of design.
-Writing dot description to `output/gv/madd_8_app3.dot'.
-Dumping module madd_8_app3 to page 1.
-Exec: dot -Tgv 'output/gv/madd_8_app3.dot' > 'output/gv/madd_8_app3.gv.new' && mv 'output/gv/madd_8_app3.gv.new' 'output/gv/madd_8_app3.gv'
+Writing dot description to `output/gv/abs_diff_i4_o3_app1.dot'.
+Dumping module abs_diff_i4_o3_app1 to page 1.
+Exec: dot -Tgv 'output/gv/abs_diff_i4_o3_app1.dot' > 'output/gv/abs_diff_i4_o3_app1.gv.new' && mv 'output/gv/abs_diff_i4_o3_app1.gv.new' 'output/gv/abs_diff_i4_o3_app1.gv'
 
-End of script. Logfile hash: afc5281fdb, CPU: user 0.04s system 0.01s, MEM: 17.63 MB peak
+End of script. Logfile hash: 0605519a0c, CPU: user 0.00s system 0.00s, MEM: 15.51 MB peak
 Yosys 0.9+4052 (git sha1 a5adb007, gcc 9.3.0-17ubuntu1~20.04 -fPIC -Os)
-Time spent: 98% 1x show (2 sec), 1% 2x read_verilog (0 sec)
+Time spent: 98% 1x show (0 sec), 1% 2x read_verilog (0 sec)
