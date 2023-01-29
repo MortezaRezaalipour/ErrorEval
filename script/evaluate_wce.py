@@ -36,6 +36,8 @@ def main():
     z3py_obj_qor.export_z3pyscript()
     z3py_obj_qor.run_z3pyscript_qor()
 
+    print(f'wce is evaluated!')
+
 
 if __name__ == "__main__":
     main()

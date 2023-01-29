@@ -366,7 +366,7 @@ class Z3solver:
         pass
 
     def export_z3pyscript(self):
-        print(f'{self.out_path = }')
+        # print(f'{self.out_path = }')
         with open(self.out_path, 'w') as z:
             z.writelines(self.z3pyscript)
 
@@ -537,7 +537,7 @@ class Z3solver:
 
     def declare_original_output(self):
         output_declaration = ''
-        print(f'{self.graph.output_dict = }')
+        # print(f'{self.graph.output_dict = }')
 
         for i in range(self.graph.num_outputs):
             output_declaration += f"exact_out{i}=Int('exact_out{i}')\n"
@@ -557,7 +557,7 @@ class Z3solver:
 
     def declare_approximate_output(self):
         output_declaration = ''
-        print(f'{self.approximate_graph.output_dict = }')
+        # print(f'{self.approximate_graph.output_dict = }')
 
         for i in range(self.approximate_graph.num_outputs):
             output_declaration += f"approx_out{i}=Int('approx_out{i}')\n"
