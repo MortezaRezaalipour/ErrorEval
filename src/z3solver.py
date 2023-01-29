@@ -7,17 +7,22 @@ from src.graph import *
 
 class Z3solver:
     def __init__(self, benchmark_name: str, approximate_benchmark_name: str = None, samples: list = []):
+        """
+
+        :param benchmark_name: the input benchmark in gv format
+        :param approximate_benchmark_name: the approximate benchmark in gv format
+        :param samples: number of samples for the mc evaluation; by defaults it is an empty list
+        """
         self.__circuit_name = get_pure_name(benchmark_name)
+
         folder, extension = OUTPUT_PATH['gv']
         self.__graph_in_path = f'{folder}/{benchmark_name}.{extension}'
 
-        folder, extension = OUTPUT_PATH['z3']
-        self.__z3_out_path = f'{folder}/{benchmark_name}.{extension}'
+        self.__z3_out_path = None
 
         self.__graph = Graph(benchmark_name, True)
 
-        folder, extension = TEST_PATH['z3']
-        self.__pyscript_results_out_path = f'{folder}/{benchmark_name}.{extension}'
+        self.__pyscript_results_out_path = None
 
         folder, extension = LOG_PATH['z3']
         self.__z3_log_path = f'{folder}/{benchmark_name}_{Z3}_{LOG}.{extension}'
@@ -26,6 +31,7 @@ class Z3solver:
         self.__approximate_graph = None
 
         if approximate_benchmark_name:
+            self.__approximate_circuit_name = approximate_benchmark_name
             folder, extension = INPUT_PATH['app_gv']
             self.__approximate_verilog_in_path = f'{folder}/{approximate_benchmark_name}.{extension}'
             self.__approximate_graph = Graph(approximate_benchmark_name, True)
@@ -35,8 +41,7 @@ class Z3solver:
             self.approximate_graph.set_gate_dict(self.approximate_graph.extract_gates())
             self.approximate_graph.set_constant_dict(self.approximate_graph.extract_constants())
 
-        folder, extension = OUTPUT_PATH['report']
-        self.__z3_report = f'{folder}/{benchmark_name}.{extension}'
+        self.__z3_report = None
 
         self.__samples = samples
         self.__sample_results = None
@@ -45,11 +50,16 @@ class Z3solver:
 
         self.__z3pyscript = None
 
-        self.__strategy = DEFAULT_STRATEGY
+        self.__strategy = None
+        self.__experiment = None
 
     @property
     def name(self):
         return self.__circuit_name
+
+    @property
+    def approximate_benchmark(self):
+        return self.__approximate_circuit_name
 
     @property
     def graph_in_path(self):
@@ -58,6 +68,9 @@ class Z3solver:
     @property
     def out_path(self):
         return self.__z3_out_path
+
+    def set_out_path(self, out_path: str):
+        self.__z3_out_path = out_path
 
     @property
     def z3_log_path(self):
@@ -79,9 +92,18 @@ class Z3solver:
         self.__strategy = strategy
 
     @property
+    def experiment(self):
+        return self.__experiment
+
+    def set_experiment(self, experiment: str):
+        self.__experiment = experiment
+
+    @property
     def z3_report(self):
         return self.__z3_report
 
+    def set_z3_report(self, z3_report: str):
+        self.__z3_report = z3_report
 
     # TODO
     # Deprecated
@@ -130,6 +152,9 @@ class Z3solver:
     def pyscript_results_out_path(self):
         return self.__pyscript_results_out_path
 
+    def set_pyscript_results_out_path(self, pyscript_results_out_path: str):
+        self.__pyscript_results_out_path = pyscript_results_out_path
+
     @property
     def graph(self):
         return self.__graph
@@ -162,6 +187,15 @@ class Z3solver:
         self.approximate_graph.set_graph(nx.relabel_nodes(self.approximate_graph.graph, output_mapping))
 
     def convert_gv_to_z3pyscript_test(self):
+        folder, extension = OUTPUT_PATH['report']
+        self.set_z3_report(f'{folder}/{self.name}.{extension}')
+
+        folder, extension = OUTPUT_PATH['z3']
+        self.set_out_path(f'{folder}/{self.name}.{extension}')
+
+        folder, extension = TEST_PATH['z3']
+        self.set_pyscript_results_out_path(f'{folder}/{self.name}.{extension}')
+
         import_string = self.create_imports()
         abs_function = self.create_abs_function()
         exact_circuit_declaration = self.declare_original_circuit()
@@ -174,7 +208,17 @@ class Z3solver:
         self.set_z3pyscript(import_string + abs_function + exact_circuit_declaration + exact_circuit_expression +
                             output_declaration + exact_function + solver + sample_expression + store_results)
 
-    def convert_gv_to_z3pyscript_maxerror_qor(self):
+    def convert_gv_to_z3pyscript_maxerror_qor(self, strategy: str = DEFAULT_STRATEGY):
+
+        self.set_experiment(QOR)
+        self.set_strategy(strategy)
+        folder, extension = OUTPUT_PATH['report']
+        self.set_z3_report(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.strategy}.{extension}')
+        folder, extension = OUTPUT_PATH['z3']
+        self.set_out_path(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.strategy}.{extension}')
+        folder, extension = TEST_PATH['z3']
+        self.set_pyscript_results_out_path(
+            f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.strategy}.{extension}')
 
         import_string = self.create_imports()
         abs_function = self.create_abs_function()
@@ -272,30 +316,29 @@ class Z3solver:
                 f"{TAB}csvwriter.writerow(['Number of SAT calls', stats['num_sats']])\n" \
                 f"{TAB}csvwriter.writerow(['Number of UNSAT calls', stats['num_unsats']])\n"
 
-
         return loop
 
     def express_monotonic_while_loop_sat(self):
         if_sat = ''
-        if_sat +=   f"{TAB}if response == sat:\n" \
-                    f"{TAB}{TAB}print(f'sat')\n" \
-                    f"{TAB}{TAB}returned_model = s.model()\n" \
-                    f"{TAB}{TAB}print(f'{{returned_model = }}')\n" \
-                    f"{TAB}{TAB}print(f\"{{returned_model[f_exact].else_value() = }}\")\n" \
-                    f"{TAB}{TAB}print(f\"{{returned_model[f_approx].else_value() = }}\")\n" \
-                    f"{TAB}{TAB}print(f\"{{returned_model[f_error].else_value() = }}\")\n" \
-                    f"{TAB}{TAB}returned_value = abs(int(returned_model[f_error].else_value().as_long()))\n" \
-                    f"{TAB}{TAB}returned_value_reval = abs(int(returned_model.evaluate(f_error(exact_out, approx_out)).as_long()))\n" \
-                    f"{TAB}{TAB}if returned_value == returned_value_reval:\n" \
-                    f"{TAB}{TAB}{TAB}print(f'double-check is passed!')\n" \
-                    f"{TAB}{TAB}else:\n" \
-                    f"{TAB}{TAB}{TAB}print(f'ERROR!!! double-check failed! exiting...')\n" \
-                    f"{TAB}{TAB}{TAB}exit()\n" \
-                    f"{TAB}{TAB}end_iteration = time.time()\n" \
-                    f"{TAB}{TAB}stats['et'] = returned_value\n" \
-                    f"{TAB}{TAB}stats['num_sats'] += 1\n" \
-                    f"{TAB}{TAB}stats['sat_runtime'] += (end_iteration - start_iteration)\n" \
-                    f"{TAB}{TAB}stats['jumps'].append(returned_value)\n"
+        if_sat += f"{TAB}if response == sat:\n" \
+                  f"{TAB}{TAB}print(f'sat')\n" \
+                  f"{TAB}{TAB}returned_model = s.model()\n" \
+                  f"{TAB}{TAB}print(f'{{returned_model = }}')\n" \
+                  f"{TAB}{TAB}print(f\"{{returned_model[f_exact].else_value() = }}\")\n" \
+                  f"{TAB}{TAB}print(f\"{{returned_model[f_approx].else_value() = }}\")\n" \
+                  f"{TAB}{TAB}print(f\"{{returned_model[f_error].else_value() = }}\")\n" \
+                  f"{TAB}{TAB}returned_value = abs(int(returned_model[f_error].else_value().as_long()))\n" \
+                  f"{TAB}{TAB}returned_value_reval = abs(int(returned_model.evaluate(f_error(exact_out, approx_out)).as_long()))\n" \
+                  f"{TAB}{TAB}if returned_value == returned_value_reval:\n" \
+                  f"{TAB}{TAB}{TAB}print(f'double-check is passed!')\n" \
+                  f"{TAB}{TAB}else:\n" \
+                  f"{TAB}{TAB}{TAB}print(f'ERROR!!! double-check failed! exiting...')\n" \
+                  f"{TAB}{TAB}{TAB}exit()\n" \
+                  f"{TAB}{TAB}end_iteration = time.time()\n" \
+                  f"{TAB}{TAB}stats['et'] = returned_value\n" \
+                  f"{TAB}{TAB}stats['num_sats'] += 1\n" \
+                  f"{TAB}{TAB}stats['sat_runtime'] += (end_iteration - start_iteration)\n" \
+                  f"{TAB}{TAB}stats['jumps'].append(returned_value)\n"
         return if_sat
 
     def express_monotonic_while_loop_unsat(self):
@@ -310,7 +353,6 @@ class Z3solver:
                     f"{TAB}{TAB}stats['wce'] = stats['et']\n"
         return if_unsat
 
-
     def express_monotonic_strategy(self):
         monotonic_strategy = ''
         monotonic_strategy += self.declare_stats()
@@ -324,6 +366,7 @@ class Z3solver:
         pass
 
     def export_z3pyscript(self):
+        print(f'{self.out_path = }')
         with open(self.out_path, 'w') as z:
             z.writelines(self.z3pyscript)
 
@@ -494,6 +537,7 @@ class Z3solver:
 
     def declare_original_output(self):
         output_declaration = ''
+        print(f'{self.graph.output_dict = }')
 
         for i in range(self.graph.num_outputs):
             output_declaration += f"exact_out{i}=Int('exact_out{i}')\n"
@@ -501,6 +545,7 @@ class Z3solver:
 
         output_declaration += f"exact_out = Int('exact_out')\n"
         output_declaration += f'exact_out='
+
         for i in range(self.graph.num_outputs):
             if i == self.graph.num_outputs - 1:
                 output_declaration += f'exact_out{i}'
@@ -512,6 +557,7 @@ class Z3solver:
 
     def declare_approximate_output(self):
         output_declaration = ''
+        print(f'{self.approximate_graph.output_dict = }')
 
         for i in range(self.approximate_graph.num_outputs):
             output_declaration += f"approx_out{i}=Int('approx_out{i}')\n"
@@ -583,8 +629,13 @@ class Z3solver:
         store_results += f"print(f'{{results = }}')"
         return store_results
 
-    def run_z3pyscript(self):
-        # print(f'{self.out_path = }')
+    # TODO: decorators-----------------------------
+    def run_z3pyscript_qor(self):
+        with open(self.z3_log_path, 'w') as f:
+            subprocess.call([PYTHON3, self.out_path], stdout=f)
+
+    def run_z3pyscript_test(self):
         with open(self.z3_log_path, 'w') as f:
             subprocess.call([PYTHON3, self.out_path], stdout=f)
         self.set_sample_results(self.import_results())
+    # TODO: decorators (end)--------------------------

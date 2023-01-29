@@ -12,6 +12,11 @@ from src.utils import *
 
 class Verilog:
     def __init__(self, benchmark_name: str, samples: list = []):
+        """
+        takes in a circuit and creates a verilog object out of it
+        :param benchmark_name: the input circuit in verilog format
+        :param samples: number of samples for the mc simulation; it is an empty list by default
+        """
         self.__circuit_name = get_pure_name(benchmark_name)
 
         folder, extension = INPUT_PATH['ver']

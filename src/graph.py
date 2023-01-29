@@ -9,7 +9,11 @@ from src.argument import Arguments
 
 class Graph:
     def __init__(self, benchmark_name, is_clean=False):
-
+        """
+        takes in a circuit and creates a networkx graph out of it
+        :param benchmark_name: the input benchmark in gv format
+        :param is_clean: leave empty for now
+        """
         self.__graph_name = benchmark_name
         folder, extension = INPUT_PATH['gv']
         self.__graph_in_path = f'{folder}/{benchmark_name}.{extension}'
@@ -136,35 +140,43 @@ class Graph:
     def extract_inputs(self):
         # print(f'Extracting inputs...')
         input_dict = {}
+        idx = 0
         for n in self.graph.nodes():
             if self.is_pi(n):
                 idx = re.search('\d+', n).group()
                 input_dict[int(idx)] = n
+                # idx += 1
         return input_dict
 
     def extract_outputs(self):
         # print(f'Extracting outputs...')
         output_dict = {}
+        idx = 0
         for n in self.graph.nodes():
             if self.is_po(n):
                 idx = re.search('\d+', n).group()
                 output_dict[int(idx)] = n
+                # idx += 1
         return output_dict
 
     def extract_gates(self):
         gate_dict = {}
+        idx = 0
         for n in self.graph.nodes:
             if self.is_cleaned_gate(n):
                 idx = re.search('\d+', n).group()
                 gate_dict[int(idx)] = n
+                # idx += 1
         return gate_dict
 
     def extract_constants(self):
         constant_dict = {}
+        idx = 0
         for n in self.graph.nodes:
             if self.is_constant(n):
                 idx = re.search('\d+', n).group()
                 constant_dict[int(idx)] = n
+                # idx += 1
         return constant_dict
 
     # methods
@@ -291,8 +303,8 @@ class Graph:
                     cur_gate = re.search(POSSIBLE_GATES, self.graph.nodes[n]['label']).group()
                     self.graph.nodes[n]['label'] = cur_gate
                     self.graph.nodes[n]['shape'] = 'invhouse'
-        for n in self.graph.nodes:
-            print(f'{n = }')
+        # for n in self.graph.nodes:
+        #     print(f'{n = }')
 
     def clean_constant_labels(self):
         # g16[label = "F", shape = circle, fillcolor = white]
@@ -372,8 +384,8 @@ class Graph:
 
         self.set_graph(tmp_graph)
 
-        for n in self.graph.nodes:
-            print(f'{n = }, {self.graph.nodes[n] = }')
+        # for n in self.graph.nodes:
+        #     print(f'{n = }, {self.graph.nodes[n] = }')
 
     def is_cleaned_pi(self, node):
         if not self.is_constant(node):
@@ -513,7 +525,7 @@ class Graph:
             line = f"{n} [label=\"{self.graph.nodes[n]['label']}\\n{n}\", shape={self.graph.nodes[n]['shape']}];\n"
         else:
             print('WARNING!!! found a node that is not a PI, PO, WIRE, CONSTANT, GATE')
-            print(f'{n = }, {self.graph.nodes[n] = }')
+            # print(f'{n = }, {self.graph.nodes[n] = }')
 
         file_handler.write(line)
 

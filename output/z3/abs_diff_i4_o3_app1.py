@@ -28,34 +28,29 @@ g13 = Bool('g13')
 g14 = Bool('g14')
 g15 = Bool('g15')
 g16 = Bool('g16')
-g17 = Bool('g17')
-g18 = Bool('g18')
-g19 = Bool('g19')
 out0 = Bool('out0')
 out1 = Bool('out1')
-g0=Not(in3)
-g1=Not(in2)
-g2=Not(in1)
-g3=Not(in0)
-g4=And(in1,g0)
-g5=And(in0,g1)
-g6=And(in3,g2)
-g7=And(in2,g3)
-g8=Not(g5)
-g9=Not(g5)
-g10=Not(g7)
-g11=Not(g7)
-g12=And(g6,g8)
-g13=And(g4,g10)
-g14=And(g9,g11)
-g15=Not(g12)
-g16=Not(g13)
-g17=Not(g14)
-g18=And(g15,g16)
-out0 = g17
+g0 = True
 
-g19=Not(g18)
-out1 = g19
+g1=Not(in3)
+g2=Not(in2)
+g3=Not(in1)
+g4=Not(in0)
+out0 = g0
+
+g5=And(in1,g1)
+g6=And(in0,g2)
+g7=And(in3,g3)
+g8=And(in2,g4)
+g9=Not(g6)
+g10=Not(g8)
+g11=And(g7,g9)
+g12=And(g5,g10)
+g13=Not(g11)
+g14=Not(g12)
+g15=And(g13,g14)
+g16=Not(g15)
+out1 = g16
 
 
 exact_out0=Int('exact_out0')
@@ -203,7 +198,7 @@ cur_result = m[f_exact].else_value().as_string()
 results.append(cur_result)
 s.pop()
 
-with open('test/z3/abs_diff_i4_o3.txt', 'w') as f:
+with open('test/z3/abs_diff_i4_o3_app1.txt', 'w') as f:
 	for line in results:
 		f.write(line)
 		f.write('\n')

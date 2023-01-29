@@ -11,6 +11,7 @@ class Arguments:
         self.__benchmark_name = benchmark
         self.__approximate_benchmark = approximate_benchmark
         self.__mc_samples = tmp_args.samples
+        self.__wce = tmp_args.wce
         self.__clean = tmp_args.clean
 
     @property
@@ -24,6 +25,9 @@ class Arguments:
     @property
     def num_samples(self):
         return self.__mc_samples
+    @property
+    def wce(self):
+        return self.__wce
 
     @property
     def clean(self):
@@ -34,6 +38,7 @@ class Arguments:
                f'{self.benchmark_name = }\n' \
                f'{self.approximate_benchmark = }\n' \
                f'{self.num_samples = }\n' \
+               f'{self.wce = }\n' \
                f'{self.clean = }\n' \
 
 
@@ -55,6 +60,10 @@ class Arguments:
                                type=str,
                                default=None,
                                help='approximate-benchmark-name in gv/verilog format')
+        my_parser.add_argument('--wce', '-metric',
+                               type=str,
+                               default=None,
+                               help='the-desired-worst-case-error-metric')
         my_parser.add_argument('--clean',
                                type=bool,
                                default=False)

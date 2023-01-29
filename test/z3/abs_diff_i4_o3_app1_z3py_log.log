@@ -1,0 +1,76 @@
+m = [in1 = False,
+ in2 = False,
+ in3 = False,
+ in0 = False,
+ f = [else -> 1]]
+m = [in1 = False,
+ in2 = False,
+ in3 = False,
+ in0 = True,
+ f = [else -> 1]]
+m = [in1 = True,
+ in2 = False,
+ in3 = False,
+ in0 = False,
+ f = [else -> 3]]
+m = [in1 = True,
+ in2 = False,
+ in3 = False,
+ in0 = True,
+ f = [else -> 3]]
+m = [in1 = False,
+ in2 = True,
+ in3 = False,
+ in0 = False,
+ f = [else -> 1]]
+m = [in1 = False,
+ in2 = True,
+ in3 = False,
+ in0 = True,
+ f = [else -> 1]]
+m = [in1 = True,
+ in2 = True,
+ in3 = False,
+ in0 = False,
+ f = [else -> 1]]
+m = [in1 = True,
+ in2 = True,
+ in3 = False,
+ in0 = True,
+ f = [else -> 3]]
+m = [in1 = False,
+ in2 = False,
+ in3 = True,
+ in0 = False,
+ f = [else -> 3]]
+m = [in1 = False,
+ in2 = False,
+ in3 = True,
+ in0 = True,
+ f = [else -> 1]]
+m = [in1 = True,
+ in2 = False,
+ in3 = True,
+ in0 = False,
+ f = [else -> 1]]
+m = [in1 = True,
+ in2 = False,
+ in3 = True,
+ in0 = True,
+ f = [else -> 1]]
+m = [in1 = False,
+ in2 = True,
+ in3 = True,
+ in0 = False,
+ f = [else -> 3]]
+m = [in1 = False,
+ in2 = True,
+ in3 = True,
+ in0 = True,
+ f = [else -> 3]]
+m = [in1 = True,
+ in2 = True,
+ in3 = True,
+ in0 = False,
+ f = [else -> 1]]
+results = ['1', '1', '3', '3', '1', '1', '1', '3', '3', '1', '1', '1', '3', '3', '1']

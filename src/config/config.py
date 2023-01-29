@@ -53,3 +53,7 @@ BISECTION = 'bisection'
 MC = 'mc'
 DEFAULT_STRATEGY = MONOTONIC
 
+# Experiments
+QOR = 'qor'
+RANDOM = 'random-pruning'
+SINLE = 'single_gate_removal'

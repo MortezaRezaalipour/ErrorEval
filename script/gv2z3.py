@@ -14,7 +14,7 @@ def gv2z3():
     mymax = 2 ** z3py_obj.graph.num_inputs - 1
     rand_array = random.randint(0, mymax, size=args.num_samples)
     z3py_obj.set_samples(rand_array)
-    z3py_obj.convert_gv_to_z3pyscript_maxerror_qor()
+    z3py_obj.convert_gv_to_z3pyscript_test()
     z3py_obj.export_z3pyscript()
 
 
