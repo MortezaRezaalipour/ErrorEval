@@ -1,14 +1,18 @@
+LF: please rename Readme in README. Remove the venv folder from the repository. The repo should contain only all those files that cannot be replicated, or examples.
+LF: Why there is a touch $(VENV) command at the end of the make setup rule?
+
 # translators
 
-This project contains three translators, a testbench generator, and a verifier.
+This project contains three translators (LF: for what?), a testbench generator (LF: whose purpose is?), and a verifier (LF: used for?).
 
-1) **Verilog to Verilog translator**
+1) **Verilog to Verilog translator** (LF: this is confusing for someone who check this for the first time)
 2) **Verilog to GraphViz translator**
 3) **GraphViz to z3py translator**
 5) **Testbench generator**
 6) **Verify z3py representation**
 
-
+LF: Add here a better descriptio of each script. Othewise a user would not know what each translator/step does. Images can also help to shwow the difference.
+LF: Before the setting up or the how to use, you should also mention the benchmark such that one knows what is doing in the how to use examples.
 
 ## Setting up:
 
