@@ -45,6 +45,7 @@ PYTHON3 = 'python3'
 Z3 = 'z3py'
 SHAPE = 'shape'
 LABEL = 'label'
+PRUNED = 'pruned'
 TAB = '\t'
 
 # strategies
@@ -56,4 +57,4 @@ DEFAULT_STRATEGY = MONOTONIC
 # Experiments
 QOR = 'qor'
 RANDOM = 'random-pruning'
-SINLE = 'single_gate_removal'
+SIGNLE = 'single_gate_removal'

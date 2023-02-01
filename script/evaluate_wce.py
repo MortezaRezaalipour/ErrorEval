@@ -33,6 +33,8 @@ def main():
     z3py_obj_qor = Z3solver(args.benchmark_name, args.approximate_benchmark)
     z3py_obj_qor.convert_gv_to_z3pyscript_maxerror_qor()
 
+    print(f'evaluating the wce...')
+
     z3py_obj_qor.export_z3pyscript()
     z3py_obj_qor.run_z3pyscript_qor()
 

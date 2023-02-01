@@ -396,6 +396,16 @@ class Graph:
         else:
             return False
 
+    def is_pruned_pi(self, node):
+        if not self.is_constant(node):
+            if (re.search(r'in\d+', self.graph.nodes[node][LABEL]) and
+                    PRUNED in self.graph.nodes[node]):
+                return True
+            else:
+                return False
+        else:
+            return False
+
     def is_pi(self, node):
         if not self.is_constant(node):
             if re.search(r'pi\d+|in\d+', self.graph.nodes[node][LABEL]):
@@ -441,8 +451,17 @@ class Graph:
                         node]):
                 return True
             elif (re.search('invhouse', self.graph.nodes[node][SHAPE]) and re.search(r'g\d+', node) and
-                    'contraction' not in self.graph.nodes[node].keys() and 'contractions' not in self.graph.nodes[
-                        node]):
+                  'contraction' not in self.graph.nodes[node].keys() and 'contractions' not in self.graph.nodes[
+                      node]):
+                return True
+            else:
+                return False
+        else:
+            return False
+
+    def is_pruned_gate(self, node):
+        if not self.is_constant(node):
+            if self.is_cleaned_gate(node) and PRUNED in self.graph.nodes[node]:
                 return True
             else:
                 return False

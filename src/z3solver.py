@@ -1,6 +1,7 @@
 import numpy as np
-import re
-import subprocess
+import os
+import copy
+import networkx as nx
 from src.utils import *
 from src.graph import *
 
@@ -53,6 +54,8 @@ class Z3solver:
         self.__strategy = None
         self.__experiment = None
 
+        self.__pyscript_files_for_labeling: list = []
+
     @property
     def name(self):
         return self.__circuit_name
@@ -104,6 +107,15 @@ class Z3solver:
 
     def set_z3_report(self, z3_report: str):
         self.__z3_report = z3_report
+
+    def pyscript_files_for_labeling(self):
+        return self.__pyscript_files_for_labeling
+
+    def set_pyscript_files_for_labeling(self, pyscript_files_for_labeling):
+        self.__pyscript_files_for_labeling = pyscript_files_for_labeling
+
+    def append_pyscript_files_for_labeling(self, pyscript_file):
+        self.__pyscript_files_for_labeling.append(pyscript_file)
 
     # TODO
     # Deprecated
@@ -163,6 +175,9 @@ class Z3solver:
     def approximate_graph(self):
         return self.__approximate_graph
 
+    def set_approximate_graph(self, tmp_graph):
+        self.__approximate_graph = tmp_graph
+
     # TODO
     # Deprecated
     def import_z3_expression(self):
@@ -216,9 +231,6 @@ class Z3solver:
         self.set_z3_report(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.strategy}.{extension}')
         folder, extension = OUTPUT_PATH['z3']
         self.set_out_path(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.strategy}.{extension}')
-        folder, extension = TEST_PATH['z3']
-        self.set_pyscript_results_out_path(
-            f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.strategy}.{extension}')
 
         import_string = self.create_imports()
         abs_function = self.create_abs_function()
@@ -243,11 +255,72 @@ class Z3solver:
                             original_output_declaration + approximate_circuit_declaration + approximate_circuit_expression +
                             approximate_output_declaration + declare_error_distance_function + strategy)
 
-    def convert_gv_to_z3pyscript_maxerror_labelling(self):
-        pass
+    def convert_gv_to_z3pyscript_maxerror_labeling(self, strategy: str = DEFAULT_STRATEGY):
+        self.set_experiment(SIGNLE)
+        self.set_strategy(strategy)
+        removed_gate = []
+        for key in self.graph.input_dict:
+            removed_gate = [self.graph.input_dict[key]]
+            self.create_pruned_z3pyscript(removed_gate)
+        for key in self.graph.gate_dict:
+            removed_gate = [self.graph.gate_dict[key]]
+            self.create_pruned_z3pyscript(removed_gate)
+
+    # TODO
+    # Naming problems for more than one gate removal
+    def create_pruned_z3pyscript(self, gates: list):
+        self.create_pruned_graph(gates)
+        for gate in gates:
+            folder, extension = OUTPUT_PATH['report']
+            folder = f'{folder}/{self.name}_{self.experiment}_{self.strategy}'
+            os.makedirs(folder, exist_ok=True)
+            self.set_z3_report(f'{folder}/{self.name}_{self.experiment}_{self.strategy}_{gate}.{extension}')
+
+            folder, extension = OUTPUT_PATH['z3']
+            folder = f'{folder}/{self.name}_{self.experiment}_{self.strategy}'
+            os.makedirs(folder, exist_ok=True)
+            self.set_out_path(f'{folder}/{self.name}_{self.experiment}_{self.strategy}_{gate}.{extension}')
+
+            self.append_pyscript_files_for_labeling(self.out_path)
+
+            import_string = self.create_imports()
+            abs_function = self.create_abs_function()
+
+            # exact_part
+            original_circuit_declaration = self.declare_original_circuit()
+            original_circuit_expression = self.express_original_circuit()
+            original_output_declaration = self.declare_original_output()
+
+            approximate_circuit_declaration = self.declare_approximate_circuit()
+            approximate_circuit_expression = self.express_approximate_circuit()
+            approximate_output_declaration = self.declare_approximate_output()
+
+            # error distance function
+            declare_error_distance_function = self.declare_error_distance_function()
+            # strategy
+
+            strategy = self.express_strategy()
+
+            self.set_z3pyscript(
+                import_string + abs_function + original_circuit_declaration + original_circuit_expression +
+                original_output_declaration + approximate_circuit_declaration + approximate_circuit_expression +
+                approximate_output_declaration + declare_error_distance_function + strategy)
+
+            self.export_z3pyscript()
 
     def convert_gv_to_z3pyscript_xpat(self):
         pass
+
+    def create_pruned_graph(self, gates: list):
+
+        tmp_graph = copy.deepcopy(self.graph)
+        self.set_approximate_graph(tmp_graph)
+        mapping_dict = {}
+        for gate in gates:
+            mapping_dict[gate] = f'app_{gate}'
+        for gate in gates:
+            self.approximate_graph.graph.nodes[gate][PRUNED] = True
+        self.approximate_graph.set_graph(nx.relabel_nodes(self.approximate_graph.graph, mapping_dict))
 
     # TODO
     # for other back-ends as well
@@ -366,7 +439,6 @@ class Z3solver:
         pass
 
     def export_z3pyscript(self):
-        # print(f'{self.out_path = }')
         with open(self.out_path, 'w') as z:
             z.writelines(self.z3pyscript)
 
@@ -411,8 +483,6 @@ class Z3solver:
         return exact_circuit_declaration
 
     def declare_approximate_circuit(self):
-        # for n in self.approximate_graph.graph.nodes:
-        #     print(f'{n = }, {self.approximate_graph.graph.nodes[n]= }')
         exact_circuit_declaration = ''
         # inputs
         for n in self.approximate_graph.graph.nodes:
@@ -437,7 +507,6 @@ class Z3solver:
         return declaration
 
     def express_original_circuit(self):
-        # print(f'expressing the original circuit')
         exact_circuit_function = ''
         for n in self.graph.graph.nodes:
             if self.graph.is_cleaned_gate(n):
@@ -451,8 +520,11 @@ class Z3solver:
 
     def express_approximate_circuit(self):
         approximate_circuit_function = ''
+
         for n in self.approximate_graph.graph.nodes:
-            if self.approximate_graph.is_cleaned_gate(n):
+            if self.approximate_graph.is_cleaned_pi(n):
+                approximate_circuit_function += f'{self.express_approximate_gate(n)}\n'
+            elif self.approximate_graph.is_cleaned_gate(n):
                 approximate_circuit_function += f'{self.express_approximate_gate(n)}\n'
             elif self.approximate_graph.is_cleaned_constant(n):
                 approximate_circuit_function += f'{self.express_approximate_constant(n)}\n'
@@ -514,7 +586,9 @@ class Z3solver:
     def express_approximate_gate(self, this_key: str):
         # sth like this: g110 = Not(And(g108, g109))
         cur_node = ''
-        if self.approximate_graph.is_cleaned_gate(this_key):
+        if self.approximate_graph.is_pruned_gate(this_key):
+            cur_node = f'{this_key} = {self.approximate_graph.graph.nodes[this_key][PRUNED]}'
+        elif self.approximate_graph.is_cleaned_gate(this_key):
             this_gate = re.search(POSSIBLE_GATES, self.approximate_graph.graph.nodes[this_key]['label']).group()
             cur_gate = Z3_GATES_DICTIONARY[this_gate]
             predecessor_list = list(self.approximate_graph.graph.predecessors(this_key))
@@ -526,8 +600,8 @@ class Z3solver:
                 else:
                     cur_node += f','
 
-        elif self.approximate_graph.is_cleaned_pi(this_key):
-            pass
+        elif self.approximate_graph.is_pruned_pi(this_key):
+            cur_node = f'{this_key}= {self.approximate_graph.graph.nodes[this_key][PRUNED]}'
         elif self.approximate_graph.is_cleaned_po(this_key):
             cur_node = f'{this_key}='
             predecessor_list = list(self.approximate_graph.graph.predecessors(this_key))
@@ -561,7 +635,7 @@ class Z3solver:
 
         for i in range(self.approximate_graph.num_outputs):
             output_declaration += f"approx_out{i}=Int('approx_out{i}')\n"
-            output_declaration += f"approx_out{i}={self.approximate_graph.output_dict[i]}*{2 ** i}\n"
+            output_declaration += f"approx_out{i}={self.approximate_graph.output_dict[i]}*{2 ** i}*2/2\n"
 
         output_declaration += f"approx_out = Int('approx_out')\n"
         output_declaration += f'approx_out='
@@ -633,6 +707,11 @@ class Z3solver:
     def run_z3pyscript_qor(self):
         with open(self.z3_log_path, 'w') as f:
             subprocess.call([PYTHON3, self.out_path], stdout=f)
+
+    def run_z3pyscript_labeling(self):
+        for pyscript in self.pyscript_files_for_labeling():
+            with open(self.z3_log_path, 'w') as f:
+                subprocess.call([PYTHON3, pyscript], stdout=f)
 
     def run_z3pyscript_test(self):
         with open(self.z3_log_path, 'w') as f:

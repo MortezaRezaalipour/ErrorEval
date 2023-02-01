@@ -70,55 +70,60 @@ in1 = Bool('in1')
 in0 = Bool('in0')
 
 app_g0 = Bool('app_g0')
-app_g1 = Bool('app_g1')
-app_g2 = Bool('app_g2')
-app_g3 = Bool('app_g3')
-app_g4 = Bool('app_g4')
-app_g5 = Bool('app_g5')
-app_g6 = Bool('app_g6')
-app_g7 = Bool('app_g7')
-app_g8 = Bool('app_g8')
-app_g9 = Bool('app_g9')
-app_g10 = Bool('app_g10')
-app_g11 = Bool('app_g11')
-app_g12 = Bool('app_g12')
-app_g13 = Bool('app_g13')
-app_g14 = Bool('app_g14')
-app_g15 = Bool('app_g15')
-app_g16 = Bool('app_g16')
-app_out0 = Bool('app_out0')
-app_out1 = Bool('app_out1')
+g1 = Bool('g1')
+g2 = Bool('g2')
+g3 = Bool('g3')
+g4 = Bool('g4')
+g5 = Bool('g5')
+g6 = Bool('g6')
+g7 = Bool('g7')
+g8 = Bool('g8')
+g9 = Bool('g9')
+g10 = Bool('g10')
+g11 = Bool('g11')
+g12 = Bool('g12')
+g13 = Bool('g13')
+g14 = Bool('g14')
+g15 = Bool('g15')
+g16 = Bool('g16')
+g17 = Bool('g17')
+g18 = Bool('g18')
+g19 = Bool('g19')
+out0 = Bool('out0')
+out1 = Bool('out1')
 
 
 
 
 app_g0 = True
+g1=Not(in2)
+g2=Not(in1)
+g3=Not(in0)
+g4=And(in1,app_g0)
+g5=And(in0,g1)
+g6=And(in3,g2)
+g7=And(in2,g3)
+g8=Not(g5)
+g9=Not(g5)
+g10=Not(g7)
+g11=Not(g7)
+g12=And(g6,g8)
+g13=And(g4,g10)
+g14=And(g9,g11)
+g15=Not(g12)
+g16=Not(g13)
+g17=Not(g14)
+g18=And(g15,g16)
+out0 = g17
 
-app_g1=Not(in3)
-app_g2=Not(in2)
-app_g3=Not(in1)
-app_g4=Not(in0)
-app_out0 = app_g0
-
-app_g5=And(in1,app_g1)
-app_g6=And(in0,app_g2)
-app_g7=And(in3,app_g3)
-app_g8=And(in2,app_g4)
-app_g9=Not(app_g6)
-app_g10=Not(app_g8)
-app_g11=And(app_g7,app_g9)
-app_g12=And(app_g5,app_g10)
-app_g13=Not(app_g11)
-app_g14=Not(app_g12)
-app_g15=And(app_g13,app_g14)
-app_g16=Not(app_g15)
-app_out1 = app_g16
+g19=Not(g18)
+out1 = g19
 
 
 approx_out0=Int('approx_out0')
-approx_out0=app_out0*1*2/2
+approx_out0=out0*1*2/2
 approx_out1=Int('approx_out1')
-approx_out1=app_out1*2*2/2
+approx_out1=out1*2*2/2
 approx_out = Int('approx_out')
 approx_out=approx_out0+approx_out1
 f_exact = Function('f_exact', IntSort(), IntSort())
@@ -173,7 +178,7 @@ while(not foundWCE):
 		stats['unsat_runtime'] += (end_iteration - start_iteration)
 		stats['wce'] = stats['et']
 end_whole = time.time()
-with open('output/report/abs_diff_i4_o3_app1_qor_monotonic.csv', 'w') as f:
+with open('output/report/abs_diff_i4_o3_single_gate_removal_monotonic/abs_diff_i4_o3_single_gate_removal_monotonic_g0.csv', 'w') as f:
 	csvwriter = csv.writer(f)
 	header = ['field', 'value']
 	csvwriter.writerow(['Experiment', 'qor-evaluation'])

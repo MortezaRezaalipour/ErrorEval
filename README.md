@@ -1,16 +1,15 @@
-LF: please rename Readme in README. Remove the venv folder from the repository. The repo should contain only all those files that cannot be replicated, or examples.
-LF: Why there is a touch $(VENV) command at the end of the make setup rule?
-
 # translators
 
-This project contains three translators (LF: for what?), a testbench generator (LF: whose purpose is?), and a verifier (LF: used for?).
+This project contains three translators (LF: for what?), a testbench generator for an input circuit in Verilog format (LF: whose purpose is?), and a verifier (LF: used for?).
 
-1) **Verilog to Verilog translator** (LF: this is confusing for someone who check this for the first time)
-2) **Verilog to GraphViz translator**
-3) **GraphViz to z3py translator**
-5) **Testbench generator**
-6) **Verify z3py representation**
-7) **Evaluate Worst-Case-Error(WCE) of an input circuit**
+1) **Verilog to Verilog translator**: put-description-here (takes in a Verilog in any format (structural, behavioral, etc) and it outputs a Gate-Level limited Verilog representation which is funcionally equivalent)
+
+2) **Verilog to GraphViz translator**: : put-description-here
+3) **GraphViz to z3py translator**: put-description-here
+4) **Testbench generator**: put-description-here
+5) **Verify z3py representation**: put-description-here (important to showcase an example)
+6) **Evaluate Worst-Case-Error(WCE) of an input circuit**: put-description-here
+7) **Labeling all gates of an input circuit**
 
 LF: Add here a better descriptio of each script. Othewise a user would not know what each translator/step does. Images can also help to shwow the difference.
 LF: Before the setting up or the how to use, you should also mention the benchmark such that one knows what is doing in the how to use examples.
@@ -20,6 +19,22 @@ LF: Before the setting up or the how to use, you should also mention the benchma
 clone the repository:
 
 `$ git clone https://github.com/Laura-Pozzi-research-group/translators-morteza.git`
+
+install `virtualenv` on your machine using the following command(s):
+
+- Linux
+
+Do this
+
+- MacOS
+
+Do this 
+
+- Windows
+
+Do this
+
+
 
 head to the **main/** directory
 
@@ -75,6 +90,11 @@ Head to the **script/** directory and launch the desired script:
 
 the csv report file is generated in the "output/report/" directory. 
 
+7) **Label gates**
+
+`python3 label_gates.py benchmark-name`
+
+the csv report files are generated in the "output/report/benchmark-name/" directory.
 
 
 TODO
@@ -91,6 +111,5 @@ CPU: 3.30GHz Intel Core i9
 RAM: 256GBs
 
 OS: Linux Ubuntu 20.04LTS
-
 
 

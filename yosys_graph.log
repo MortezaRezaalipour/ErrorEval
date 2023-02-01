@@ -37,6 +37,6 @@ Writing dot description to `output/gv/abs_diff_i4_o3_app1.dot'.
 Dumping module abs_diff_i4_o3_app1 to page 1.
 Exec: dot -Tgv 'output/gv/abs_diff_i4_o3_app1.dot' > 'output/gv/abs_diff_i4_o3_app1.gv.new' && mv 'output/gv/abs_diff_i4_o3_app1.gv.new' 'output/gv/abs_diff_i4_o3_app1.gv'
 
-End of script. Logfile hash: 0605519a0c, CPU: user 0.00s system 0.00s, MEM: 24.07 MB peak
+End of script. Logfile hash: 0605519a0c, CPU: user 0.00s system 0.00s, MEM: 24.12 MB peak
 Yosys 0.9+4052 (git sha1 a5adb007, gcc 9.3.0-17ubuntu1~20.04 -fPIC -Os)
 Time spent: 97% 1x show (0 sec), 2% 2x read_verilog (0 sec)
