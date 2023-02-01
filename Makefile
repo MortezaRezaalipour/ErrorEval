@@ -11,7 +11,6 @@ requirements:
 setup:
 	sudo apt-get install virtualenv
 	$(PY) -m venv $(VENV)
-	touch $(VENV)
 
 clean:
 	rm -rf __pycache__
