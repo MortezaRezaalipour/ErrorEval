@@ -10,6 +10,7 @@ This project contains three translators (LF: for what?), a testbench generator (
 3) **GraphViz to z3py translator**
 5) **Testbench generator**
 6) **Verify z3py representation**
+7) **Evaluate Worst-Case-Error(WCE) of an input circuit**
 
 LF: Add here a better descriptio of each script. Othewise a user would not know what each translator/step does. Images can also help to shwow the difference.
 LF: Before the setting up or the how to use, you should also mention the benchmark such that one knows what is doing in the how to use examples.
@@ -67,6 +68,12 @@ Head to the **script/** directory and launch the desired script:
 5) **Verify z3py representation**
 
 `$ python3 verify_z3.py benchmark-name`
+
+6) **Evaluate WCE**
+
+`$ python3 evaluate_wce.py exact-circuit-name -app approximate-circuit-name`
+
+
 
 TODO
 NOTE:
