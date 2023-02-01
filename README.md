@@ -73,14 +73,23 @@ Head to the **script/** directory and launch the desired script:
 
 `$ python3 evaluate_wce.py exact-circuit-name -app approximate-circuit-name`
 
+the csv report file is generated in the "output/report/" directory. 
+
 
 
 TODO
+
 NOTE:
-All the results that are present in the report folder obtained using a machine with the following specs: 
-ml-edge
+
+All the results that are present in the report folder obtained using a machine with the following specs:
+
+
+Machine-name: ml-edge
+
 CPU: 3.30GHz Intel Core i9
+
 RAM: 256GBs
+
 OS: Linux Ubuntu 20.04LTS
 
 
