@@ -10,6 +10,8 @@ This project contains three translators for circuit representation in different 
   |:--:|
   | *An example of Verilog to Verilog translator on an m-bit Absolute Difference circuit* |
 
+
+
 2. **Verilog to GraphViz translator**:
 
 Takes in a _clean Verilog_ converts it into a graph representation in GraphViz format
@@ -18,23 +20,32 @@ Takes in a _clean Verilog_ converts it into a graph representation in GraphViz f
 |:--:|
 | *An example of Verilog to GraphViz translator on a 2-bit Absolute Difference circuit* |
    
+   
+   
 3. **GraphViz to z3py translator**: 
    
    Takes in a circuit graph in GraphViz format and converts it into its z3py representation that is readable by Z3 SMT-solver
+   
+   
    
 4. **Testbench generator**: 
    
    Takes in a _clean Verilog_ and the number of samples and generates a testbench over the samples
      
    
+   
 5. **Verify z3py representation**: 
 
    Takes in a Verilog in any format, generates a z3py and testbench from it, and test whether the functionalities of the two are equivalent
    
-6. **Evaluate Worst-Case-Error(WCE) of an input circuit**: ![v2v.pdf](https://github.com/Laura-Pozzi-research-group/translators-morteza/files/10568949/v2v.pdf)
+   
+   
+6. **Evaluate Worst-Case-Error(WCE) of an input circuit**:
 
    
    Takes in an exact and approximate circuit in _clean Verilog_ form and reports its WCE
+   
+   
    
 7. **Labeling all gates of an input circuit**
 
