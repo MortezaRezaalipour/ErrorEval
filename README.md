@@ -65,11 +65,11 @@ install `virtualenv` on your machine using the following command(s):
 
 - MacOS
 
-Do this 
+later... 
 
 - Windows
 
-Do this
+later...
 
 
 
