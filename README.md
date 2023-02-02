@@ -2,9 +2,12 @@
 
 This project contains three translators for circuit representation in different formats, a testbench generator for circuits expressed in Verilog, and a verifier for testing.
 
-1. **Verilog to Verilog translator**: ![v2v](https://user-images.githubusercontent.com/71635528/216324115-2f25124e-fa2c-4668-b76a-2a3c45fa6c56.png)
+1. **Verilog to Verilog translator**: 
 
    Takes in a Verilog in any format (structural, behavioral, etc) and it outputs a Gate-Level limited Verilog (_clean Verilog_) representation which is funcionally equivalent to the input
+   
+   ![v2v](https://user-images.githubusercontent.com/71635528/216324115-2f25124e-fa2c-4668-b76a-2a3c45fa6c56.png)
+   *An example of Verilog to Verilog translator on an m-bit Absolute Difference circuit*
 
 2. **Verilog to GraphViz translator**:
    
