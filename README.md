@@ -73,23 +73,21 @@ later...
 
 
 
-head to the **main/** directory
-
-install `virtualenv` and create a virtual environment:
+- head to the **main/** directory and create a virtual environment:
 
 `$ make setup`
 
-activate the environment:
+- activate the environment:
 
 `$ source venv/bin/activate`
 
 
-install requirements:
+- install requirements:
 
 `$ make requirements`
 
 
-add the current directory to your `PYTHONPATH`:
+- add the current directory to your `PYTHONPATH`:
 
 `$ export PYTHONPATH="$PWD"`
 
