@@ -11,7 +11,11 @@ This project contains three translators for circuit representation in different 
   | *An example of Verilog to Verilog translator on an m-bit Absolute Difference circuit* |
 
 2. **Verilog to GraphViz translator**:
-   
+
+| ![v2gv](https://user-images.githubusercontent.com/71635528/216329239-7c42ba1b-0e33-4821-8ae9-2276777d81f3.png) |
+|:--:|
+| *An example of Verilog to GraphViz translator on a 2-bit Absolute Difference circuit* |
+
    Takes in a _clean Verilog_ converts it into a graph representation in GraphViz format
    
 3. **GraphViz to z3py translator**: 
