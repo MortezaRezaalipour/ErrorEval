@@ -96,38 +96,38 @@ later...
 
 ## How to use:
 
-Head to the **script/** directory and launch the desired script:
+From the **main/** directory and launch the desired script:
 
 1) **Verilog to Verilog:**
 
-`$ python3 v2v.py benchmark-name`
+`$ python3 scripts/v2v.py benchmark-name`
 
 2) **Verilog to GraphViz**
 
-`$ python3 v2gv.py benchmark-name`
+`$ python3 scripts/v2gv.py benchmark-name`
 
 
 3) **GraphViz to z3py**
 
-`$ python3 gv2z3.py benchmark-name -s num-of-mc-samples`
+`$ python3 scripts/gv2z3.py benchmark-name -s num-of-mc-samples`
 
 4) **Verilog to Testbench**
 
-`$ python3 v2tb.py benchmark-name -s num-of-mc-samples`
+`$ python3 scripts/v2tb.py benchmark-name -s num-of-mc-samples`
 
 5) **Verify z3py representation**
 
-`$ python3 verify_z3.py benchmark-name`
+`$ python3 scripts/verify_z3.py benchmark-name`
 
 6) **Evaluate WCE**
 
-`$ python3 evaluate_wce.py exact-circuit-name -app approximate-circuit-name`
+`$ python3 scripts/evaluate_wce.py exact-circuit-name -app approximate-circuit-name`
 
 the csv report file is generated in the "output/report/" directory. 
 
 7) **Label gates**
 
-`python3 label_gates.py benchmark-name`
+`python3 scripts/label_gates.py benchmark-name`
 
 the csv report files are generated in the "output/report/benchmark-name/" directory.
 
