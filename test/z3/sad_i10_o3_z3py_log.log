@@ -1,0 +1,19 @@
+sat
+returned_model = [in00 = False,
+ in02 = False,
+ in04 = False,
+ in01 = False,
+ in03 = False,
+ in06 = False,
+ in08 = True,
+ in07 = False,
+ in09 = False,
+ in05 = False,
+ f_approx = [else -> 5],
+ f_exact = [else -> 1],
+ f_error = [else -> -4]]
+returned_model[f_exact].else_value() = 1
+returned_model[f_approx].else_value() = 5
+returned_model[f_error].else_value() = -4
+double-check is passed!
+unsat

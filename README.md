@@ -1,18 +1,34 @@
 # translators
 
-This project contains three translators (LF: for what?), a testbench generator for an input circuit in Verilog format (LF: whose purpose is?), and a verifier (LF: used for?).
+This project contains three translators for circuit representation in different formats, a testbench generator for circuits expressed in Verilog, and a verifier for testing.
 
-1) **Verilog to Verilog translator**: put-description-here (takes in a Verilog in any format (structural, behavioral, etc) and it outputs a Gate-Level limited Verilog representation which is funcionally equivalent)
+1. **Verilog to Verilog translator**: 
+   Takes in a Verilog in any format (structural, behavioral, etc) and it outputs a Gate-Level limited Verilog (_clean Verilog_) representation which is funcionally equivalent to the input
 
-2) **Verilog to GraphViz translator**: : put-description-here
-3) **GraphViz to z3py translator**: put-description-here
-4) **Testbench generator**: put-description-here
-5) **Verify z3py representation**: put-description-here (important to showcase an example)
-6) **Evaluate Worst-Case-Error(WCE) of an input circuit**: put-description-here
-7) **Labeling all gates of an input circuit**
+2. **Verilog to GraphViz translator**: 
+   
+   Takes in a _clean Verilog_ converts it into a graph representation in GraphViz format
+   
+3. **GraphViz to z3py translator**: 
+   
+   Takes in a circuit graph in GraphViz format and converts it into its z3py representation that is readable by Z3 SMT-solver
+   
+4. **Testbench generator**: 
+   
+   Takes in a _clean Verilog_ and the number of samples and generates a testbench over the samples
+     
+   
+5. **Verify z3py representation**: 
 
-LF: Add here a better descriptio of each script. Othewise a user would not know what each translator/step does. Images can also help to shwow the difference.
-LF: Before the setting up or the how to use, you should also mention the benchmark such that one knows what is doing in the how to use examples.
+   Takes in a Verilog in any format, generates a z3py and testbench from it, and test whether the functionalities of the two are equivalent
+   
+6. **Evaluate Worst-Case-Error(WCE) of an input circuit**: 
+   
+   Takes in an exact and approximate circuit in _clean Verilog_ form and reports its WCE
+   
+7. **Labeling all gates of an input circuit**
+
+   Takes in a circuit in _clean Verilog_ form and reports the WCE each gate when pruned. 
 
 ## Setting up:
 
@@ -24,7 +40,7 @@ install `virtualenv` on your machine using the following command(s):
 
 - Linux
 
-Do this
+`$ sudo apt-get install virtualenv`
 
 - MacOS
 
@@ -97,19 +113,15 @@ the csv report file is generated in the "output/report/" directory.
 the csv report files are generated in the "output/report/benchmark-name/" directory.
 
 
-TODO
-
-NOTE:
+## NOTE:
 
 All the results that are present in the report folder obtained using a machine with the following specs:
 
+- Machine-name: ml-edge
 
-Machine-name: ml-edge
+- CPU: 3.30GHz Intel Core i9
 
-CPU: 3.30GHz Intel Core i9
+- RAM: 256GBs
 
-RAM: 256GBs
-
-OS: Linux Ubuntu 20.04LTS
-
+- OS: Linux Ubuntu 20.04LTS
 

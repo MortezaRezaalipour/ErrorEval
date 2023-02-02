@@ -1,13 +1,13 @@
 sat
-returned_model = [in1 = True,
+returned_model = [in1 = False,
  in2 = False,
  in3 = False,
  in0 = False,
- f_approx = [else -> 3],
- f_exact = [else -> 2],
- f_error = [else -> -1]]
-returned_model[f_exact].else_value() = 2
-returned_model[f_approx].else_value() = 3
-returned_model[f_error].else_value() = -1
+ f_approx = [else -> 2],
+ f_exact = [else -> 0],
+ f_error = [else -> -2]]
+returned_model[f_exact].else_value() = 0
+returned_model[f_approx].else_value() = 2
+returned_model[f_error].else_value() = -2
 double-check is passed!
 unsat

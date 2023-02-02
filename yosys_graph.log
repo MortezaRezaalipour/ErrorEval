@@ -23,20 +23,20 @@
 
 
 -- Running command `
-        read_verilog output/ver/abs_diff_i4_o3_app1.v
-        show -prefix output/gv/abs_diff_i4_o3_app1 -format gv
+        read_verilog output/ver/mul_i12_o12.v
+        show -prefix output/gv/mul_i12_o12 -format gv
         ' --
 
-1. Executing Verilog-2005 frontend: output/ver/abs_diff_i4_o3_app1.v
-Parsing Verilog input from `output/ver/abs_diff_i4_o3_app1.v' to AST representation.
-Generating RTLIL representation for module `\abs_diff_i4_o3_app1'.
+1. Executing Verilog-2005 frontend: output/ver/mul_i12_o12.v
+Parsing Verilog input from `output/ver/mul_i12_o12.v' to AST representation.
+Generating RTLIL representation for module `\mul_i12_o12'.
 Successfully finished Verilog frontend.
 
 2. Generating Graphviz representation of design.
-Writing dot description to `output/gv/abs_diff_i4_o3_app1.dot'.
-Dumping module abs_diff_i4_o3_app1 to page 1.
-Exec: dot -Tgv 'output/gv/abs_diff_i4_o3_app1.dot' > 'output/gv/abs_diff_i4_o3_app1.gv.new' && mv 'output/gv/abs_diff_i4_o3_app1.gv.new' 'output/gv/abs_diff_i4_o3_app1.gv'
+Writing dot description to `output/gv/mul_i12_o12.dot'.
+Dumping module mul_i12_o12 to page 1.
+Exec: dot -Tgv 'output/gv/mul_i12_o12.dot' > 'output/gv/mul_i12_o12.gv.new' && mv 'output/gv/mul_i12_o12.gv.new' 'output/gv/mul_i12_o12.gv'
 
-End of script. Logfile hash: 0605519a0c, CPU: user 0.00s system 0.00s, MEM: 24.12 MB peak
+End of script. Logfile hash: 5764a40a82, CPU: user 0.03s system 0.00s, MEM: 24.11 MB peak
 Yosys 0.9+4052 (git sha1 a5adb007, gcc 9.3.0-17ubuntu1~20.04 -fPIC -Os)
 Time spent: 97% 1x show (0 sec), 2% 2x read_verilog (0 sec)
