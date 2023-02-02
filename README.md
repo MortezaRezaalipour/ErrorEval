@@ -22,7 +22,8 @@ This project contains three translators for circuit representation in different 
 
    Takes in a Verilog in any format, generates a z3py and testbench from it, and test whether the functionalities of the two are equivalent
    
-6. **Evaluate Worst-Case-Error(WCE) of an input circuit**: 
+6. **Evaluate Worst-Case-Error(WCE) of an input circuit**: ![v2v.pdf](https://github.com/Laura-Pozzi-research-group/translators-morteza/files/10568949/v2v.pdf)
+
    
    Takes in an exact and approximate circuit in _clean Verilog_ form and reports its WCE
    
