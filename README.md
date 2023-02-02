@@ -5,8 +5,7 @@ This project contains three translators for circuit representation in different 
 1. **Verilog to Verilog translator**: 
    Takes in a Verilog in any format (structural, behavioral, etc) and it outputs a Gate-Level limited Verilog (_clean Verilog_) representation which is funcionally equivalent to the input
 
-2. **Verilog to GraphViz translator**: [v2v.pdf](https://github.com/Laura-Pozzi-research-group/translators-morteza/files/10568924/v2v.pdf?raw=true)
-
+2. **Verilog to GraphViz translator**:
    
    Takes in a _clean Verilog_ converts it into a graph representation in GraphViz format
    
