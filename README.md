@@ -16,8 +16,7 @@ This project contains three translators for circuit representation in different 
 
 Takes in a _clean Verilog_ converts it into a graph representation in GraphViz format
 
-| ![v2gv](https://user-images.githubusercontent.com/71635528/216356225-b57244ba-a2be-40f6-93f9-9946838acde5.png)
- |
+| ![v2gv](https://user-images.githubusercontent.com/71635528/216356225-b57244ba-a2be-40f6-93f9-9946838acde5.png) |
 |:--:|
 | *An example of Verilog to GraphViz translator on a 2-bit Absolute Difference circuit* |
    
