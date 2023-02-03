@@ -29,6 +29,9 @@ Takes in a _clean Verilog_ converts it into a graph representation in GraphViz f
    
    Takes in a circuit graph in GraphViz format and converts it into its z3py representation that is readable by Z3 SMT-solver
    
+|<img src="readme/gv2z3py.png" width=50% height=50%>|
+|:--:|
+| *An example of GraphViz to Z3py translator on a 2-bit Absolute Difference circuit* |
    
    
 4. **Testbench generator**: 
