@@ -361,8 +361,26 @@ class Z3solver:
 
     def express_bisection_while_loop(self):
         loop = ''
+        loop += f'upper_bound = 2**({self.graph.num_outputs}) - 1\n' \
+                f'lower_bound = 0 \n' \
+                f'start_whole = time.time()\n' \
+                f's = Solver()\n' \
+                f'while(not foundWCE):\n' \
+                f'{TAB}start_iteration = time.time()\n' \
+                f"{TAB}stats['et'] = (upper_bound + lower_bound) // 2\n" \
+                f"{TAB}stats['jumps'].append(stats['et'])\n" \
+                f'{TAB}s.push()\n' \
+                f'{TAB}s.add(f_exact(exact_out) == exact_out)\n' \
+                f'{TAB}s.add(f_approx(approx_out) == approx_out)\n' \
+                f'{TAB}s.add(f_error(exact_out, approx_out) == exact_out - approx_out)\n' \
+                f"{TAB}s.add(z3_abs(f_error(exact_out, approx_out)) > stats['et'])\n" \
+                f"{TAB}response = s.check()\n"
 
+        loop += self.express_bisection_while_loop_sat()
+        loop += self.express_bisection_while_loop_unsat()
+        loop += self.express_stats()
 
+        return loop
 
     def express_monotonic_while_loop(self):
         loop = ''
@@ -381,25 +399,19 @@ class Z3solver:
 
         loop += self.express_monotonic_while_loop_sat()
         loop += self.express_monotonic_while_loop_unsat()
+        loop += self.express_stats()
 
-        loop += f"end_whole = time.time()\n" \
-                f"with open('{self.z3_report}', 'w') as f:\n" \
-                f"{TAB}csvwriter = csv.writer(f)\n" \
-                f"{TAB}header = ['field', 'value']\n" \
-                f"{TAB}csvwriter.writerow(['Experiment', 'qor-evaluation'])\n" \
-                f"{TAB}csvwriter.writerow(['WCE', stats['wce']])\n" \
-                f"{TAB}csvwriter.writerow(['Total Runtime', stats['sat_runtime'] + stats['unsat_runtime']])\n" \
-                f"{TAB}csvwriter.writerow(['SAT Runtime', stats['sat_runtime']])\n" \
-                f"{TAB}csvwriter.writerow(['UNSAT Runtime', stats['unsat_runtime']])\n" \
-                f"{TAB}csvwriter.writerow(['Number of SAT calls', stats['num_sats']])\n" \
-                f"{TAB}csvwriter.writerow(['Number of UNSAT calls', stats['num_unsats']])\n"
+
+
 
         return loop
 
-    def express_monotonic_while_loop_sat(self):
+    def express_bisection_while_loop_sat(self):
         if_sat = ''
+
         if_sat += f"{TAB}if response == sat:\n" \
                   f"{TAB}{TAB}print(f'sat')\n" \
+                  f"{TAB}{TAB}end_iteration = time.time()\n" \
                   f"{TAB}{TAB}returned_model = s.model()\n" \
                   f"{TAB}{TAB}print(f'{{returned_model = }}')\n" \
                   f"{TAB}{TAB}print(f\"{{returned_model[f_exact].else_value() = }}\")\n" \
@@ -412,12 +424,57 @@ class Z3solver:
                   f"{TAB}{TAB}else:\n" \
                   f"{TAB}{TAB}{TAB}print(f'ERROR!!! double-check failed! exiting...')\n" \
                   f"{TAB}{TAB}{TAB}exit()\n" \
+                  f"{TAB}{TAB}if upper_bound - lower_bound <= 1:\n" \
+                  f"{TAB}{TAB}{TAB}foundWCE = True\n" \
+                  f"{TAB}{TAB}{TAB}stats['wce'] = stats['et']\n" \
+                  f"{TAB}{TAB}else:\n" \
+                  f"{TAB}{TAB}{TAB}lower_bound = stats['et']\n" \
+                  f"{TAB}{TAB}stats['num_sats'] += 1\n" \
+                  f"{TAB}{TAB}stats['sat_runtime'] += (end_iteration - start_iteration)\n"
+
+        return if_sat
+
+    def express_monotonic_while_loop_sat(self):
+        if_sat = ''
+        if_sat += f"{TAB}if response == sat:\n" \
+                  f"{TAB}{TAB}print(f'sat')\n" \
                   f"{TAB}{TAB}end_iteration = time.time()\n" \
+                  f"{TAB}{TAB}returned_model = s.model()\n" \
+                  f"{TAB}{TAB}print(f'{{returned_model = }}')\n" \
+                  f"{TAB}{TAB}print(f\"{{returned_model[f_exact].else_value() = }}\")\n" \
+                  f"{TAB}{TAB}print(f\"{{returned_model[f_approx].else_value() = }}\")\n" \
+                  f"{TAB}{TAB}print(f\"{{returned_model[f_error].else_value() = }}\")\n" \
+                  f"{TAB}{TAB}returned_value = abs(int(returned_model[f_error].else_value().as_long()))\n" \
+                  f"{TAB}{TAB}returned_value_reval = abs(int(returned_model.evaluate(f_error(exact_out, approx_out)).as_long()))\n" \
+                  f"{TAB}{TAB}if returned_value == returned_value_reval:\n" \
+                  f"{TAB}{TAB}{TAB}print(f'double-check is passed!')\n" \
+                  f"{TAB}{TAB}else:\n" \
+                  f"{TAB}{TAB}{TAB}print(f'ERROR!!! double-check failed! exiting...')\n" \
+                  f"{TAB}{TAB}{TAB}exit()\n" \
                   f"{TAB}{TAB}stats['et'] = returned_value\n" \
                   f"{TAB}{TAB}stats['num_sats'] += 1\n" \
                   f"{TAB}{TAB}stats['sat_runtime'] += (end_iteration - start_iteration)\n" \
                   f"{TAB}{TAB}stats['jumps'].append(returned_value)\n"
         return if_sat
+
+    def express_bisection_while_loop_unsat(self):
+        if_unsat = ''
+
+        if_unsat += f"\n" \
+                    f"{TAB}if response == unsat:\n" \
+                    f"{TAB}{TAB}print('unsat')\n" \
+                    f"{TAB}{TAB}end_iteration = time.time()\n" \
+                    f"{TAB}{TAB}if upper_bound - lower_bound <= 1:\n" \
+                    f"{TAB}{TAB}{TAB}foundWCE = True\n" \
+                    f"{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
+                    f"{TAB}{TAB}else:\n" \
+                    f"{TAB}{TAB}{TAB}upper_bound = stats['et']\n" \
+                    f"{TAB}{TAB}stats['num_unsats'] += 1\n" \
+                    f"{TAB}{TAB}stats['unsat_runtime'] += (end_iteration - start_iteration)\n" \
+                    f"" \
+                    f"" \
+                    f""
+        return if_unsat
 
     def express_monotonic_while_loop_unsat(self):
         if_unsat = ''
@@ -431,6 +488,21 @@ class Z3solver:
                     f"{TAB}{TAB}stats['wce'] = stats['et']\n"
         return if_unsat
 
+    def express_stats(self):
+        stats = ''
+        stats += f"end_whole = time.time()\n" \
+                f"with open('{self.z3_report}', 'w') as f:\n" \
+                f"{TAB}csvwriter = csv.writer(f)\n" \
+                f"{TAB}header = ['field', 'value']\n" \
+                f"{TAB}csvwriter.writerow(['Experiment', 'qor-evaluation'])\n" \
+                f"{TAB}csvwriter.writerow(['WCE', stats['wce']])\n" \
+                f"{TAB}csvwriter.writerow(['Total Runtime', stats['sat_runtime'] + stats['unsat_runtime']])\n" \
+                f"{TAB}csvwriter.writerow(['SAT Runtime', stats['sat_runtime']])\n" \
+                f"{TAB}csvwriter.writerow(['UNSAT Runtime', stats['unsat_runtime']])\n" \
+                f"{TAB}csvwriter.writerow(['Number of SAT calls', stats['num_sats']])\n" \
+                f"{TAB}csvwriter.writerow(['Number of UNSAT calls', stats['num_unsats']])\n"
+        return stats
+
     def express_monotonic_strategy(self):
         monotonic_strategy = ''
         monotonic_strategy += self.declare_stats()
@@ -443,7 +515,9 @@ class Z3solver:
     def express_bisection_strategy(self):
         bisection_strategy = ''
         bisection_strategy += self.declare_stats()
-        # bisection_strategy +=
+        bisection_strategy += self.express_bisection_while_loop()
+
+        return bisection_strategy
 
     def export_z3pyscript(self):
         with open(self.out_path, 'w') as z:
