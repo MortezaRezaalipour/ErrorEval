@@ -632,6 +632,6 @@ Finding unused cells or wires in module \top..
 
 11. Executing AIGER backend.
 
-End of script. Logfile hash: 25c12b7c75, CPU: user 0.04s system 0.01s, MEM: 24.55 MB peak
+End of script. Logfile hash: 25c12b7c75, CPU: user 0.04s system 0.01s, MEM: 24.04 MB peak
 Yosys 0.9+4052 (git sha1 a5adb007, gcc 9.3.0-17ubuntu1~20.04 -fPIC -Os)
-Time spent: 63% 3x abc (0 sec), 10% 18x opt_expr (0 sec), ...
+Time spent: 63% 3x abc (0 sec), 11% 18x opt_expr (0 sec), ...

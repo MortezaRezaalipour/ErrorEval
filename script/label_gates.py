@@ -22,8 +22,8 @@ def main():
 
     # convert gv to z3 expression
     z3py_obj = Z3solver(args.benchmark_name)
-    print(f'labeling...')
-    z3py_obj.convert_gv_to_z3pyscript_maxerror_labeling()
+    print(f'labeling with {args.strategy}')
+    z3py_obj.convert_gv_to_z3pyscript_maxerror_labeling(args.strategy)
     z3py_obj.run_z3pyscript_labeling()
     print(f'labeling is completed!')
 

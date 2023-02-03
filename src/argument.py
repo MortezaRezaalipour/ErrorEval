@@ -12,6 +12,7 @@ class Arguments:
         self.__approximate_benchmark = approximate_benchmark
         self.__mc_samples = tmp_args.samples
         self.__wce = tmp_args.wce
+        self.__strategy = tmp_args.strategy
         self.__clean = tmp_args.clean
 
     @property
@@ -25,9 +26,15 @@ class Arguments:
     @property
     def num_samples(self):
         return self.__mc_samples
+
     @property
     def wce(self):
         return self.__wce
+
+    @property
+    def strategy(self):
+        return self.__strategy
+
 
     @property
     def clean(self):
@@ -39,6 +46,7 @@ class Arguments:
                f'{self.approximate_benchmark = }\n' \
                f'{self.num_samples = }\n' \
                f'{self.wce = }\n' \
+               f'{self.strategy = }\n' \
                f'{self.clean = }\n' \
 
 
@@ -64,6 +72,10 @@ class Arguments:
                                type=str,
                                default=None,
                                help='the-desired-worst-case-error-metric')
+        my_parser.add_argument('--strategy', '-strategy',
+                               type=str,
+                               default=MONOTONIC,
+                               help='the-solver-strategy-to-find-wce')
         my_parser.add_argument('--clean',
                                type=bool,
                                default=False)
