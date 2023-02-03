@@ -23,21 +23,21 @@
 
 
 -- Running command `
-        read_verilog input/ver/mul_i12_o12.v
+        read_verilog input/ver/sad_i10_o3.v
         synth -flatten
         opt
         opt_clean -purge
         abc -g AND,OR
-        write_verilog -noattr output/ver/mul_i12_o12.v
+        write_verilog -noattr output/ver/sad_i10_o3.v
         abc -g NAND;
         aigmap;
         opt;
         opt_clean -purge;
-        write_aiger output/aig/mul_i12_o12.aig;
+        write_aiger output/aig/sad_i10_o3.aig;
         ' --
 
-1. Executing Verilog-2005 frontend: input/ver/mul_i12_o12.v
-Parsing Verilog input from `input/ver/mul_i12_o12.v' to AST representation.
+1. Executing Verilog-2005 frontend: input/ver/sad_i10_o3.v
+Parsing Verilog input from `input/ver/sad_i10_o3.v' to AST representation.
 Generating RTLIL representation for module `\top'.
 Successfully finished Verilog frontend.
 
@@ -90,7 +90,7 @@ Optimizing module top.
 
 2.5. Executing OPT_CLEAN pass (remove unused cells and wires).
 Finding unused cells or wires in module \top..
-Removed 0 unused cells and 225 unused wires.
+Removed 0 unused cells and 73 unused wires.
 <suppressed ~1 debug messages>
 
 2.6. Executing CHECK pass (checking for obvious problems).
@@ -104,8 +104,8 @@ Optimizing module top.
 
 2.7.2. Executing OPT_MERGE pass (detect identical cells).
 Finding identical cells in module `\top'.
-<suppressed ~168 debug messages>
-Removed a total of 56 cells.
+<suppressed ~72 debug messages>
+Removed a total of 24 cells.
 
 2.7.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
 Running muxtree optimizer on module \top..
@@ -125,7 +125,7 @@ Removed a total of 0 cells.
 
 2.7.7. Executing OPT_CLEAN pass (remove unused cells and wires).
 Finding unused cells or wires in module \top..
-Removed 0 unused cells and 56 unused wires.
+Removed 0 unused cells and 24 unused wires.
 <suppressed ~1 debug messages>
 
 2.7.8. Executing OPT_EXPR pass (perform const folding).
@@ -358,10 +358,10 @@ Generating RTLIL representation for module `\_90_lut'.
 Successfully finished Verilog frontend.
 
 2.21.2. Continuing TECHMAP pass.
-Using extmapper simplemap for cells of type $and.
 Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $and.
 No more expansions possible.
-<suppressed ~501 debug messages>
+<suppressed ~214 debug messages>
 
 2.22. Executing OPT pass (performing simple optimizations).
 
@@ -382,7 +382,7 @@ Finding unused cells or wires in module \top..
 2.23. Executing ABC pass (technology mapping using ABC).
 
 2.23.1. Extracting gate netlist of module `\top' to `<abc-temp-dir>/input.blif'..
-Extracted 434 gates and 446 wires to a netlist network with 12 inputs and 12 outputs.
+Extracted 147 gates and 157 wires to a netlist network with 10 inputs and 3 outputs.
 
 2.23.1.1. Executing ABC.
 Running ABC command: <yosys-exe-dir>/yosys-abc -s -f <abc-temp-dir>/abc.script 2>&1
@@ -397,17 +397,19 @@ ABC: + map
 ABC: + write_blif <abc-temp-dir>/output.blif 
 
 2.23.1.2. Re-integrating ABC results.
-ABC RESULTS:               AND cells:       57
-ABC RESULTS:            ANDNOT cells:       25
-ABC RESULTS:              NAND cells:       14
-ABC RESULTS:               NOR cells:        7
-ABC RESULTS:                OR cells:       25
-ABC RESULTS:             ORNOT cells:        4
-ABC RESULTS:              XNOR cells:        9
-ABC RESULTS:               XOR cells:       37
-ABC RESULTS:        internal signals:      422
-ABC RESULTS:           input signals:       12
-ABC RESULTS:          output signals:       12
+ABC RESULTS:               AND cells:        3
+ABC RESULTS:            ANDNOT cells:       19
+ABC RESULTS:               MUX cells:        5
+ABC RESULTS:              NAND cells:        1
+ABC RESULTS:               NOR cells:        1
+ABC RESULTS:               NOT cells:        1
+ABC RESULTS:                OR cells:        4
+ABC RESULTS:             ORNOT cells:        6
+ABC RESULTS:              XNOR cells:        3
+ABC RESULTS:               XOR cells:        7
+ABC RESULTS:        internal signals:      144
+ABC RESULTS:           input signals:       10
+ABC RESULTS:          output signals:        3
 Removing temp directory.
 
 2.24. Executing OPT pass (performing simple optimizations).
@@ -423,8 +425,8 @@ Removed a total of 0 cells.
 
 2.24.4. Executing OPT_CLEAN pass (remove unused cells and wires).
 Finding unused cells or wires in module \top..
-Removed 0 unused cells and 446 unused wires.
-<suppressed ~214 debug messages>
+Removed 0 unused cells and 157 unused wires.
+<suppressed ~71 debug messages>
 
 2.24.5. Finished fast OPT passes.
 
@@ -441,22 +443,24 @@ Removed 0 unused modules.
 
 === top ===
 
-   Number of wires:                201
-   Number of wire bits:            201
-   Number of public wires:          35
-   Number of public wire bits:      35
+   Number of wires:                 62
+   Number of wire bits:             62
+   Number of public wires:          15
+   Number of public wire bits:      15
    Number of memories:               0
    Number of memory bits:            0
    Number of processes:              0
-   Number of cells:                178
-     $_ANDNOT_                      25
-     $_AND_                         57
-     $_NAND_                        14
-     $_NOR_                          7
-     $_ORNOT_                        4
-     $_OR_                          25
-     $_XNOR_                         9
-     $_XOR_                         37
+   Number of cells:                 50
+     $_ANDNOT_                      19
+     $_AND_                          3
+     $_MUX_                          5
+     $_NAND_                         1
+     $_NOR_                          1
+     $_NOT_                          1
+     $_ORNOT_                        6
+     $_OR_                           4
+     $_XNOR_                         3
+     $_XOR_                          7
 
 2.27. Executing CHECK pass (checking for obvious problems).
 Checking module top...
@@ -497,13 +501,13 @@ Optimizing module top.
 
 4. Executing OPT_CLEAN pass (remove unused cells and wires).
 Finding unused cells or wires in module \top..
-Removed 0 unused cells and 11 unused wires.
-<suppressed ~11 debug messages>
+Removed 0 unused cells and 2 unused wires.
+<suppressed ~2 debug messages>
 
 5. Executing ABC pass (technology mapping using ABC).
 
 5.1. Extracting gate netlist of module `\top' to `<abc-temp-dir>/input.blif'..
-Extracted 178 gates and 190 wires to a netlist network with 12 inputs and 12 outputs.
+Extracted 50 gates and 60 wires to a netlist network with 10 inputs and 3 outputs.
 
 5.1.1. Executing ABC.
 Running ABC command: <yosys-exe-dir>/yosys-abc -s -f <abc-temp-dir>/abc.script 2>&1
@@ -526,12 +530,12 @@ ABC: + &put
 ABC: + write_blif <abc-temp-dir>/output.blif 
 
 5.1.2. Re-integrating ABC results.
-ABC RESULTS:               AND cells:      162
-ABC RESULTS:               NOT cells:       66
-ABC RESULTS:                OR cells:      133
-ABC RESULTS:        internal signals:      166
-ABC RESULTS:           input signals:       12
-ABC RESULTS:          output signals:       12
+ABC RESULTS:               AND cells:       52
+ABC RESULTS:               NOT cells:       21
+ABC RESULTS:                OR cells:       50
+ABC RESULTS:        internal signals:       47
+ABC RESULTS:           input signals:       10
+ABC RESULTS:          output signals:        3
 Removing temp directory.
 
 6. Executing Verilog backend.
@@ -540,7 +544,7 @@ Dumping module `\top'.
 7. Executing ABC pass (technology mapping using ABC).
 
 7.1. Extracting gate netlist of module `\top' to `<abc-temp-dir>/input.blif'..
-Extracted 361 gates and 373 wires to a netlist network with 12 inputs and 12 outputs.
+Extracted 123 gates and 133 wires to a netlist network with 10 inputs and 3 outputs.
 
 7.1.1. Executing ABC.
 Running ABC command: <yosys-exe-dir>/yosys-abc -s -f <abc-temp-dir>/abc.script 2>&1
@@ -563,25 +567,25 @@ ABC: + &put
 ABC: + write_blif <abc-temp-dir>/output.blif 
 
 7.1.2. Re-integrating ABC results.
-ABC RESULTS:              NAND cells:      224
-ABC RESULTS:               NOT cells:      110
-ABC RESULTS:        internal signals:      349
-ABC RESULTS:           input signals:       12
-ABC RESULTS:          output signals:       12
+ABC RESULTS:              NAND cells:       69
+ABC RESULTS:               NOT cells:       33
+ABC RESULTS:        internal signals:      120
+ABC RESULTS:           input signals:       10
+ABC RESULTS:          output signals:        3
 Removing temp directory.
 
 8. Executing AIGMAP pass (map logic to AIG).
-Module top: replaced 224 cells with 448 new cells, skipped 110 cells.
+Module top: replaced 69 cells with 138 new cells, skipped 33 cells.
   replaced 1 cell types:
-     224 $_NAND_
+      69 $_NAND_
   not replaced 1 cell types:
-     110 $_NOT_
+      33 $_NOT_
 
 9. Executing OPT pass (performing simple optimizations).
 
 9.1. Executing OPT_EXPR pass (perform const folding).
 Optimizing module top.
-<suppressed ~110 debug messages>
+<suppressed ~23 debug messages>
 
 9.2. Executing OPT_MERGE pass (detect identical cells).
 Finding identical cells in module `\top'.
@@ -605,8 +609,8 @@ Removed a total of 0 cells.
 
 9.7. Executing OPT_CLEAN pass (remove unused cells and wires).
 Finding unused cells or wires in module \top..
-Removed 14 unused cells and 911 unused wires.
-<suppressed ~15 debug messages>
+Removed 6 unused cells and 291 unused wires.
+<suppressed ~7 debug messages>
 
 9.8. Executing OPT_EXPR pass (perform const folding).
 Optimizing module top.
@@ -642,6 +646,6 @@ Finding unused cells or wires in module \top..
 
 11. Executing AIGER backend.
 
-End of script. Logfile hash: a6858e9282, CPU: user 0.38s system 0.00s, MEM: 24.09 MB peak
+End of script. Logfile hash: 715bc2cccd, CPU: user 0.13s system 0.00s, MEM: 24.11 MB peak
 Yosys 0.9+4052 (git sha1 a5adb007, gcc 9.3.0-17ubuntu1~20.04 -fPIC -Os)
-Time spent: 28% 18x opt_expr (0 sec), 28% 3x abc (0 sec), ...
+Time spent: 48% 3x abc (0 sec), 19% 18x opt_expr (0 sec), ...

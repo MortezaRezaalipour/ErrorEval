@@ -6,7 +6,7 @@ This project contains three translators for circuit representation in different 
 
    Takes in a Verilog in any format (structural, behavioral, etc) and it outputs a Gate-Level limited Verilog (_clean Verilog_) representation which is funcionally equivalent to the input
    
-  | ![v2v](https://user-images.githubusercontent.com/71635528/216324115-2f25124e-fa2c-4668-b76a-2a3c45fa6c56.png) |
+  | ![v2v](https://user-images.githubusercontent.com/71635528/216324115-2f25124e-fa2c-4668-b76a-2a3c45fa6c56.png |
   |:--:|
   | *An example of Verilog to Verilog translator on an m-bit Absolute Difference circuit* |
 
