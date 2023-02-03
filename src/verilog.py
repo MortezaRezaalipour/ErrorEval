@@ -47,6 +47,9 @@ class Verilog:
         self.__sample_results = None
         self.__samples = samples
 
+        self.synthesize_to_gate_level()
+        self.unwrap_variables()
+
     @property
     def name(self):
         return self.__circuit_name
@@ -338,7 +341,8 @@ class Verilog:
         self.set_sample_results(self.import_results())
 
     def export_circuit(self):
-        pass
+        self.synthesize_to_gate_level()
+        self.unwrap_variables()
 
     def __repr__(self):
         return f'An object of class Verilog\n' \

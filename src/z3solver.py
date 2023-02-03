@@ -359,6 +359,11 @@ class Z3solver:
                 f"stats['jumps'] = []\n"
         return stats
 
+    def express_bisection_while_loop(self):
+        loop = ''
+
+
+
     def express_monotonic_while_loop(self):
         loop = ''
 
@@ -436,7 +441,9 @@ class Z3solver:
         pass
 
     def express_bisection_strategy(self):
-        pass
+        bisection_strategy = ''
+        bisection_strategy += self.declare_stats()
+        # bisection_strategy +=
 
     def export_z3pyscript(self):
         with open(self.out_path, 'w') as z:

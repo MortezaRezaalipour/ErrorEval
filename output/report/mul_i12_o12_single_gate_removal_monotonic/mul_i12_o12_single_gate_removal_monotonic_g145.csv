@@ -1,7 +1,0 @@
-Experiment,qor-evaluation
-WCE,16
-Total Runtime,0.7096498012542725
-SAT Runtime,0.030536413192749023
-UNSAT Runtime,0.6791133880615234
-Number of SAT calls,1
-Number of UNSAT calls,1
