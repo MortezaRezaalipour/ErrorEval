@@ -9,7 +9,6 @@ requirements:
 	python3 -m pip install --upgrade pip
 	$(BIN)/pip install --upgrade -r requirements.txt
 setup:
-	sudo apt-get install virtualenv
 	$(PY) -m venv $(VENV)
 
 clean:
