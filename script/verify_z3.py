@@ -1,4 +1,3 @@
-
 from numpy import random
 import numpy as np
 from src.argument import Arguments
@@ -14,7 +13,6 @@ def main():
 
     # clean and prepare:
 
-
     # 1) create testbench and samples
     verilog_obj = Verilog(args.benchmark_name)
     print(f'{verilog_obj = }')
@@ -28,7 +26,6 @@ def main():
     print(f'{graph_obj = }')
 
     graph_obj.export_graph()
-
 
     my_max = 2 ** verilog_obj.num_inputs - 1
     if 2 ** verilog_obj.num_inputs < args.num_samples:

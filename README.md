@@ -102,41 +102,82 @@ later...
 
 ## How to use:
 
+### Benchmarks
+
+1. Verilog:
+
+    Circuits expressed in Verilog are the primary inputs to the framework and are located at **main/input/ver** directory
+
+2. GraphViz:
+
+    Circuits expressed in GraphViz (gv) format can serve as both input and output files, depending on the script that is launched.
+
+3. Python:
+    
+    Similar to GraphViz files, circuits expressed in Z3py (py) format can serve as both input and output files, depending on the script that is launched.
+
+### Launching scripts
 From the **main/** directory and launch the desired script:
 
 1) **Verilog to Verilog:**
 
-`$ python3 scripts/v2v.py benchmark-name`
+`$ python3 script/v2v.py benchmark-name`
+
+- _example: assuming that *abs_diff_i4_o3.v* is available at *input/ver* directory_
+
+    `$ python script/v2v.py abs_diff_i4_o3.v`
 
 2) **Verilog to GraphViz**
 
-`$ python3 scripts/v2gv.py benchmark-name`
+`$ python3 script/v2gv.py benchmark-name`
 
+- _example: assuming that a clean Verilog of *abs_diff_i4_o3.v* is available at *output/ver* directory_
+
+    `$ python script/v2v.py abs_diff_i4_o3.v`
 
 3) **GraphViz to z3py**
 
-`$ python3 scripts/gv2z3.py benchmark-name -s num-of-mc-samples`
+`$ python3 script/gv2z3.py benchmark-name -s num-of-mc-samples`
+
+- _example: assuming that *abs_diff_i4_o3.gv* is available at *output/gv* directory_
+
+    `$ python script/gv2z3.py abs_diff_i4_o3.gv`
 
 4) **Verilog to Testbench**
 
-`$ python3 scripts/v2tb.py benchmark-name -s num-of-mc-samples`
+`$ python3 script/v2tb.py benchmark-name -s num-of-mc-samples`
+
+- _example: assuming that *abs_diff_i4_o3.v* is available at *input/ver* directory, and the number of desired samples is 100_
+
+    `$ python3 script/v2tb.py abs_diff_i4_o3.v -s 100`
 
 5) **Verify z3py representation**
 
-`$ python3 scripts/verify_z3.py benchmark-name`
+`$ python3 script/verify_z3.py benchmark-name -s num-of-mc-samples`
+
+- _example: assuming that *abs_diff_i4_o3.v* is available at *input/ver* directory, and the number of desired samples is 100_
+
+    `$ python3 script/verify_z3.py abs_diff_i4_o3.v -s 100`
 
 6) **Evaluate WCE**
 
-`$ python3 scripts/evaluate_wce.py exact-circuit-name -app approximate-circuit-name`
+`$ python3 script/evaluate_wce.py exact-circuit-name -app approximate-circuit-name`
 
-the csv report file is generated in the "output/report/" directory. 
+the csv report file is generated in the "output/report/" directory.
+
+- _example: assuming that *abs_diff_i4_o3.v* (the exact circuit) and *abs_diff_i4_o3_app1.v* (the approximate circuit) are available at *input/ver* directory:
+    
+    `$ python3 script/evaluate_wce.py abs_diff_i4_o3.v -app abs_diff_i4_o3_app1.v`
 
 7) **Label gates**
 
-`python3 scripts/label_gates.py benchmark-name`
+`python3 script/label_gates.py benchmark-name`
 
-the csv report files are generated in the "output/report/benchmark-name/" directory.
+the csv report files are generated in the *output/report/benchmark-name/* directory.
 
+- _example: assuming that *abs_diff_i4_o3.v* is available at *input/ver* directory:
+
+    `python3 script/label_gates.py abs_diff_i4_o3.v`
 
 ## NOTE:
 
