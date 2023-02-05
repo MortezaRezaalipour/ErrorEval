@@ -225,6 +225,7 @@ class Z3solver:
 
     def convert_gv_to_z3pyscript_maxerror_qor(self, strategy: str = DEFAULT_STRATEGY):
 
+        print(f'{strategy = }')
         self.set_experiment(QOR)
         self.set_strategy(strategy)
         folder, extension = OUTPUT_PATH['report']

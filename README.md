@@ -48,10 +48,11 @@ Takes in a _clean Verilog_ converts it into a graph representation in GraphViz f
    
 6. **Evaluate Worst-Case-Error(WCE) of an input circuit**:
 
-   
    Takes in an exact and approximate circuit in _clean Verilog_ form and reports its WCE
    
-   
+    |<img src="readme_img/evaluate_wce.png" width=50% height=50%>|
+    |:--:|
+    | *The flow diagram of evaluate_wce.py script* |   
    
 7. **Labeling all gates of an input circuit**
 
