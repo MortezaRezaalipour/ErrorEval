@@ -118,11 +118,6 @@ class Z3solver:
         self.__pyscript_files_for_labeling.append(pyscript_file)
 
     # TODO
-    # Deprecated
-    #
-    # def append_z3pyscript(self, that_script):
-    #     self.__z3pyscript = f'{self.z3pyscript}\n' \
-    #                         f'{that_script}'
 
     @property
     def z3string(self):
@@ -225,7 +220,7 @@ class Z3solver:
 
     def convert_gv_to_z3pyscript_maxerror_qor(self, strategy: str = DEFAULT_STRATEGY):
 
-        print(f'{strategy = }')
+
         self.set_experiment(QOR)
         self.set_strategy(strategy)
         folder, extension = OUTPUT_PATH['report']
@@ -309,6 +304,7 @@ class Z3solver:
 
             self.export_z3pyscript()
 
+
     def convert_gv_to_z3pyscript_xpat(self):
         pass
 
@@ -359,6 +355,46 @@ class Z3solver:
                 f"stats['unsat_runtime'] = 0.0\n" \
                 f"stats['jumps'] = []\n"
         return stats
+
+    def express_mc_while_loop(self):
+        loop = ''
+        loop += f's=Solver()\n' \
+                f'start_whole = time.time()\n' \
+
+
+        for sample in self.samples:
+            loop += f's.push()\n' \
+                    f's.add(f_error(exact_out, approx_out) == z3_abs(exact_out - approx_out))\n' \
+                    f'{self.express_push_input_sample(sample)}' \
+                    f'response=s.check()\n' \
+                    f'returned_model = s.model()\n' \
+                    f'returned_value = abs(int(returned_model[f_error].else_value().as_long()))\n' \
+                    f'returned_value_reval = abs(int(returned_model.evaluate(f_error(exact_out, approx_out)).as_long()))\n' \
+                    f'if returned_value == returned_value_reval:\n' \
+                    f"{TAB}print(f'double-check is passed!')\n" \
+                    f"else:\n" \
+                    f"{TAB}print(f'ERROR!!! double-check failed! exiting...')\n" \
+                    f"{TAB}exit()\n" \
+                    f"if returned_value > stats['wce']:\n" \
+                    f"{TAB}stats['wce'] = returned_value\n" \
+                    f"s.pop()\n" \
+                    f"\n" \
+                    f""
+        loop += self.express_stats()
+        return loop
+
+    def express_push_input_sample(self, sample: int):
+        sample_expression = ''
+        s_expression = [True if i == '1' else False for i in list(f'{sample:0{self.graph.num_inputs}b}')]
+        s_expression.reverse()
+        sample_expression += f's.add('
+        for idx, e in enumerate(s_expression):
+            if idx == len(s_expression) - 1:
+                sample_expression += f'{self.graph.input_dict[idx]}=={e})\n'
+            else:
+                sample_expression += f'{self.graph.input_dict[idx]}=={e}, '
+
+        return sample_expression
 
     def express_bisection_while_loop(self):
         loop = ''
@@ -427,7 +463,7 @@ class Z3solver:
                   f"{TAB}{TAB}{TAB}exit()\n" \
                   f"{TAB}{TAB}if upper_bound - lower_bound <= 1:\n" \
                   f"{TAB}{TAB}{TAB}foundWCE = True\n" \
-                  f"{TAB}{TAB}{TAB}stats['wce'] = stats['et']\n" \
+                  f"{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n" \
                   f"{TAB}{TAB}else:\n" \
                   f"{TAB}{TAB}{TAB}lower_bound = stats['et']\n" \
                   f"{TAB}{TAB}stats['num_sats'] += 1\n" \
@@ -472,9 +508,7 @@ class Z3solver:
                     f"{TAB}{TAB}{TAB}upper_bound = stats['et']\n" \
                     f"{TAB}{TAB}stats['num_unsats'] += 1\n" \
                     f"{TAB}{TAB}stats['unsat_runtime'] += (end_iteration - start_iteration)\n" \
-                    f"" \
-                    f"" \
-                    f""
+                    f"{TAB}s.pop()\n"
         return if_unsat
 
     def express_monotonic_while_loop_unsat(self):
@@ -486,7 +520,9 @@ class Z3solver:
                     f"{TAB}{TAB}foundWCE = True\n" \
                     f"{TAB}{TAB}stats['num_unsats'] += 1\n" \
                     f"{TAB}{TAB}stats['unsat_runtime'] += (end_iteration - start_iteration)\n" \
-                    f"{TAB}{TAB}stats['wce'] = stats['et']\n"
+                    f"{TAB}{TAB}stats['wce'] = stats['et']\n" \
+                    f"{TAB}s.pop()\n" \
+
         return if_unsat
 
     def express_stats(self):
@@ -495,13 +531,14 @@ class Z3solver:
                 f"with open('{self.z3_report}', 'w') as f:\n" \
                 f"{TAB}csvwriter = csv.writer(f)\n" \
                 f"{TAB}header = ['field', 'value']\n" \
-                f"{TAB}csvwriter.writerow(['Experiment', 'qor-evaluation'])\n" \
+                f"{TAB}csvwriter.writerow(['Experiment', '{self.experiment}'])\n" \
                 f"{TAB}csvwriter.writerow(['WCE', stats['wce']])\n" \
                 f"{TAB}csvwriter.writerow(['Total Runtime', stats['sat_runtime'] + stats['unsat_runtime']])\n" \
                 f"{TAB}csvwriter.writerow(['SAT Runtime', stats['sat_runtime']])\n" \
                 f"{TAB}csvwriter.writerow(['UNSAT Runtime', stats['unsat_runtime']])\n" \
                 f"{TAB}csvwriter.writerow(['Number of SAT calls', stats['num_sats']])\n" \
-                f"{TAB}csvwriter.writerow(['Number of UNSAT calls', stats['num_unsats']])\n"
+                f"{TAB}csvwriter.writerow(['Number of UNSAT calls', stats['num_unsats']])\n" \
+                f"{TAB}csvwriter.writerow(['Jumps', stats['jumps']])\n"
         return stats
 
     def express_monotonic_strategy(self):
@@ -511,7 +548,10 @@ class Z3solver:
         return monotonic_strategy
 
     def express_mc_strategy(self):
-        pass
+        mc_strategy = ''
+        mc_strategy += self.declare_stats()
+        mc_strategy += self.express_mc_while_loop()
+        return mc_strategy
 
     def express_bisection_strategy(self):
         bisection_strategy = ''

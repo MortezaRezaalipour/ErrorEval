@@ -1,0 +1,133 @@
+digraph circuit{
+	node [style = filled, fillcolor = white,shape=rect, fontname=geneva]
+	g0 [label="in0\nw",shape=circle,fillcolor=white]
+	g1 [label="in1\nw",shape=circle,fillcolor=white]
+	g2 [label="in2\nw",shape=circle,fillcolor=white]
+	g3 [label="in3\nw",shape=circle,fillcolor=white]
+	g4 [label="in4\nw",shape=circle,fillcolor=white]
+	g5 [label="in5\nw",shape=circle,fillcolor=white]
+	g6 [label="in6\nw",shape=circle,fillcolor=white]
+	g7 [label="in7\nw",shape=circle,fillcolor=white]
+	g8 [label="in8\nw",shape=circle,fillcolor=white]
+	g9 [label="in9\nw",shape=circle,fillcolor=white]
+	g10 [label="in10\nw",shape=circle,fillcolor=white]
+	g11 [label="in11\nw",shape=circle,fillcolor=white]
+	g12 [label="in12\nw",shape=circle,fillcolor=white]
+	g13 [label="in13\nw",shape=circle,fillcolor=white]
+	g14 [label="in14\nw",shape=circle,fillcolor=white]
+	g15 [label="in15\nw",shape=circle,fillcolor=white]
+	g16 [label="F",shape=circle,fillcolor=white]
+	g17 [label="F",shape=circle,fillcolor=white]
+	g18 [label="F",shape=circle,fillcolor=white]
+	g19 [label="F",shape=circle,fillcolor=white]
+	g20 [label="F",shape=circle,fillcolor=white]
+	g21 [label="F",shape=circle,fillcolor=white]
+	g22 [label="F",shape=circle,fillcolor=white]
+	g23 [label="F",shape=circle,fillcolor=white]
+	g24 [label="or\nw",fillcolor=white]
+	g25 [label="and\nw",fillcolor=white]
+	g26 [label="and\nw",fillcolor=white]
+	g27 [label="and\nw",fillcolor=white]
+	g28 [label="or\nw",fillcolor=white]
+	g29 [label="or\nw",fillcolor=white]
+	g30 [label="and\nw",fillcolor=white]
+	g31 [label="and\nw",fillcolor=white]
+	g32 [label="or\nw",fillcolor=white]
+	g33 [label="and\nw",fillcolor=white]
+	g34 [label="or\nw",fillcolor=white]
+	g35 [label="or\nw",fillcolor=white]
+	g36 [label="and\nw",fillcolor=white]
+	g37 [label="or\nw",fillcolor=white]
+	g38 [label="and\nw",fillcolor=white]
+	g39 [label="and\nw",fillcolor=white]
+	g40 [label="and\nw",fillcolor=white]
+	g41 [label="or\nw",fillcolor=white]
+	g42 [label="or\nw",fillcolor=white]
+	g43 [label="or\nw",fillcolor=white]
+	g44 [label="and\nw",fillcolor=white]
+	g45 [label="or\nw",fillcolor=white]
+	g46 [label="and\nw",fillcolor=white]
+	g47 [label="and\nw",fillcolor=white]
+	g48 [label="or\nw",fillcolor=white]
+	g49 [label="or\nw",fillcolor=white]
+	g50 [label="and\nw",fillcolor=white]
+	g51 [label="and\nw",fillcolor=white]
+	g52 [label="or\nw",fillcolor=white]
+	g53 [label="out0\nw",shape=doublecircle,fillcolor=white]
+	g54 [label="out1\nw",shape=doublecircle,fillcolor=white]
+	g55 [label="out2\nw",shape=doublecircle,fillcolor=white]
+	g56 [label="out3\nw",shape=doublecircle,fillcolor=white]
+	g57 [label="out4\nw",shape=doublecircle,fillcolor=white]
+	g58 [label="out5\nw",shape=doublecircle,fillcolor=white]
+	g59 [label="out6\nw",shape=doublecircle,fillcolor=white]
+	g60 [label="out7\nw",shape=doublecircle,fillcolor=white]
+	g61 [label="out8\nw",shape=doublecircle,fillcolor=white]
+	edge [fontname=Geneva,fontcolor=forestgreen]
+	g0->g49
+	g0->g51
+	g1->g45
+	g1->g47
+	g2->g40
+	g2->g43
+	g3->g36
+	g3->g37
+	g4->g33
+	g4->g35
+	g5->g31
+	g6->g24
+	g6->g27
+	g7->g26
+	g8->g50
+	g9->g45
+	g9->g47
+	g10->g40
+	g10->g43
+	g11->g36
+	g11->g37
+	g12->g33
+	g12->g35
+	g13->g29
+	g13->g30
+	g14->g24
+	g14->g27
+	g15->g25
+	g16->g61
+	g17->g60
+	g18->g59
+	g19->g58
+	g20->g57
+	g21->g56
+	g22->g55
+	g23->g54
+	g24->g25
+	g25->g26
+	g26->g28
+	g27->g28
+	g28->g29
+	g28->g30
+	g29->g31
+	g30->g32
+	g31->g32
+	g32->g34
+	g33->g34
+	g34->g38
+	g35->g39
+	g36->g42
+	g37->g38
+	g38->g39
+	g39->g41
+	g40->g41
+	g41->g42
+	g42->g44
+	g43->g44
+	g44->g46
+	g45->g46
+	g46->g48
+	g47->g48
+	g48->g49
+	g48->g51
+	g49->g50
+	g50->g52
+	g51->g52
+	g52->g53
+}

@@ -13,6 +13,7 @@ class Arguments:
         self.__mc_samples = tmp_args.samples
         self.__wce = tmp_args.wce
         self.__strategy = tmp_args.strategy
+        # self.__approach = tmp_args.approach
         self.__clean = tmp_args.clean
 
     @property
@@ -35,6 +36,9 @@ class Arguments:
     def strategy(self):
         return self.__strategy
 
+    # @property
+    # def approach(self):
+    #     return self.__approach
 
     @property
     def clean(self):
@@ -76,6 +80,10 @@ class Arguments:
                                type=str,
                                default=MONOTONIC,
                                help='the-solver-strategy-to-find-wce')
+        # my_parser.add_argument('--approach', '-a',
+        #                        type=str,
+        #                        default='exact',
+        #                        help='exact or monte carlo')
         my_parser.add_argument('--clean',
                                type=bool,
                                default=False)

@@ -1,0 +1,706 @@
+digraph circuit{
+	node [style = filled, fillcolor = white,shape=rect, fontname=geneva]
+	g0 [label="in0\nw",shape=circle,fillcolor=white]
+	g1 [label="in1\nw",shape=circle,fillcolor=white]
+	g2 [label="in2\nw",shape=circle,fillcolor=white]
+	g3 [label="in3\nw",shape=circle,fillcolor=white]
+	g4 [label="in4\nw",shape=circle,fillcolor=white]
+	g5 [label="in5\nw",shape=circle,fillcolor=white]
+	g6 [label="in6\nw",shape=circle,fillcolor=white]
+	g7 [label="in7\nw",shape=circle,fillcolor=white]
+	g8 [label="in8\nw",shape=circle,fillcolor=white]
+	g9 [label="in9\nw",shape=circle,fillcolor=white]
+	g10 [label="in10\nw",shape=circle,fillcolor=white]
+	g11 [label="in11\nw",shape=circle,fillcolor=white]
+	g12 [label="F",shape=circle,fillcolor=white]
+	g13 [label="F",shape=circle,fillcolor=white]
+	g14 [label="F",shape=circle,fillcolor=white]
+	g15 [label="not\nw",fillcolor=white]
+	g16 [label="not\nw",fillcolor=white]
+	g17 [label="not\nw",fillcolor=white]
+	g18 [label="not\nw",fillcolor=white]
+	g19 [label="or\nw",fillcolor=white]
+	g20 [label="and\nw",fillcolor=white]
+	g21 [label="not\nw",fillcolor=white]
+	g22 [label="and\nw",fillcolor=white]
+	g23 [label="and\nw",fillcolor=white]
+	g24 [label="not\nw",fillcolor=white]
+	g25 [label="and\nw",fillcolor=white]
+	g26 [label="or\nw",fillcolor=white]
+	g27 [label="or\nw",fillcolor=white]
+	g28 [label="not\nw",fillcolor=white]
+	g29 [label="or\nw",fillcolor=white]
+	g30 [label="and\nw",fillcolor=white]
+	g31 [label="not\nw",fillcolor=white]
+	g32 [label="and\nw",fillcolor=white]
+	g33 [label="not\nw",fillcolor=white]
+	g34 [label="and\nw",fillcolor=white]
+	g35 [label="or\nw",fillcolor=white]
+	g36 [label="not\nw",fillcolor=white]
+	g37 [label="or\nw",fillcolor=white]
+	g38 [label="and\nw",fillcolor=white]
+	g39 [label="not\nw",fillcolor=white]
+	g40 [label="and\nw",fillcolor=white]
+	g41 [label="or\nw",fillcolor=white]
+	g42 [label="or\nw",fillcolor=white]
+	g43 [label="and\nw",fillcolor=white]
+	g44 [label="not\nw",fillcolor=white]
+	g45 [label="and\nw",fillcolor=white]
+	g46 [label="or\nw",fillcolor=white]
+	g47 [label="not\nw",fillcolor=white]
+	g48 [label="or\nw",fillcolor=white]
+	g49 [label="and\nw",fillcolor=white]
+	g50 [label="and\nw",fillcolor=white]
+	g51 [label="or\nw",fillcolor=white]
+	g52 [label="and\nw",fillcolor=white]
+	g53 [label="or\nw",fillcolor=white]
+	g54 [label="not\nw",fillcolor=white]
+	g55 [label="and\nw",fillcolor=white]
+	g56 [label="not\nw",fillcolor=white]
+	g57 [label="or\nw",fillcolor=white]
+	g58 [label="and\nw",fillcolor=white]
+	g59 [label="or\nw",fillcolor=white]
+	g60 [label="and\nw",fillcolor=white]
+	g61 [label="not\nw",fillcolor=white]
+	g62 [label="and\nw",fillcolor=white]
+	g63 [label="not\nw",fillcolor=white]
+	g64 [label="and\nw",fillcolor=white]
+	g65 [label="and\nw",fillcolor=white]
+	g66 [label="or\nw",fillcolor=white]
+	g67 [label="and\nw",fillcolor=white]
+	g68 [label="not\nw",fillcolor=white]
+	g69 [label="and\nw",fillcolor=white]
+	g70 [label="and\nw",fillcolor=white]
+	g71 [label="and\nw",fillcolor=white]
+	g72 [label="not\nw",fillcolor=white]
+	g73 [label="and\nw",fillcolor=white]
+	g74 [label="and\nw",fillcolor=white]
+	g75 [label="and\nw",fillcolor=white]
+	g76 [label="not\nw",fillcolor=white]
+	g77 [label="and\nw",fillcolor=white]
+	g78 [label="and\nw",fillcolor=white]
+	g79 [label="and\nw",fillcolor=white]
+	g80 [label="and\nw",fillcolor=white]
+	g81 [label="or\nw",fillcolor=white]
+	g82 [label="and\nw",fillcolor=white]
+	g83 [label="and\nw",fillcolor=white]
+	g84 [label="and\nw",fillcolor=white]
+	g85 [label="not\nw",fillcolor=white]
+	g86 [label="and\nw",fillcolor=white]
+	g87 [label="or\nw",fillcolor=white]
+	g88 [label="and\nw",fillcolor=white]
+	g89 [label="and\nw",fillcolor=white]
+	g90 [label="or\nw",fillcolor=white]
+	g91 [label="or\nw",fillcolor=white]
+	g92 [label="not\nw",fillcolor=white]
+	g93 [label="and\nw",fillcolor=white]
+	g94 [label="or\nw",fillcolor=white]
+	g95 [label="or\nw",fillcolor=white]
+	g96 [label="not\nw",fillcolor=white]
+	g97 [label="and\nw",fillcolor=white]
+	g98 [label="and\nw",fillcolor=white]
+	g99 [label="not\nw",fillcolor=white]
+	g100 [label="and\nw",fillcolor=white]
+	g101 [label="and\nw",fillcolor=white]
+	g102 [label="and\nw",fillcolor=white]
+	g103 [label="and\nw",fillcolor=white]
+	g104 [label="and\nw",fillcolor=white]
+	g105 [label="not\nw",fillcolor=white]
+	g106 [label="and\nw",fillcolor=white]
+	g107 [label="or\nw",fillcolor=white]
+	g108 [label="or\nw",fillcolor=white]
+	g109 [label="and\nw",fillcolor=white]
+	g110 [label="and\nw",fillcolor=white]
+	g111 [label="not\nw",fillcolor=white]
+	g112 [label="and\nw",fillcolor=white]
+	g113 [label="not\nw",fillcolor=white]
+	g114 [label="and\nw",fillcolor=white]
+	g115 [label="and\nw",fillcolor=white]
+	g116 [label="and\nw",fillcolor=white]
+	g117 [label="not\nw",fillcolor=white]
+	g118 [label="and\nw",fillcolor=white]
+	g119 [label="or\nw",fillcolor=white]
+	g120 [label="and\nw",fillcolor=white]
+	g121 [label="not\nw",fillcolor=white]
+	g122 [label="and\nw",fillcolor=white]
+	g123 [label="and\nw",fillcolor=white]
+	g124 [label="not\nw",fillcolor=white]
+	g125 [label="and\nw",fillcolor=white]
+	g126 [label="or\nw",fillcolor=white]
+	g127 [label="not\nw",fillcolor=white]
+	g128 [label="not\nw",fillcolor=white]
+	g129 [label="and\nw",fillcolor=white]
+	g130 [label="not\nw",fillcolor=white]
+	g131 [label="and\nw",fillcolor=white]
+	g132 [label="and\nw",fillcolor=white]
+	g133 [label="not\nw",fillcolor=white]
+	g134 [label="and\nw",fillcolor=white]
+	g135 [label="and\nw",fillcolor=white]
+	g136 [label="or\nw",fillcolor=white]
+	g137 [label="and\nw",fillcolor=white]
+	g138 [label="not\nw",fillcolor=white]
+	g139 [label="or\nw",fillcolor=white]
+	g140 [label="and\nw",fillcolor=white]
+	g141 [label="and\nw",fillcolor=white]
+	g142 [label="or\nw",fillcolor=white]
+	g143 [label="not\nw",fillcolor=white]
+	g144 [label="and\nw",fillcolor=white]
+	g145 [label="and\nw",fillcolor=white]
+	g146 [label="and\nw",fillcolor=white]
+	g147 [label="not\nw",fillcolor=white]
+	g148 [label="and\nw",fillcolor=white]
+	g149 [label="or\nw",fillcolor=white]
+	g150 [label="and\nw",fillcolor=white]
+	g151 [label="not\nw",fillcolor=white]
+	g152 [label="and\nw",fillcolor=white]
+	g153 [label="or\nw",fillcolor=white]
+	g154 [label="and\nw",fillcolor=white]
+	g155 [label="or\nw",fillcolor=white]
+	g156 [label="not\nw",fillcolor=white]
+	g157 [label="and\nw",fillcolor=white]
+	g158 [label="or\nw",fillcolor=white]
+	g159 [label="and\nw",fillcolor=white]
+	g160 [label="or\nw",fillcolor=white]
+	g161 [label="and\nw",fillcolor=white]
+	g162 [label="and\nw",fillcolor=white]
+	g163 [label="not\nw",fillcolor=white]
+	g164 [label="and\nw",fillcolor=white]
+	g165 [label="or\nw",fillcolor=white]
+	g166 [label="and\nw",fillcolor=white]
+	g167 [label="and\nw",fillcolor=white]
+	g168 [label="not\nw",fillcolor=white]
+	g169 [label="and\nw",fillcolor=white]
+	g170 [label="or\nw",fillcolor=white]
+	g171 [label="and\nw",fillcolor=white]
+	g172 [label="not\nw",fillcolor=white]
+	g173 [label="and\nw",fillcolor=white]
+	g174 [label="not\nw",fillcolor=white]
+	g175 [label="and\nw",fillcolor=white]
+	g176 [label="and\nw",fillcolor=white]
+	g177 [label="or\nw",fillcolor=white]
+	g178 [label="and\nw",fillcolor=white]
+	g179 [label="or\nw",fillcolor=white]
+	g180 [label="and\nw",fillcolor=white]
+	g181 [label="and\nw",fillcolor=white]
+	g182 [label="not\nw",fillcolor=white]
+	g183 [label="and\nw",fillcolor=white]
+	g184 [label="or\nw",fillcolor=white]
+	g185 [label="not\nw",fillcolor=white]
+	g186 [label="or\nw",fillcolor=white]
+	g187 [label="and\nw",fillcolor=white]
+	g188 [label="and\nw",fillcolor=white]
+	g189 [label="or\nw",fillcolor=white]
+	g190 [label="and\nw",fillcolor=white]
+	g191 [label="not\nw",fillcolor=white]
+	g192 [label="and\nw",fillcolor=white]
+	g193 [label="or\nw",fillcolor=white]
+	g194 [label="and\nw",fillcolor=white]
+	g195 [label="and\nw",fillcolor=white]
+	g196 [label="and\nw",fillcolor=white]
+	g197 [label="not\nw",fillcolor=white]
+	g198 [label="and\nw",fillcolor=white]
+	g199 [label="or\nw",fillcolor=white]
+	g200 [label="or\nw",fillcolor=white]
+	g201 [label="not\nw",fillcolor=white]
+	g202 [label="or\nw",fillcolor=white]
+	g203 [label="and\nw",fillcolor=white]
+	g204 [label="and\nw",fillcolor=white]
+	g205 [label="or\nw",fillcolor=white]
+	g206 [label="not\nw",fillcolor=white]
+	g207 [label="and\nw",fillcolor=white]
+	g208 [label="and\nw",fillcolor=white]
+	g209 [label="not\nw",fillcolor=white]
+	g210 [label="and\nw",fillcolor=white]
+	g211 [label="and\nw",fillcolor=white]
+	g212 [label="or\nw",fillcolor=white]
+	g213 [label="or\nw",fillcolor=white]
+	g214 [label="not\nw",fillcolor=white]
+	g215 [label="and\nw",fillcolor=white]
+	g216 [label="or\nw",fillcolor=white]
+	g217 [label="and\nw",fillcolor=white]
+	g218 [label="not\nw",fillcolor=white]
+	g219 [label="and\nw",fillcolor=white]
+	g220 [label="or\nw",fillcolor=white]
+	g221 [label="and\nw",fillcolor=white]
+	g222 [label="or\nw",fillcolor=white]
+	g223 [label="or\nw",fillcolor=white]
+	g224 [label="and\nw",fillcolor=white]
+	g225 [label="and\nw",fillcolor=white]
+	g226 [label="or\nw",fillcolor=white]
+	g227 [label="and\nw",fillcolor=white]
+	g228 [label="not\nw",fillcolor=white]
+	g229 [label="and\nw",fillcolor=white]
+	g230 [label="or\nw",fillcolor=white]
+	g231 [label="or\nw",fillcolor=white]
+	g232 [label="not\nw",fillcolor=white]
+	g233 [label="and\nw",fillcolor=white]
+	g234 [label="or\nw",fillcolor=white]
+	g235 [label="or\nw",fillcolor=white]
+	g236 [label="and\nw",fillcolor=white]
+	g237 [label="not\nw",fillcolor=white]
+	g238 [label="and\nw",fillcolor=white]
+	g239 [label="or\nw",fillcolor=white]
+	g240 [label="and\nw",fillcolor=white]
+	g241 [label="not\nw",fillcolor=white]
+	g242 [label="and\nw",fillcolor=white]
+	g243 [label="and\nw",fillcolor=white]
+	g244 [label="and\nw",fillcolor=white]
+	g245 [label="not\nw",fillcolor=white]
+	g246 [label="or\nw",fillcolor=white]
+	g247 [label="and\nw",fillcolor=white]
+	g248 [label="and\nw",fillcolor=white]
+	g249 [label="or\nw",fillcolor=white]
+	g250 [label="and\nw",fillcolor=white]
+	g251 [label="not\nw",fillcolor=white]
+	g252 [label="and\nw",fillcolor=white]
+	g253 [label="or\nw",fillcolor=white]
+	g254 [label="out0\nw",shape=doublecircle,fillcolor=white]
+	g255 [label="out1\nw",shape=doublecircle,fillcolor=white]
+	g256 [label="out2\nw",shape=doublecircle,fillcolor=white]
+	g257 [label="out3\nw",shape=doublecircle,fillcolor=white]
+	g258 [label="out4\nw",shape=doublecircle,fillcolor=white]
+	g259 [label="out5\nw",shape=doublecircle,fillcolor=white]
+	g260 [label="out6\nw",shape=doublecircle,fillcolor=white]
+	g261 [label="out7\nw",shape=doublecircle,fillcolor=white]
+	g262 [label="out8\nw",shape=doublecircle,fillcolor=white]
+	g263 [label="out9\nw",shape=doublecircle,fillcolor=white]
+	g264 [label="out10\nw",shape=doublecircle,fillcolor=white]
+	g265 [label="out11\nw",shape=doublecircle,fillcolor=white]
+	g266 [label="out12\nw",shape=doublecircle,fillcolor=white]
+	g267 [label="out13\nw",shape=doublecircle,fillcolor=white]
+	edge [fontname=Geneva,fontcolor=forestgreen]
+	g0->g43
+	g0->g44
+	g1->g38
+	g1->g39
+	g2->g33
+	g3->g28
+	g4->g23
+	g4->g24
+	g5->g18
+	g6->g17
+	g6->g45
+	g6->g132
+	g7->g16
+	g7->g40
+	g7->g42
+	g8->g34
+	g8->g35
+	g9->g29
+	g9->g30
+	g10->g15
+	g10->g25
+	g10->g27
+	g11->g19
+	g11->g20
+	g12->g266
+	g13->g255
+	g14->g254
+	g15->g23
+	g16->g38
+	g17->g43
+	g18->g19
+	g18->g20
+	g19->g22
+	g20->g21
+	g20->g74
+	g21->g22
+	g21->g64
+	g22->g62
+	g22->g66
+	g23->g26
+	g24->g25
+	g24->g27
+	g25->g26
+	g26->g59
+	g26->g75
+	g27->g60
+	g28->g29
+	g28->g30
+	g29->g32
+	g29->g58
+	g30->g31
+	g30->g57
+	g31->g32
+	g32->g53
+	g33->g34
+	g33->g35
+	g34->g37
+	g35->g36
+	g35->g52
+	g36->g37
+	g37->g51
+	g37->g97
+	g38->g41
+	g39->g40
+	g39->g42
+	g40->g41
+	g41->g48
+	g41->g131
+	g42->g50
+	g42->g98
+	g43->g46
+	g44->g45
+	g44->g131
+	g45->g46
+	g45->g48
+	g46->g47
+	g46->g55
+	g46->g65
+	g46->g70
+	g46->g78
+	g46->g86
+	g46->g109
+	g46->g140
+	g46->g145
+	g46->g166
+	g46->g267
+	g47->g49
+	g48->g49
+	g48->g50
+	g48->g97
+	g48->g134
+	g49->g265
+	g50->g51
+	g51->g52
+	g51->g100
+	g52->g53
+	g52->g57
+	g53->g54
+	g53->g88
+	g53->g210
+	g54->g55
+	g54->g71
+	g54->g80
+	g54->g83
+	g54->g87
+	g54->g101
+	g54->g129
+	g54->g152
+	g54->g223
+	g55->g56
+	g55->g137
+	g56->g141
+	g57->g58
+	g58->g59
+	g58->g75
+	g59->g60
+	g59->g77
+	g60->g61
+	g61->g62
+	g61->g66
+	g61->g74
+	g62->g63
+	g63->g64
+	g63->g67
+	g64->g65
+	g64->g69
+	g64->g73
+	g64->g82
+	g64->g110
+	g64->g123
+	g64->g207
+	g65->g108
+	g66->g67
+	g67->g68
+	g67->g70
+	g67->g71
+	g67->g79
+	g67->g89
+	g67->g114
+	g67->g118
+	g67->g167
+	g67->g178
+	g68->g69
+	g68->g81
+	g69->g84
+	g70->g170
+	g71->g72
+	g71->g125
+	g72->g73
+	g73->g122
+	g74->g91
+	g74->g93
+	g75->g76
+	g76->g77
+	g77->g78
+	g77->g79
+	g77->g80
+	g77->g81
+	g77->g84
+	g77->g85
+	g77->g106
+	g77->g115
+	g77->g211
+	g77->g224
+	g78->g103
+	g78->g154
+	g78->g158
+	g79->g150
+	g80->g195
+	g80->g196
+	g81->g82
+	g82->g83
+	g83->g95
+	g84->g90
+	g85->g86
+	g85->g87
+	g85->g88
+	g85->g93
+	g85->g104
+	g86->g102
+	g87->g208
+	g88->g89
+	g89->g90
+	g89->g94
+	g90->g91
+	g91->g92
+	g91->g252
+	g92->g250
+	g93->g94
+	g94->g95
+	g95->g96
+	g95->g229
+	g95->g231
+	g96->g227
+	g97->g98
+	g98->g99
+	g99->g100
+	g100->g101
+	g100->g115
+	g100->g116
+	g100->g118
+	g100->g122
+	g100->g123
+	g100->g128
+	g100->g144
+	g101->g102
+	g101->g103
+	g101->g104
+	g101->g105
+	g102->g160
+	g103->g155
+	g104->g107
+	g105->g106
+	g105->g108
+	g105->g109
+	g105->g157
+	g106->g107
+	g107->g161
+	g108->g112
+	g109->g110
+	g110->g111
+	g111->g112
+	g111->g114
+	g111->g119
+	g112->g113
+	g112->g183
+	g112->g186
+	g113->g181
+	g114->g116
+	g115->g179
+	g116->g117
+	g117->g120
+	g117->g190
+	g118->g119
+	g119->g120
+	g120->g121
+	g120->g192
+	g121->g188
+	g121->g189
+	g122->g126
+	g123->g124
+	g124->g125
+	g125->g126
+	g125->g226
+	g126->g127
+	g126->g233
+	g127->g225
+	g128->g129
+	g128->g135
+	g128->g136
+	g129->g130
+	g129->g164
+	g130->g162
+	g131->g132
+	g132->g133
+	g133->g134
+	g134->g135
+	g134->g136
+	g134->g144
+	g134->g152
+	g134->g161
+	g134->g178
+	g134->g194
+	g134->g196
+	g134->g207
+	g135->g139
+	g136->g137
+	g136->g138
+	g137->g142
+	g138->g139
+	g138->g141
+	g139->g140
+	g140->g264
+	g141->g142
+	g142->g143
+	g142->g148
+	g143->g146
+	g144->g145
+	g144->g150
+	g144->g153
+	g145->g146
+	g145->g147
+	g146->g149
+	g147->g148
+	g148->g149
+	g149->g263
+	g150->g151
+	g151->g180
+	g151->g187
+	g152->g153
+	g153->g154
+	g153->g158
+	g154->g155
+	g154->g156
+	g155->g169
+	g155->g175
+	g156->g157
+	g157->g159
+	g158->g159
+	g159->g160
+	g160->g262
+	g161->g162
+	g161->g163
+	g162->g165
+	g163->g164
+	g164->g165
+	g165->g166
+	g165->g170
+	g166->g167
+	g167->g168
+	g168->g169
+	g168->g173
+	g169->g171
+	g170->g171
+	g170->g176
+	g171->g172
+	g172->g173
+	g172->g175
+	g173->g174
+	g173->g176
+	g173->g200
+	g174->g202
+	g174->g204
+	g175->g177
+	g176->g177
+	g177->g261
+	g178->g179
+	g179->g180
+	g180->g181
+	g180->g182
+	g181->g184
+	g182->g183
+	g182->g186
+	g183->g184
+	g184->g185
+	g184->g198
+	g185->g194
+	g186->g187
+	g187->g188
+	g187->g189
+	g187->g191
+	g188->g193
+	g189->g190
+	g190->g235
+	g190->g236
+	g191->g192
+	g192->g193
+	g193->g213
+	g193->g215
+	g194->g195
+	g195->g199
+	g195->g205
+	g196->g197
+	g197->g198
+	g198->g199
+	g199->g200
+	g199->g201
+	g200->g203
+	g201->g202
+	g201->g204
+	g202->g203
+	g203->g260
+	g204->g205
+	g205->g206
+	g205->g217
+	g205->g221
+	g206->g219
+	g207->g208
+	g207->g209
+	g208->g212
+	g209->g210
+	g209->g223
+	g210->g211
+	g211->g212
+	g212->g213
+	g212->g215
+	g213->g214
+	g214->g216
+	g214->g222
+	g215->g216
+	g216->g217
+	g216->g218
+	g217->g220
+	g218->g219
+	g218->g221
+	g219->g220
+	g220->g259
+	g221->g222
+	g222->g239
+	g222->g240
+	g223->g224
+	g224->g225
+	g224->g232
+	g225->g226
+	g225->g234
+	g226->g227
+	g226->g228
+	g227->g230
+	g228->g229
+	g228->g231
+	g229->g230
+	g229->g249
+	g230->g244
+	g230->g246
+	g231->g248
+	g232->g233
+	g233->g234
+	g234->g235
+	g234->g236
+	g235->g238
+	g235->g243
+	g236->g237
+	g237->g238
+	g238->g239
+	g238->g240
+	g239->g242
+	g240->g241
+	g241->g242
+	g241->g243
+	g242->g258
+	g243->g244
+	g243->g246
+	g243->g248
+	g244->g245
+	g245->g247
+	g246->g247
+	g247->g257
+	g248->g249
+	g249->g250
+	g249->g251
+	g250->g253
+	g251->g252
+	g252->g253
+	g253->g256
+}
