@@ -41,14 +41,25 @@ def main():
         rand_array = random.randint(0, my_max, size=args.num_samples)
 
     z3py_obj_qor.set_samples(rand_array)
-    z3py_obj_qor.convert_gv_to_z3pyscript_maxerror_qor(args.strategy)
 
-    print(f'evaluating the wce with {args.strategy}...')
-
+    print(f'evaluating wce with bisection...')
+    z3py_obj_qor.convert_gv_to_z3pyscript_maxerror_qor(BISECTION)
     z3py_obj_qor.export_z3pyscript()
-    # z3py_obj_qor.run_z3pyscript_qor()
+    z3py_obj_qor.run_z3pyscript_qor()
+    print(f'done!')
 
-    print(f'wce is evaluated!')
+    print(f'evaluating wce with monotonic...')
+    z3py_obj_qor.convert_gv_to_z3pyscript_maxerror_qor(MONOTONIC)
+    z3py_obj_qor.export_z3pyscript()
+    z3py_obj_qor.run_z3pyscript_qor()
+    print(f'done!')
+
+    print(f'evaluating wce with mc over {args.num_samples} samples...')
+    z3py_obj_qor.convert_gv_to_z3pyscript_maxerror_qor(MC)
+    z3py_obj_qor.export_z3pyscript()
+    z3py_obj_qor.run_z3pyscript_qor()
+    print(f'done!')
+
 
 
 if __name__ == "__main__":

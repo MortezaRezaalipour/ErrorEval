@@ -57,4 +57,19 @@ DEFAULT_STRATEGY = MONOTONIC
 # Experiments
 QOR = 'qor'
 RANDOM = 'random-pruning'
-SIGNLE = 'single_gate_removal'
+SINGLE = 'single_gate_removal'
+
+# Metrics
+WAE = 'wae'
+WRE = 'wre'
+WHD = 'whd'
+
+# CSV FILE
+EXPERIMENT = 'Experiment'
+WCE = 'WCE'
+TOTAL_RUNTIME = 'Total Runtime'
+SAT_RUNTIME = 'SAT Runtime'
+UNSAT_RUNTIME = 'UNSAT Runtime'
+N_SATS = 'Number of SAT calls'
+N_UNSATS = 'Number of UNSAT calls'
+JUMPS = 'Jumps'

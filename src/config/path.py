@@ -4,7 +4,8 @@ INPUT_PATH = {
     'aig': ('input/aig', 'aig'),
     'dot': ('input/gv', 'dot'),
     'app_ver': ('input/ver', 'v'),
-    'app_gv': ('input/gv', 'gv')
+    'app_gv': ('input/gv', 'gv'),
+    'report': ('output/report', 'csv')
 }
 OUTPUT_PATH = {
     'ver': ('output/ver', 'v'),
@@ -29,3 +30,4 @@ LOG_PATH = {
     'yosys': 'txt',
     'lsoracle': 'txt'
 }
+

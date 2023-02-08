@@ -252,7 +252,7 @@ class Z3solver:
                             approximate_output_declaration + declare_error_distance_function + strategy)
 
     def convert_gv_to_z3pyscript_maxerror_labeling(self, strategy: str = DEFAULT_STRATEGY):
-        self.set_experiment(SIGNLE)
+        self.set_experiment(SINGLE)
         self.set_strategy(strategy)
         removed_gate = []
         for key in self.graph.input_dict:

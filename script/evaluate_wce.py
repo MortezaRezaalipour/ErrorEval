@@ -30,7 +30,7 @@ def main():
 
     # 3) create a qor z3py scripts
     z3py_obj_qor = Z3solver(args.benchmark_name, args.approximate_benchmark)
-    if args.strategy is 'mc':
+    if args.strategy is MC:
         my_max = 2 ** z3py_obj_qor.graph.num_inputs - 1
         if 2 ** z3py_obj_qor.graph.num_inputs < args.num_samples:
             print(f'Exhaustive Simulation...')
