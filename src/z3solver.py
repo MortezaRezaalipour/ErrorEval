@@ -533,7 +533,7 @@ class Z3solver:
                 f"{TAB}header = ['field', 'value']\n" \
                 f"{TAB}csvwriter.writerow(['Experiment', '{self.experiment}'])\n" \
                 f"{TAB}csvwriter.writerow(['WCE', stats['wce']])\n" \
-                f"{TAB}csvwriter.writerow(['Total Runtime', stats['sat_runtime'] + stats['unsat_runtime']])\n" \
+                f"{TAB}csvwriter.writerow(['Total Runtime', end_whole - start_whole])\n" \
                 f"{TAB}csvwriter.writerow(['SAT Runtime', stats['sat_runtime']])\n" \
                 f"{TAB}csvwriter.writerow(['UNSAT Runtime', stats['unsat_runtime']])\n" \
                 f"{TAB}csvwriter.writerow(['Number of SAT calls', stats['num_sats']])\n" \

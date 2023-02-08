@@ -4,16 +4,11 @@ from src.specs import Specs
 from src.argument import Arguments
 from src.config.config import *
 
+
 def main():
-    # csv_path = 'output/report/abs_diff_i16_o9_single_gate_removal_bisection/abs_diff_i16_o9_single_gate_removal_bisection_g1.csv'
-    # my_stats = Stats(csv_path)
-
     args = Arguments.parse()
-
-    specs = Specs(args.benchmark_name, None,
-                  SINGLE, MC,
-                  None, None)
-    print(f'{specs = }')
+    print(f'{args = }')
+    specs = Specs(args.benchmark_name, args.approximate_benchmark, args.experiment, args.strategy, None, None)
 
     result = Result(specs)
 

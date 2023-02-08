@@ -13,7 +13,7 @@ class Arguments:
         self.__mc_samples = tmp_args.samples
         self.__wce = tmp_args.wce
         self.__strategy = tmp_args.strategy
-        # self.__approach = tmp_args.approach
+        self.__experiment = tmp_args.experiment
         self.__clean = tmp_args.clean
 
     @property
@@ -36,6 +36,10 @@ class Arguments:
     def strategy(self):
         return self.__strategy
 
+    @property
+    def experiment(self):
+        return self.__experiment
+
     # @property
     # def approach(self):
     #     return self.__approach
@@ -51,6 +55,7 @@ class Arguments:
                f'{self.num_samples = }\n' \
                f'{self.wce = }\n' \
                f'{self.strategy = }\n' \
+               f'{self.experiment = }\n' \
                f'{self.clean = }\n' \
 
 
@@ -74,12 +79,16 @@ class Arguments:
                                help='approximate-benchmark-name in gv/verilog format')
         my_parser.add_argument('--wce', '-metric',
                                type=str,
-                               default=None,
+                               default=WAE,
                                help='the-desired-worst-case-error-metric')
         my_parser.add_argument('--strategy', '-strategy',
                                type=str,
                                default=MONOTONIC,
                                help='the-solver-strategy-to-find-wce')
+        my_parser.add_argument('--experiment', '-e',
+                               type=str,
+                               default=SINGLE,
+                               help="the-experiment-name [SINGLE|QOR|RANDOM]")
         # my_parser.add_argument('--approach', '-a',
         #                        type=str,
         #                        default='exact',

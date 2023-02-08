@@ -71,13 +71,13 @@ class Result:
     def find_input_report_paths(self):
         input_paths = []
         folder, extension = INPUT_PATH['report']
-        if self.experiment is SINGLE:
+        if self.experiment == SINGLE:
             input_paths = self.find_relevant_csv()
-        elif self.experiment is QOR:
+        elif self.experiment == QOR:
             #TODO
             # Fix naming
-            input_paths.append(f'{folder}/{self.benchmark}_{self.experiment}_{self.strategy}.{extension}')
-        elif self.experiment is RANDOM:
+            input_paths.append(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.strategy}.{extension}')
+        elif self.experiment == RANDOM:
             pass
 
         return input_paths

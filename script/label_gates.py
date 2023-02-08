@@ -24,7 +24,7 @@ def main():
     # convert gv to z3 expression
     z3py_obj = Z3solver(args.benchmark_name)
 
-    if args.strategy is 'mc':
+    if args.strategy == MC:
         my_max = 2 ** z3py_obj.graph.num_inputs - 1
         if 2 ** z3py_obj.graph.num_inputs < args.num_samples:
             print(f'Exhaustive Simulation...')
