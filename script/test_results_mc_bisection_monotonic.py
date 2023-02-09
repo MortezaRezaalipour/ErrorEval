@@ -22,21 +22,27 @@ def main():
     result_monotonic = Result(specs_monotonic)
 
     # 3) Compare them and print TEST -> OK if they are passed!
-    print(f'{result_mc = }')
-    print(f'{result_bisection = }')
-    print(f'{result_monotonic = }')
+    # print(f'{result_mc = }')
+    # print(f'{result_bisection = }')
+    # print(f'{result_monotonic = }')
 
     assert len(result_mc.reports) == len(result_bisection.reports) and len(result_mc.reports) == len(
         result_monotonic.reports)
     print(f'TEST -> OK')
 
+    count = 0
     for idx, report in enumerate(result_mc.reports):
         if (float(report.wce) <= float(result_bisection.reports[idx].wce) == float(result_monotonic.reports[idx].wce)):
-            print(f'TEST -> OK')
+            count += 1
         else:
             print(f'ERROR!')
+            print(f'for file id{idx}')
+            print(f'{float(report.wce) = }')
+            print(f'{float(result_bisection.reports[idx].wce) = }')
+            print(f'{float(result_monotonic.reports[idx].wce) = }')
             break
-
+    if count == len(result_mc.reports):
+        print(f'TEST -> OK')
 
 if __name__ == "__main__":
     main()

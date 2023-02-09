@@ -1,5 +1,6 @@
 import os
 import re
+import natsort
 
 from typing import List
 from copy import deepcopy
@@ -61,11 +62,13 @@ class Result:
         folder, extension = INPUT_PATH['report']
         #TODO
         # Fix naming
-        cur_dir = f'{folder}/{self.benchmark}_{self.experiment}_{self.strategy}/'
+        cur_dir = f'{folder}/{self.benchmark}_{self.experiment}_{self.strategy}'
         all_csv = [f for f in os.listdir(cur_dir)]
         for f in all_csv:
             if f.endswith(extension):
                 relevant_csv.append(f'{cur_dir}/{f}')
+
+        relevant_csv = natsort.natsorted(relevant_csv) # sorting the files alphabetically in descending order
         return relevant_csv
 
     def find_input_report_paths(self):
