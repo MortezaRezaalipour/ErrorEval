@@ -13,8 +13,7 @@ def main():
 
     # read input verilog and clean it
     verilog_obj = Verilog(args.benchmark_name)
-    verilog_obj.synthesize_to_gate_level()
-    verilog_obj.unwrap_variables()
+    verilog_obj.export_circuit()
 
     # convert verilog to gv and clean it
     convert_verilog_to_gv(args.benchmark_name)

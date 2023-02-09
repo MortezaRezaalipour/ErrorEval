@@ -56,8 +56,8 @@ DEFAULT_STRATEGY = MONOTONIC
 
 # Experiments
 QOR = 'qor'
-RANDOM = 'random-pruning'
-SINGLE = 'single_gate_removal'
+RANDOM = 'random'
+SINGLE = 'labeling'
 
 # Metrics
 WAE = 'wae'
