@@ -1,13 +1,15 @@
 import numpy as np
 import os
 import copy
+from typing import *
 import networkx as nx
 from src.utils import *
 from src.graph import *
 
 
 class Z3solver:
-    def __init__(self, benchmark_name: str, approximate_benchmark_name: str = None, samples: list = []):
+    def __init__(self, benchmark_name: str, approximate_benchmark_name: str = None, samples: list = [], experiment=SINGLE,
+                 pruned_percentage=None, pruned_gates=None):
         """
 
         :param benchmark_name: the input benchmark in gv format
@@ -42,6 +44,15 @@ class Z3solver:
             self.approximate_graph.set_gate_dict(self.approximate_graph.extract_gates())
             self.approximate_graph.set_constant_dict(self.approximate_graph.extract_constants())
 
+        self.__experiment = experiment
+        self.__pruned_percentage = None
+        # TODO
+        # Later create and internal method that can generate pruned gates
+        self.__pruned_gates = None
+        if experiment == RANDOM:
+            self.__pruned_percentage = pruned_percentage
+            self.__pruned_gates = pruned_gates
+
         self.__z3_report = None
 
         self.__samples = samples
@@ -52,7 +63,6 @@ class Z3solver:
         self.__z3pyscript = None
 
         self.__strategy = None
-        self.__experiment = None
 
         self.__pyscript_files_for_labeling: list = []
 
@@ -94,12 +104,37 @@ class Z3solver:
     def set_strategy(self, strategy: str):
         self.__strategy = strategy
 
+    # TODO Deprecated
+    # @property
+    # def experiment(self):
+    #     return self.__experiment
+    # def set_experiment(self, experiment: str):
+    #     self.__experiment = experiment
+
     @property
     def experiment(self):
         return self.__experiment
 
-    def set_experiment(self, experiment: str):
+    @experiment.setter
+    def experiment(self, experiment):
+        print(f'{experiment = }')
         self.__experiment = experiment
+
+    @property
+    def pruned_percentage(self):
+        return self.__pruned_percentage
+
+    @pruned_percentage.setter
+    def pruned_percentage(self, pruned_percentage):
+        self.__pruned_percentage = pruned_percentage
+
+    @property
+    def pruned_gates(self):
+        return self.__pruned_gates
+
+    @pruned_gates.setter
+    def pruned_gates(self, pruned_gates: List[int]):
+        self.__pruned_gates = pruned_gates
 
     @property
     def z3_report(self):
@@ -220,8 +255,7 @@ class Z3solver:
 
     def convert_gv_to_z3pyscript_maxerror_qor(self, strategy: str = DEFAULT_STRATEGY):
 
-
-        self.set_experiment(QOR)
+        self.experiment = QOR
         self.set_strategy(strategy)
         folder, extension = OUTPUT_PATH['report']
         self.set_z3_report(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.strategy}.{extension}')
@@ -252,7 +286,7 @@ class Z3solver:
                             approximate_output_declaration + declare_error_distance_function + strategy)
 
     def convert_gv_to_z3pyscript_maxerror_labeling(self, strategy: str = DEFAULT_STRATEGY):
-        self.set_experiment(SINGLE)
+        self.experiment = SINGLE
         self.set_strategy(strategy)
         removed_gate = []
         for key in self.graph.input_dict:
@@ -262,48 +296,65 @@ class Z3solver:
             removed_gate = [self.graph.gate_dict[key]]
             self.create_pruned_z3pyscript(removed_gate)
 
+    def convert_gv_to_z3pyscript_maxerror_random_pruning(self, strategy: str = DEFAULT_STRATEGY):
+
+        self.experiment = RANDOM
+        self.set_strategy(strategy)
+
+        removed_gates = []
+        for idx in self.pruned_gates:
+            if idx < self.graph.num_inputs:  # remove pi
+                removed_gates.append(self.graph.input_dict[idx])
+            else:  # remove gate
+                removed_gates.append(self.graph.gate_dict[idx - self.graph.num_inputs + 1])
+        # print(f'{removed_gates}')
+        self.create_pruned_z3pyscript(removed_gates)
+
     # TODO
     # Naming problems for more than one gate removal
     def create_pruned_z3pyscript(self, gates: list):
         self.create_pruned_graph(gates)
-        for gate in gates:
-            folder, extension = OUTPUT_PATH['report']
-            folder = f'{folder}/{self.name}_{self.experiment}_{self.strategy}'
-            os.makedirs(folder, exist_ok=True)
-            self.set_z3_report(f'{folder}/{self.name}_{self.experiment}_{self.strategy}_{gate}.{extension}')
+        if self.experiment == SINGLE:
+            gate = gates[0]
+        # TODO
+        elif self.experiment == RANDOM:
+            gate = 'id0'
+        folder, extension = OUTPUT_PATH['report']
+        folder = f'{folder}/{self.name}_{self.experiment}_{self.strategy}'
+        os.makedirs(folder, exist_ok=True)
+        self.set_z3_report(f'{folder}/{self.name}_{self.experiment}_{self.strategy}_{gate}.{extension}')
 
-            folder, extension = OUTPUT_PATH['z3']
-            folder = f'{folder}/{self.name}_{self.experiment}_{self.strategy}'
-            os.makedirs(folder, exist_ok=True)
-            self.set_out_path(f'{folder}/{self.name}_{self.experiment}_{self.strategy}_{gate}.{extension}')
+        folder, extension = OUTPUT_PATH['z3']
+        folder = f'{folder}/{self.name}_{self.experiment}_{self.strategy}'
+        os.makedirs(folder, exist_ok=True)
+        self.set_out_path(f'{folder}/{self.name}_{self.experiment}_{self.strategy}_{gate}.{extension}')
 
-            self.append_pyscript_files_for_labeling(self.out_path)
+        self.append_pyscript_files_for_labeling(self.out_path)
 
-            import_string = self.create_imports()
-            abs_function = self.create_abs_function()
+        import_string = self.create_imports()
+        abs_function = self.create_abs_function()
 
-            # exact_part
-            original_circuit_declaration = self.declare_original_circuit()
-            original_circuit_expression = self.express_original_circuit()
-            original_output_declaration = self.declare_original_output()
+        # exact_part
+        original_circuit_declaration = self.declare_original_circuit()
+        original_circuit_expression = self.express_original_circuit()
+        original_output_declaration = self.declare_original_output()
 
-            approximate_circuit_declaration = self.declare_approximate_circuit()
-            approximate_circuit_expression = self.express_approximate_circuit()
-            approximate_output_declaration = self.declare_approximate_output()
+        approximate_circuit_declaration = self.declare_approximate_circuit()
+        approximate_circuit_expression = self.express_approximate_circuit()
+        approximate_output_declaration = self.declare_approximate_output()
 
-            # error distance function
-            declare_error_distance_function = self.declare_error_distance_function()
-            # strategy
+        # error distance function
+        declare_error_distance_function = self.declare_error_distance_function()
+        # strategy
 
-            strategy = self.express_strategy()
+        strategy = self.express_strategy()
 
-            self.set_z3pyscript(
-                import_string + abs_function + original_circuit_declaration + original_circuit_expression +
-                original_output_declaration + approximate_circuit_declaration + approximate_circuit_expression +
-                approximate_output_declaration + declare_error_distance_function + strategy)
+        self.set_z3pyscript(
+            import_string + abs_function + original_circuit_declaration + original_circuit_expression +
+            original_output_declaration + approximate_circuit_declaration + approximate_circuit_expression +
+            approximate_output_declaration + declare_error_distance_function + strategy)
 
-            self.export_z3pyscript()
-
+        self.export_z3pyscript()
 
     def convert_gv_to_z3pyscript_xpat(self):
         pass
@@ -314,10 +365,16 @@ class Z3solver:
         self.set_approximate_graph(tmp_graph)
         mapping_dict = {}
         for gate in gates:
-            mapping_dict[gate] = f'app_{gate}'
+            if self.graph.is_pi(gate) or self.graph.is_cleaned_pi(gate) or self.graph.is_pruned_pi(gate):
+                mapping_dict[gate] = f'app_{gate}'
         for gate in gates:
             self.approximate_graph.graph.nodes[gate][PRUNED] = True
         self.approximate_graph.set_graph(nx.relabel_nodes(self.approximate_graph.graph, mapping_dict))
+        self.relabel_approximate_graph()
+        self.approximate_graph.set_input_dict(self.approximate_graph.extract_inputs())
+        self.approximate_graph.set_output_dict(self.approximate_graph.extract_outputs())
+        self.approximate_graph.set_gate_dict(self.approximate_graph.extract_gates())
+        self.approximate_graph.set_constant_dict(self.approximate_graph.extract_constants())
 
     # TODO
     # for other back-ends as well
@@ -359,8 +416,7 @@ class Z3solver:
     def express_mc_while_loop(self):
         loop = ''
         loop += f's=Solver()\n' \
-                f'start_whole = time.time()\n' \
-
+                f'start_whole = time.time()\n'
 
         for sample in self.samples:
             loop += f's.push()\n' \
@@ -437,9 +493,6 @@ class Z3solver:
         loop += self.express_monotonic_while_loop_sat()
         loop += self.express_monotonic_while_loop_unsat()
         loop += self.express_stats()
-
-
-
 
         return loop
 
@@ -521,24 +574,23 @@ class Z3solver:
                     f"{TAB}{TAB}stats['num_unsats'] += 1\n" \
                     f"{TAB}{TAB}stats['unsat_runtime'] += (end_iteration - start_iteration)\n" \
                     f"{TAB}{TAB}stats['wce'] = stats['et']\n" \
-                    f"{TAB}s.pop()\n" \
-
+                    f"{TAB}s.pop()\n"
         return if_unsat
 
     def express_stats(self):
         stats = ''
         stats += f"end_whole = time.time()\n" \
-                f"with open('{self.z3_report}', 'w') as f:\n" \
-                f"{TAB}csvwriter = csv.writer(f)\n" \
-                f"{TAB}header = ['field', 'value']\n" \
-                f"{TAB}csvwriter.writerow(['Experiment', '{self.experiment}'])\n" \
-                f"{TAB}csvwriter.writerow(['WCE', stats['wce']])\n" \
-                f"{TAB}csvwriter.writerow(['Total Runtime', end_whole - start_whole])\n" \
-                f"{TAB}csvwriter.writerow(['SAT Runtime', stats['sat_runtime']])\n" \
-                f"{TAB}csvwriter.writerow(['UNSAT Runtime', stats['unsat_runtime']])\n" \
-                f"{TAB}csvwriter.writerow(['Number of SAT calls', stats['num_sats']])\n" \
-                f"{TAB}csvwriter.writerow(['Number of UNSAT calls', stats['num_unsats']])\n" \
-                f"{TAB}csvwriter.writerow(['Jumps', stats['jumps']])\n"
+                 f"with open('{self.z3_report}', 'w') as f:\n" \
+                 f"{TAB}csvwriter = csv.writer(f)\n" \
+                 f"{TAB}header = ['field', 'value']\n" \
+                 f"{TAB}csvwriter.writerow(['Experiment', '{self.experiment}'])\n" \
+                 f"{TAB}csvwriter.writerow(['WCE', stats['wce']])\n" \
+                 f"{TAB}csvwriter.writerow(['Total Runtime', end_whole - start_whole])\n" \
+                 f"{TAB}csvwriter.writerow(['SAT Runtime', stats['sat_runtime']])\n" \
+                 f"{TAB}csvwriter.writerow(['UNSAT Runtime', stats['unsat_runtime']])\n" \
+                 f"{TAB}csvwriter.writerow(['Number of SAT calls', stats['num_sats']])\n" \
+                 f"{TAB}csvwriter.writerow(['Number of UNSAT calls', stats['num_unsats']])\n" \
+                 f"{TAB}csvwriter.writerow(['Jumps', stats['jumps']])\n"
         return stats
 
     def express_monotonic_strategy(self):
@@ -608,7 +660,7 @@ class Z3solver:
         exact_circuit_declaration = ''
         # inputs
         for n in self.approximate_graph.graph.nodes:
-            if re.search(r'in\d+', self.approximate_graph.graph.nodes[n]['label']):
+            if self.approximate_graph.is_pruned_pi(n):
                 exact_circuit_declaration = f'{exact_circuit_declaration}' \
                                             f'{self.declare_gate(n)}\n'
         exact_circuit_declaration += f'\n'
@@ -758,7 +810,7 @@ class Z3solver:
         for i in range(self.approximate_graph.num_outputs):
             output_declaration += f"approx_out{i}=Int('approx_out{i}')\n"
             output_declaration += f"approx_out{i}={self.approximate_graph.output_dict[i]}*{2 ** i}*2/2\n"
-
+        # print(f'{self.approximate_graph.output_dict = }')
         output_declaration += f"approx_out = Int('approx_out')\n"
         output_declaration += f'approx_out='
         for i in range(self.approximate_graph.num_outputs):
@@ -834,6 +886,10 @@ class Z3solver:
         for pyscript in self.pyscript_files_for_labeling():
             with open(self.z3_log_path, 'w') as f:
                 subprocess.call([PYTHON3, pyscript], stdout=f)
+
+    def run_z3pyscript_random(self):
+        with open(self.z3_log_path, 'w') as f:
+            subprocess.call([PYTHON3, self.out_path], stdout=f)
 
     def run_z3pyscript_test(self):
         with open(self.z3_log_path, 'w') as f:

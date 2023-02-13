@@ -14,6 +14,7 @@ class Arguments:
         self.__wce = tmp_args.wce
         self.__strategy = tmp_args.strategy
         self.__experiment = tmp_args.experiment
+        self.__pruning_percentage = tmp_args.pruning_percentage
         self.__clean = tmp_args.clean
 
     @property
@@ -40,6 +41,10 @@ class Arguments:
     def experiment(self):
         return self.__experiment
 
+    @property
+    def pruning_percentage(self):
+        return self.__pruning_percentage
+
     # @property
     # def approach(self):
     #     return self.__approach
@@ -56,6 +61,7 @@ class Arguments:
                f'{self.wce = }\n' \
                f'{self.strategy = }\n' \
                f'{self.experiment = }\n' \
+               f'{self.pruning_percentage = }\n' \
                f'{self.clean = }\n' \
 
 
@@ -89,6 +95,10 @@ class Arguments:
                                type=str,
                                default=SINGLE,
                                help="the-experiment-name [SINGLE|QOR|RANDOM]")
+        my_parser.add_argument('--pruning_percentage', '-pp',
+                               type=int,
+                               default=10,
+                               help='gate-percentage-carved-out')
         # my_parser.add_argument('--approach', '-a',
         #                        type=str,
         #                        default='exact',
