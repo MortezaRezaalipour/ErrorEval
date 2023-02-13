@@ -58,6 +58,17 @@ Takes in a _clean Verilog_ converts it into a graph representation in GraphViz f
 
    Takes in a circuit in _clean Verilog_ form and reports the WCE each gate when pruned. 
 
+8. **Random pruning**
+
+    Takes in a circuit in _clean Verilog_ format alongside _pruning percentage_ expressed as an integer *P*,
+    and outputs an approximate circuit in z3py format by pruning *P* percent of the gates of the input circuit.
+   
+9. **Testing the experiments (1)labeling, (2)evaluating WCE, and (3)random pruning**
+
+    Takes in a cricuit in _clean Verilog_ format, runs the desired experiment with three different strategies: 
+    (1) monotonic, (2) bisection, and (3) monte carlo (mc) and verifies whether the results obtained are valid.
+   
+
 ## Setting up:
 
 clone the repository:
@@ -179,6 +190,24 @@ the csv report files are generated in the *output/report/benchmark-name/* direct
 - _example: assuming that *abs_diff_i4_o3.v* is available at *input/ver* directory:
 
     `python3 script/label_gates.py abs_diff_i4_o3.v`
+
+8) **Random Pruning**
+
+`python3 script/random_pruning.py benchmark-name -pp pruning_percentage`
+
+the csv report files are generated in the *output/report/benchmark-name/* directory.
+
+- _example: assuming that *abs_diff_i4_o3.v* is available at *input/ver* directory:
+
+    `python3 script/random_pruning.py abs_diff_i4_o3.v -pp 10`
+
+9) **Testing Experiments**
+
+`python3 script/test_results_mc_bisection_monotonic.py benchmark-name`
+
+- _example: assuming that *abs_diff_i4_o3.v* is available at *input/ver* directory:
+
+    `python3 script/test_results_mc_bisection_monotonic.py abs_diff_i4_o3.v`
 
 ## NOTE:
 
