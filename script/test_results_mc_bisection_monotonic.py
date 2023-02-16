@@ -10,7 +10,6 @@ from src.utils import *
 from numpy import random
 
 
-
 def main():
     args = Arguments.parse()
     print(f'{args = }')
@@ -29,12 +28,12 @@ def main():
         pruned_gates = random.randint(0, graph_obj.num_inputs + graph_obj.num_gates, size=num_pruned_gates)
 
         # convert gv to z3 expression
-        z3py_obj = Z3solver(args.benchmark_name, pruned_gates=pruned_gates, experiment=args.experiment, metric=args.metric)
+        z3py_obj = Z3solver(args.benchmark_name, pruned_gates=pruned_gates, experiment=args.experiment,
+                            metric=args.metric)
         z3py_obj.convert_gv_to_z3pyscript_maxerror_random_pruning(MONOTONIC)
         z3py_obj.run_z3pyscript_random()
         z3py_obj.convert_gv_to_z3pyscript_maxerror_random_pruning(BISECTION)
         z3py_obj.run_z3pyscript_random()
-
 
         my_max = 2 ** z3py_obj.graph.num_inputs - 1
         if 2 ** z3py_obj.graph.num_inputs < args.num_samples:
@@ -78,8 +77,9 @@ def main():
             break
     if count == len(result_monotonic.reports):
         print(f'TEST -> OK')
-    print(f'{count = }')
-    print(len(result_monotonic.reports))
+        with open(args.benchmark_name, 'w') as f:
+            f.write('PASSED!')
+
 
 if __name__ == "__main__":
     main()
