@@ -44,12 +44,12 @@ def main():
 
     z3py_obj_qor.convert_gv_to_z3pyscript_maxerror_qor(args.strategy)
 
-    print(f'evaluating the wce with {args.strategy}...')
+    print(f'evaluating the metric with {args.strategy}...')
 
     z3py_obj_qor.export_z3pyscript()
     z3py_obj_qor.run_z3pyscript_qor()
 
-    print(f'wce is evaluated!')
+    print(f'metric is evaluated!')
 
 
 if __name__ == "__main__":

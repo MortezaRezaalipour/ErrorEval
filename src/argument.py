@@ -1,20 +1,21 @@
 import argparse
 import sys
 from src.utils import *
+import typing
 
 
 class Arguments:
-    def __init__(self, tmp_args):
-
+    def __init__(self, tmp_args: argparse):
         benchmark = get_pure_name(tmp_args.benchmark)
         approximate_benchmark = get_pure_name(tmp_args.approximate_benchmark)
-        self.__benchmark_name = benchmark
-        self.__approximate_benchmark = approximate_benchmark
-        self.__mc_samples = tmp_args.samples
-        self.__wce = tmp_args.wce
-        self.__strategy = tmp_args.strategy
-        self.__experiment = tmp_args.experiment
-        self.__pruning_percentage = tmp_args.pruning_percentage
+        self.__benchmark_name: str = benchmark
+        self.__approximate_benchmark: str = approximate_benchmark
+        self.__mc_samples: int = tmp_args.samples
+        self.__metric: str = tmp_args.metric
+        self.__precision: int = tmp_args.precision
+        self.__strategy: str = tmp_args.strategy
+        self.__experiment: str = tmp_args.experiment
+        self.__pruning_percentage: int = tmp_args.pruning_percentage
         self.__clean = tmp_args.clean
 
     @property
@@ -30,8 +31,12 @@ class Arguments:
         return self.__mc_samples
 
     @property
-    def wce(self):
-        return self.__wce
+    def metric(self):
+        return self.__metric
+
+    @property
+    def precision(self):
+        return self.__precision
 
     @property
     def strategy(self):
@@ -58,12 +63,12 @@ class Arguments:
                f'{self.benchmark_name = }\n' \
                f'{self.approximate_benchmark = }\n' \
                f'{self.num_samples = }\n' \
-               f'{self.wce = }\n' \
+               f'{self.metric = }\n' \
+               f'{self.precision = }\n' \
                f'{self.strategy = }\n' \
                f'{self.experiment = }\n' \
                f'{self.pruning_percentage = }\n' \
-               f'{self.clean = }\n' \
-
+               f'{self.clean = }\n'
 
     @classmethod
     def parse(cls):
@@ -83,14 +88,18 @@ class Arguments:
                                type=str,
                                default=None,
                                help='approximate-benchmark-name in gv/verilog format')
-        my_parser.add_argument('--wce', '-metric',
+        my_parser.add_argument('--metric', '-metric',
                                type=str,
                                default=WAE,
                                help='the-desired-worst-case-error-metric')
+        my_parser.add_argument('--precision', '-p',
+                               type=int,
+                               default=2,
+                               help='number-of-decimal-points-for-wre')
         my_parser.add_argument('--strategy', '-strategy',
                                type=str,
                                default=MONOTONIC,
-                               help='the-solver-strategy-to-find-wce')
+                               help='the-solver-strategy-to-find-metric')
         my_parser.add_argument('--experiment', '-e',
                                type=str,
                                default=SINGLE,
@@ -99,10 +108,7 @@ class Arguments:
                                type=int,
                                default=10,
                                help='gate-percentage-carved-out')
-        # my_parser.add_argument('--approach', '-a',
-        #                        type=str,
-        #                        default='exact',
-        #                        help='exact or monte carlo')
+
         my_parser.add_argument('--clean',
                                type=bool,
                                default=False)

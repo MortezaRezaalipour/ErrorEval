@@ -21,7 +21,7 @@ def main():
     graph_obj.export_graph()
 
     # convert gv to z3 expression
-    z3py_obj = Z3solver(args.benchmark_name, experiment=SINGLE)
+    z3py_obj = Z3solver(args.benchmark_name, experiment=SINGLE, metric=args.metric, precision=args.precision)
 
     if args.strategy == MC:
         my_max = 2 ** z3py_obj.graph.num_inputs - 1
@@ -34,7 +34,7 @@ def main():
 
         z3py_obj.set_samples(rand_array)
 
-    print(f'labeling with {args.strategy}')
+    print(f'labeling {args.metric.upper()} with {args.strategy.upper()}')
     z3py_obj.convert_gv_to_z3pyscript_maxerror_labeling(args.strategy)
     z3py_obj.run_z3pyscript_labeling()
     print(f'labeling is completed!')

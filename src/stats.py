@@ -93,10 +93,15 @@ class Stats:
     def jump_list(self, jump_list):
         self.__jumps = jump_list
 
+    @property
+    def file_path(self):
+        return self.__file_in_path
+
     def import_csv(self):
         with open(self.path, 'r') as f:
             csvreader = csv.reader(f)
             for row in csvreader:
+
                 if re.search(EXPERIMENT, row[0]):
                     self.experiment = row[1]
                 elif re.search(WCE, row[0]):
