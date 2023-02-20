@@ -158,6 +158,7 @@ class Z3solver:
     def set_z3_report(self, z3_report: str):
         self.__z3_report = z3_report
 
+    @property
     def pyscript_files_for_labeling(self):
         return self.__pyscript_files_for_labeling
 
@@ -1032,9 +1033,11 @@ class Z3solver:
             process = subprocess.run([PYTHON3, self.out_path], stdout=PIPE, stderr=PIPE)
 
     def run_z3pyscript_labeling(self):
-        for pyscript in self.pyscript_files_for_labeling():
+        # print(self.pyscript_files_for_labeling )
+        for pyscript in self.pyscript_files_for_labeling:
+
             with open(self.z3_log_path, 'w') as f:
-                process = subprocess.run([PYTHON3, self.out_path], stdout=PIPE, stderr=PIPE)
+                process = subprocess.run([PYTHON3, pyscript], stderr=PIPE)
 
     def run_z3pyscript_random(self):
         with open(self.z3_log_path, 'w') as f:
