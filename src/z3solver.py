@@ -3,6 +3,7 @@ import os
 import copy
 from typing import *
 import networkx as nx
+from subprocess import PIPE
 from src.utils import *
 from src.graph import *
 
@@ -22,14 +23,13 @@ class Z3solver:
         folder, extension = OUTPUT_PATH['gv']
         self.__graph_in_path = f'{folder}/{benchmark_name}.{extension}'
 
-        self.__z3_out_path = None
-
         self.__graph = Graph(benchmark_name, True)
 
         self.__pyscript_results_out_path = None
 
         folder, extension = LOG_PATH['z3']
-        self.__z3_log_path = f'{folder}/{benchmark_name}_{Z3}_{LOG}.{extension}'
+        os.makedirs(f'{folder}/{benchmark_name}_{Z3}_{LOG}', exist_ok=True)
+        self.__z3_log_path = f'{folder}/{benchmark_name}_{Z3}_{LOG}/{benchmark_name}_{Z3}_{LOG}.{extension}'
 
         self.__approximate_verilog_in_path = None
         self.__approximate_graph = None
@@ -69,6 +69,8 @@ class Z3solver:
         self.__strategy = None
 
         self.__pyscript_files_for_labeling: list = []
+
+        self.__z3_out_path = None
 
     @property
     def name(self):
@@ -123,13 +125,6 @@ class Z3solver:
     @precision.setter
     def precision(self, precision):
         self.__precision = precision
-
-    # TODO Deprecated
-    # @property
-    # def experiment(self):
-    #     return self.__experiment
-    # def set_experiment(self, experiment: str):
-    #     self.__experiment = experiment
 
     @property
     def experiment(self):
@@ -253,13 +248,16 @@ class Z3solver:
 
     def convert_gv_to_z3pyscript_test(self):
         folder, extension = OUTPUT_PATH['report']
-        self.set_z3_report(f'{folder}/{self.name}.{extension}')
+        os.makedirs(f'{folder}/{self.name}', exist_ok=True)
+        self.set_z3_report(f'{folder}/{self.name}/{self.name}_{TEST}.{extension}')
 
         folder, extension = OUTPUT_PATH['z3']
-        self.set_out_path(f'{folder}/{self.name}.{extension}')
+        os.makedirs(f'{folder}/{self.name}', exist_ok=True)
+        self.set_out_path(f'{folder}/{self.name}/{self.name}_{TEST}.{extension}')
 
         folder, extension = TEST_PATH['z3']
-        self.set_pyscript_results_out_path(f'{folder}/{self.name}.{extension}')
+        os.makedirs(f'{folder}/{self.name}', exist_ok=True)
+        self.set_pyscript_results_out_path(f'{folder}/{self.name}/{self.name}_{TEST}.{extension}')
 
         import_string = self.create_imports()
         abs_function = self.create_abs_function()
@@ -277,10 +275,17 @@ class Z3solver:
 
         self.experiment = QOR
         self.set_strategy(strategy)
-        folder, extension = OUTPUT_PATH['report']
-        self.set_z3_report(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.strategy}.{extension}')
-        folder, extension = OUTPUT_PATH['z3']
-        self.set_out_path(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.strategy}.{extension}')
+
+        if self.metric == WRE:
+            folder, extension = OUTPUT_PATH['report']
+            self.set_z3_report(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}.{extension}')
+            folder, extension = OUTPUT_PATH['z3']
+            self.set_out_path(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}.{extension}')
+        else:
+            folder, extension = OUTPUT_PATH['report']
+            self.set_z3_report(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_{self.strategy}.{extension}')
+            folder, extension = OUTPUT_PATH['z3']
+            self.set_out_path(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_{self.strategy}.{extension}')
 
         import_string = self.create_imports()
         abs_function = self.create_abs_function()
@@ -340,14 +345,27 @@ class Z3solver:
         elif self.experiment == RANDOM:
             gate = 'id0'
         folder, extension = OUTPUT_PATH['report']
-        folder = f'{folder}/{self.name}_{self.experiment}_{self.strategy}'
-        os.makedirs(folder, exist_ok=True)
-        self.set_z3_report(f'{folder}/{self.name}_{self.experiment}_{self.strategy}_{gate}.{extension}')
+        if self.metric == WRE:
+            folder = f'{folder}/{self.name}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}'
+            os.makedirs(folder, exist_ok=True)
+            self.set_z3_report(
+                f'{folder}/{self.name}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}_{gate}.{extension}')
+        else:
+            folder = f'{folder}/{self.name}_{self.experiment}_{self.metric}_{self.strategy}'
+            os.makedirs(folder, exist_ok=True)
+            self.set_z3_report(
+                f'{folder}/{self.name}_{self.experiment}_{self.metric}_{self.strategy}_{gate}.{extension}')
 
         folder, extension = OUTPUT_PATH['z3']
-        folder = f'{folder}/{self.name}_{self.experiment}_{self.strategy}'
-        os.makedirs(folder, exist_ok=True)
-        self.set_out_path(f'{folder}/{self.name}_{self.experiment}_{self.strategy}_{gate}.{extension}')
+        if self.metric == WRE:
+            folder = f'{folder}/{self.name}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}'
+            os.makedirs(folder, exist_ok=True)
+            self.set_out_path(
+                f'{folder}/{self.name}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}_{gate}.{extension}')
+        else:
+            folder = f'{folder}/{self.name}_{self.experiment}_{self.metric}_{self.strategy}'
+            os.makedirs(folder, exist_ok=True)
+            self.set_out_path(f'{folder}/{self.name}_{self.experiment}_{self.metric}_{self.strategy}_{gate}.{extension}')
 
         self.append_pyscript_files_for_labeling(self.out_path)
 
@@ -507,7 +525,6 @@ class Z3solver:
         elif self.metric == WRE:
             loop += f"{TAB}stats['et'] = round(float(upper_bound + lower_bound) / 2, {self.precision})\n"
 
-
         loop += f"{TAB}stats['jumps'].append(stats['et'])\n" \
                 f'{TAB}s.push()\n' \
                 f'{TAB}s.add(f_exact(exact_out) == exact_out)\n' \
@@ -611,9 +628,6 @@ class Z3solver:
                   f"{TAB}{TAB}{TAB}foundWCE = True\n" \
                   f"{TAB}{TAB}{TAB}stats['wce'] = stats['et']\n"
 
-
-
-
         return if_sat
 
     def express_monotonic_while_loop_sat(self):
@@ -690,7 +704,6 @@ class Z3solver:
                         f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
                         f"{TAB}{TAB}{TAB}else:\n" \
                         f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n"
-
 
         if_unsat += f"{TAB}{TAB}else:\n" \
                     f"{TAB}{TAB}{TAB}upper_bound = stats['et']\n" \
@@ -1016,19 +1029,20 @@ class Z3solver:
     # TODO: decorators-----------------------------
     def run_z3pyscript_qor(self):
         with open(self.z3_log_path, 'w') as f:
-            subprocess.call([PYTHON3, self.out_path], stdout=f)
+            process = subprocess.run([PYTHON3, self.out_path], stdout=PIPE, stderr=PIPE)
 
     def run_z3pyscript_labeling(self):
         for pyscript in self.pyscript_files_for_labeling():
             with open(self.z3_log_path, 'w') as f:
-                subprocess.call([PYTHON3, pyscript])
+                process = subprocess.run([PYTHON3, self.out_path], stdout=PIPE, stderr=PIPE)
 
     def run_z3pyscript_random(self):
         with open(self.z3_log_path, 'w') as f:
-            subprocess.call([PYTHON3, self.out_path], stdout=f)
+            process = subprocess.run([PYTHON3, self.out_path], stdout=PIPE, stderr=PIPE)
 
     def run_z3pyscript_test(self):
         with open(self.z3_log_path, 'w') as f:
-            subprocess.call([PYTHON3, self.out_path], stdout=f)
+            process = subprocess.run([PYTHON3, self.out_path], stdout=PIPE, stderr=PIPE)
+
         self.set_sample_results(self.import_results())
     # TODO: decorators (end)--------------------------

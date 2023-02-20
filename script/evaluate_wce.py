@@ -29,7 +29,8 @@ def main():
     graph_obj_approx.export_graph()
 
     # 3) create a qor z3py scripts
-    z3py_obj_qor = Z3solver(args.benchmark_name, args.approximate_benchmark)
+    z3py_obj_qor = Z3solver(args.benchmark_name, args.approximate_benchmark, precision=args.precision, metric=args.metric,
+                            experiment=args.experiment)
     if args.strategy == MC:
         my_max = 2 ** z3py_obj_qor.graph.num_inputs - 1
         if 2 ** z3py_obj_qor.graph.num_inputs < args.num_samples:
