@@ -1037,7 +1037,7 @@ class Z3solver:
         for pyscript in self.pyscript_files_for_labeling:
 
             with open(self.z3_log_path, 'w') as f:
-                process = subprocess.run([PYTHON3, pyscript], stderr=PIPE)
+                process = subprocess.run([PYTHON3, pyscript], stdout=PIPE, stderr=PIPE)
 
     def run_z3pyscript_random(self):
         with open(self.z3_log_path, 'w') as f:
