@@ -78,7 +78,7 @@ def main():
             break
     if count == len(result_monotonic.reports):
         print(f'TEST -> OK')
-        with open(args.benchmark_name, 'w') as f:
+        with open(f'{args.benchmark_name}_{args.metric}', 'w') as f:
             f.write('PASSED!')
 
 
