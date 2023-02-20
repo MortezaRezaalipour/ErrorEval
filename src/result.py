@@ -62,7 +62,10 @@ class Result:
         folder, extension = INPUT_PATH['report']
         #TODO
         # Fix naming
-        cur_dir = f'{folder}/{self.benchmark}_{self.experiment}_{self.strategy}'
+        if self.metric == WRE:
+            cur_dir = f'{folder}/{self.benchmark}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}'
+        else:
+            cur_dir = f'{folder}/{self.benchmark}_{self.experiment}_{self.metric}_{self.strategy}'
         all_csv = [f for f in os.listdir(cur_dir)]
         for f in all_csv:
             if f.endswith(extension):

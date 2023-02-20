@@ -48,12 +48,13 @@ def main():
 
     # 2) Collect all the results mc, bisection, and monotonic
     # specs_mc = Specs(args.benchmark_name, args.approximate_benchmark, args.experiment, MC, None, None)
-    specs_bisection = Specs(args.benchmark_name, args.approximate_benchmark, args.experiment, BISECTION, None, None)
-    specs_monotonic = Specs(args.benchmark_name, args.approximate_benchmark, args.experiment, MONOTONIC, None, None)
-
+    specs_bisection = Specs(args.benchmark_name, args.approximate_benchmark, args.experiment, BISECTION, metric=args.metric)
+    specs_monotonic = Specs(args.benchmark_name, args.approximate_benchmark, args.experiment, MONOTONIC, metric=args.metric)
+    print(f'{specs_monotonic= }')
     # result_mc = Result(specs_mc)
     result_bisection = Result(specs_bisection)
     result_monotonic = Result(specs_monotonic)
+
 
     # assert len(result_mc.reports) == len(result_bisection.reports) and len(result_mc.reports) == len(
     #     result_monotonic.reports)
