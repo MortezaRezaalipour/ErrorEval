@@ -11,7 +11,8 @@ from src.graph import *
 class Z3solver:
     def __init__(self, benchmark_name: str, approximate_benchmark_name: str = None, samples: list = [],
                  experiment: str = SINGLE,
-                 pruned_percentage: int = None, pruned_gates=None, metric: str = WAE, precision: int = 4):
+                 pruned_percentage: int = None, pruned_gates=None, metric: str = WAE, precision: int = 4,
+                 optimization: str = None):
         """
 
         :param benchmark_name: the input benchmark in gv format
@@ -68,6 +69,8 @@ class Z3solver:
 
         self.__strategy = None
 
+        self.__optimization = optimization
+
         self.__pyscript_files_for_labeling: list = []
 
         self.__z3_out_path = None
@@ -109,6 +112,14 @@ class Z3solver:
 
     def set_strategy(self, strategy: str):
         self.__strategy = strategy
+
+    @property
+    def optimization(self):
+        return self.__optimization
+
+    @optimization.setter
+    def optimization(self, optimization):
+        self.__optimization = optimization
 
     @property
     def metric(self):
@@ -279,14 +290,38 @@ class Z3solver:
 
         if self.metric == WRE:
             folder, extension = OUTPUT_PATH['report']
-            self.set_z3_report(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}.{extension}')
+            if self.optimization == OPTIMIZE or self.optimization == MAXIMIZE and (self.strategy != BISECTION):
+                self.set_z3_report(
+                    f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}_{self.optimization}.{extension}')
+            else:
+                self.set_z3_report(
+                    f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}.{extension}')
+
             folder, extension = OUTPUT_PATH['z3']
-            self.set_out_path(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}.{extension}')
+            if self.optimization == OPTIMIZE or self.optimization == MAXIMIZE and (self.strategy != BISECTION):
+                self.set_out_path(
+                    f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}_{self.optimization}.{extension}')
+            else:
+                self.set_out_path(
+                    f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}.{extension}')
+
         else:
             folder, extension = OUTPUT_PATH['report']
-            self.set_z3_report(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_{self.strategy}.{extension}')
+            if self.optimization == OPTIMIZE or self.optimization == MAXIMIZE and (self.strategy != BISECTION):
+                self.set_z3_report(
+                    f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_{self.strategy}_{self.optimization}.{extension}')
+            else:
+                self.set_z3_report(
+                    f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_{self.strategy}.{extension}')
+
             folder, extension = OUTPUT_PATH['z3']
-            self.set_out_path(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_{self.strategy}.{extension}')
+            if self.optimization == OPTIMIZE or self.optimization == MAXIMIZE and (self.strategy != BISECTION):
+                self.set_out_path(
+                    f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_{self.strategy}_{self.optimization}.{extension}')
+            else:
+                self.set_out_path(
+                    f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_{self.strategy}.{extension}')
+
 
         import_string = self.create_imports()
         abs_function = self.create_abs_function()
@@ -347,26 +382,52 @@ class Z3solver:
             gate = 'id0'
         folder, extension = OUTPUT_PATH['report']
         if self.metric == WRE:
-            folder = f'{folder}/{self.name}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}'
-            os.makedirs(folder, exist_ok=True)
-            self.set_z3_report(
-                f'{folder}/{self.name}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}_{gate}.{extension}')
+            if self.optimization == OPTIMIZE or self.optimization == MAXIMIZE and (self.strategy != BISECTION):
+                folder = f'{folder}/{self.name}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}_{self.optimization}'
+                os.makedirs(folder, exist_ok=True)
+                self.set_z3_report(
+                    f'{folder}/{self.name}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}_{self.optimization}_{gate}.{extension}')
+            else:
+                folder = f'{folder}/{self.name}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}'
+                os.makedirs(folder, exist_ok=True)
+                self.set_z3_report(
+                    f'{folder}/{self.name}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}_{gate}.{extension}')
         else:
-            folder = f'{folder}/{self.name}_{self.experiment}_{self.metric}_{self.strategy}'
-            os.makedirs(folder, exist_ok=True)
-            self.set_z3_report(
-                f'{folder}/{self.name}_{self.experiment}_{self.metric}_{self.strategy}_{gate}.{extension}')
+
+            if self.optimization == OPTIMIZE or self.optimization == MAXIMIZE and (self.strategy != BISECTION):
+                folder = f'{folder}/{self.name}_{self.experiment}_{self.metric}_{self.strategy}_{self.optimization}'
+                os.makedirs(folder, exist_ok=True)
+                self.set_z3_report(
+                    f'{folder}/{self.name}_{self.experiment}_{self.metric}_{self.strategy}_{self.optimization}_{gate}.{extension}')
+            else:
+                folder = f'{folder}/{self.name}_{self.experiment}_{self.metric}_{self.strategy}'
+                os.makedirs(folder, exist_ok=True)
+                self.set_z3_report(
+                    f'{folder}/{self.name}_{self.experiment}_{self.metric}_{self.strategy}_{gate}.{extension}')
 
         folder, extension = OUTPUT_PATH['z3']
         if self.metric == WRE:
-            folder = f'{folder}/{self.name}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}'
-            os.makedirs(folder, exist_ok=True)
-            self.set_out_path(
-                f'{folder}/{self.name}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}_{gate}.{extension}')
+            if self.optimization == OPTIMIZE or self.optimization == MAXIMIZE and (self.strategy != BISECTION):
+                folder = f'{folder}/{self.name}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}_{self.optimization}'
+                os.makedirs(folder, exist_ok=True)
+                self.set_out_path(
+                    f'{folder}/{self.name}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}_{self.optimization}_{gate}.{extension}')
+            else:
+                folder = f'{folder}/{self.name}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}'
+                os.makedirs(folder, exist_ok=True)
+                self.set_out_path(
+                    f'{folder}/{self.name}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}_{gate}.{extension}')
         else:
-            folder = f'{folder}/{self.name}_{self.experiment}_{self.metric}_{self.strategy}'
-            os.makedirs(folder, exist_ok=True)
-            self.set_out_path(f'{folder}/{self.name}_{self.experiment}_{self.metric}_{self.strategy}_{gate}.{extension}')
+            if self.optimization == OPTIMIZE or self.optimization == MAXIMIZE and (self.strategy != BISECTION):
+                folder = f'{folder}/{self.name}_{self.experiment}_{self.metric}_{self.strategy}_{self.optimization}'
+                os.makedirs(folder, exist_ok=True)
+                self.set_out_path(
+                    f'{folder}/{self.name}_{self.experiment}_{self.metric}_{self.strategy}_{self.optimization}_{gate}.{extension}')
+            else:
+                folder = f'{folder}/{self.name}_{self.experiment}_{self.metric}_{self.strategy}'
+                os.makedirs(folder, exist_ok=True)
+                self.set_out_path(
+                    f'{folder}/{self.name}_{self.experiment}_{self.metric}_{self.strategy}_{gate}.{extension}')
 
         self.append_pyscript_files_for_labeling(self.out_path)
 
@@ -514,9 +575,11 @@ class Z3solver:
         loop = ''
         loop += f'upper_bound = 2**({self.graph.num_outputs}) - 1\n' \
                 f'lower_bound = 0 \n' \
-                f'start_whole = time.time()\n' \
-                f's = Solver()\n' \
-                f'while(not foundWCE):\n' \
+                f'start_whole = time.time()\n'
+
+        loop += f's = Solver()\n'
+
+        loop += f'while(not foundWCE):\n' \
                 f'{TAB}start_iteration = time.time()\n'
 
         if self.metric == WAE:
@@ -530,6 +593,7 @@ class Z3solver:
                 f'{TAB}s.push()\n' \
                 f'{TAB}s.add(f_exact(exact_out) == exact_out)\n' \
                 f'{TAB}s.add(f_approx(approx_out) == approx_out)\n'
+
         if self.metric == WAE:
             loop += f'{TAB}s.add(f_error(exact_out, approx_out) == exact_out - approx_out)\n' \
                     f"{TAB}s.add(z3_abs(f_error(exact_out, approx_out)) > stats['et'])\n"
@@ -537,6 +601,7 @@ class Z3solver:
             pass
             # TODO
         elif self.metric == WRE:
+
             loop += f'{TAB}s.add(f_error(exact_out, approx_out) == z3_abs(exact_out - approx_out) / (z3_abs(exact_out) + z3_abs(1.0))  )\n' \
                     f"{TAB}s.add(z3_abs(f_error(exact_out, approx_out)) > stats['et'])\n"
         loop += f"{TAB}response = s.check()\n"
@@ -550,9 +615,16 @@ class Z3solver:
     def express_monotonic_while_loop(self):
         loop = ''
 
-        loop += f'start_whole = time.time()\n' \
-                f's = Solver()\n' \
-                f"stats['jumps'].append(stats['et'])\n" \
+        loop += f'start_whole = time.time()\n'
+        # print(f'{self.optimization == MAXIMIZE = }')
+        # print(f'{self.optimization = }')
+        if self.optimization == OPTIMIZE or self.optimization == MAXIMIZE and (self.strategy != BISECTION):
+            loop += f's = Optimize()\n'
+        else:
+            # print('We are here')
+            loop += f's = Solver()\n'
+
+        loop += f"stats['jumps'].append(stats['et'])\n" \
                 f'while(not foundWCE):\n' \
                 f'{TAB}start_iteration = time.time()\n' \
                 f'{TAB}s.push()\n' \
@@ -560,14 +632,29 @@ class Z3solver:
                 f'{TAB}s.add(f_approx(approx_out) == approx_out)\n'
 
         if self.metric == WAE:
-            loop += f'{TAB}s.add(f_error(exact_out, approx_out) == exact_out - approx_out)\n' \
-                    f"{TAB}s.add(z3_abs(f_error(exact_out, approx_out)) > stats['et'])\n"
+            if self.optimization == MAXIMIZE and (self.strategy != BISECTION):
+                loop += f'{TAB}s.add(f_error(exact_out, approx_out) == exact_out - approx_out)\n' \
+                        f"{TAB}s.add(z3_abs(f_error(exact_out, approx_out)) > stats['et'])\n" \
+                        f"{TAB}s.maximize(z3_abs(f_error(exact_out, approx_out)))\n"
+            else:
+                loop += f'{TAB}s.add(f_error(exact_out, approx_out) == exact_out - approx_out)\n' \
+                        f"{TAB}s.add(z3_abs(f_error(exact_out, approx_out)) > stats['et'])\n"
+
+            # TODO add optimization thingy right here
         elif self.metric == WHD:
-            pass
+            if self.optimization == MAXIMIZE and (self.strategy != BISECTION):
+                pass
+            else:
+                pass
             # TODO
         elif self.metric == WRE:
-            loop += f'{TAB}s.add(f_error(exact_out, approx_out) == z3_abs(exact_out - approx_out) / (z3_abs(exact_out) + z3_abs(1.0))  )\n' \
-                    f"{TAB}s.add(z3_abs(f_error(exact_out, approx_out)) > stats['et'])\n"
+            if self.optimization == MAXIMIZE and (self.strategy != BISECTION):
+                loop += f'{TAB}s.add(f_error(exact_out, approx_out) == z3_abs(exact_out - approx_out) / (z3_abs(exact_out) + z3_abs(1.0))  )\n' \
+                        f"{TAB}s.add(z3_abs(f_error(exact_out, approx_out)) > stats['et'])\n" \
+                        f"{TAB}s.maximize(z3_abs(f_error(exact_out, approx_out)))\n"
+            else:
+                loop += f'{TAB}s.add(f_error(exact_out, approx_out) == z3_abs(exact_out - approx_out) / (z3_abs(exact_out) + z3_abs(1.0))  )\n' \
+                        f"{TAB}s.add(z3_abs(f_error(exact_out, approx_out)) > stats['et'])\n"
         loop += f"{TAB}response = s.check()\n"
 
         loop += self.express_monotonic_while_loop_sat()
@@ -988,8 +1075,12 @@ class Z3solver:
 
     def declare_solver(self):
         solver = ''
-        solver += f's = Solver()\n' \
-                  f's.add(f_exact(exact_out) == exact_out)'
+        if self.optimization == OPTIMIZE or self.optimization == MAXIMIZE:
+            solver += f's = Optimize()\n'
+        else:
+            solver += f's = Solver()\n'
+
+        solver += f's.add(f_exact(exact_out) == exact_out)\n'
         solver += f'\n'
 
         return solver
@@ -1035,7 +1126,6 @@ class Z3solver:
     def run_z3pyscript_labeling(self):
         # print(self.pyscript_files_for_labeling )
         for pyscript in self.pyscript_files_for_labeling:
-
             with open(self.z3_log_path, 'w') as f:
                 process = subprocess.run([PYTHON3, pyscript], stdout=PIPE, stderr=PIPE)
 

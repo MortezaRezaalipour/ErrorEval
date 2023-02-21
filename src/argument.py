@@ -14,6 +14,7 @@ class Arguments:
         self.__metric: str = tmp_args.metric
         self.__precision: int = tmp_args.precision
         self.__strategy: str = tmp_args.strategy
+        self.__optimization: str = tmp_args.optimization
         self.__experiment: str = tmp_args.experiment
         self.__pruning_percentage: int = tmp_args.pruning_percentage
         self.__clean = tmp_args.clean
@@ -43,6 +44,10 @@ class Arguments:
         return self.__strategy
 
     @property
+    def optimization(self):
+        return self.__optimization
+
+    @property
     def experiment(self):
         return self.__experiment
 
@@ -66,6 +71,7 @@ class Arguments:
                f'{self.metric = }\n' \
                f'{self.precision = }\n' \
                f'{self.strategy = }\n' \
+               f'{self.optimization = }\n' \
                f'{self.experiment = }\n' \
                f'{self.pruning_percentage = }\n' \
                f'{self.clean = }\n'
@@ -100,6 +106,10 @@ class Arguments:
                                type=str,
                                default=MONOTONIC,
                                help='the-solver-strategy-to-find-metric')
+        my_parser.add_argument('--optimization', '-opt',
+                               type=str,
+                               default=None,
+                               help='the-solver-optimization (Solver, Optimize, Maximize)')
         my_parser.add_argument('--experiment', '-e',
                                type=str,
                                default=SINGLE,

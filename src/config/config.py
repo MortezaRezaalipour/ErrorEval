@@ -54,6 +54,13 @@ BISECTION = 'bisection'
 MC = 'mc'
 DEFAULT_STRATEGY = MONOTONIC
 
+# optimization
+OPTIMIZE = 'optimize'
+MAXIMIZE = 'maximize'
+
+
+
+
 # Experiments
 QOR = 'qor'
 RANDOM = 'random'

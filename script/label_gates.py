@@ -21,7 +21,9 @@ def main():
     graph_obj.export_graph()
 
     # convert gv to z3 expression
-    z3py_obj = Z3solver(args.benchmark_name, experiment=SINGLE, metric=args.metric, precision=args.precision)
+    print(f'{args.optimization = }')
+    z3py_obj = Z3solver(args.benchmark_name, experiment=SINGLE, metric=args.metric, precision=args.precision,
+                        optimization=args.optimization)
 
     if args.strategy == MC:
         my_max = 2 ** z3py_obj.graph.num_inputs - 1

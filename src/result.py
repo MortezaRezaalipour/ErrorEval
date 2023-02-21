@@ -17,6 +17,7 @@ class Result:
         self.__approximate_benchmark: str = get_pure_name(specifications.approximate_benchmark)
         self.__experiment: str = specifications.experiment
         self.__strategy: str = specifications.strategy
+        self.__optimization: str = specifications.optimization
         self.__metric: str = specifications.metric
         self.__precision: int = specifications.precision
         self.__in_paths: List[str] = self.find_input_report_paths()
@@ -40,8 +41,13 @@ class Result:
         return self.__strategy
 
     @property
+    def optimization(self):
+        return self.__optimization
+
+    @property
     def metric(self):
         return self.__metric
+
     @property
     def precision(self):
         return self.__precision
@@ -64,12 +70,18 @@ class Result:
     def find_relevant_csv(self):
         relevant_csv = []
         folder, extension = INPUT_PATH['report']
-        #TODO
-        # Fix naming
+
         if self.metric == WRE:
-            cur_dir = f'{folder}/{self.benchmark}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}'
+            if (self.optimization == OPTIMIZE or self.optimization == MAXIMIZE) and (self.strategy != BISECTION):
+                cur_dir = f'{folder}/{self.benchmark}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}_{self.optimization}'
+            else:
+                cur_dir = f'{folder}/{self.benchmark}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}'
         else:
-            cur_dir = f'{folder}/{self.benchmark}_{self.experiment}_{self.metric}_{self.strategy}'
+            if self.optimization == OPTIMIZE or self.optimization == MAXIMIZE and (self.strategy != BISECTION):
+                cur_dir = f'{folder}/{self.benchmark}_{self.experiment}_{self.metric}_{self.strategy}_{self.optimization}'
+            else:
+                cur_dir = f'{folder}/{self.benchmark}_{self.experiment}_{self.metric}_{self.strategy}'
+
         all_csv = [f for f in os.listdir(cur_dir)]
         for f in all_csv:
             if f.endswith(extension):
@@ -84,9 +96,17 @@ class Result:
         if self.experiment == SINGLE:
             input_paths = self.find_relevant_csv()
         elif self.experiment == QOR:
-            #TODO
-            # Fix naming
-            input_paths.append(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.strategy}.{extension}')
+            if self.metric == WRE:
+                if self.optimization == OPTIMIZE or self.optimization == MAXIMIZE and (self.strategy != BISECTION):
+                    input_paths.append(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}_{self.optimization}.{extension}')
+                else:
+                    input_paths.append(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_d{self.precision}_{self.strategy}.{extension}')
+            else:
+                if self.optimization == OPTIMIZE or self.optimization == MAXIMIZE and (self.strategy != BISECTION):
+                    input_paths.append(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_{self.strategy}_{self.optimization}.{extension}')
+                else:
+                    input_paths.append(f'{folder}/{self.approximate_benchmark}_{self.experiment}_{self.metric}_{self.strategy}.{extension}')
+
         elif self.experiment == RANDOM:
             pass
 

@@ -48,9 +48,9 @@ def main():
 
     # 2) Collect all the results mc, bisection, and monotonic
     # specs_mc = Specs(args.benchmark_name, args.approximate_benchmark, args.experiment, MC, None, None)
-    specs_bisection = Specs(args.benchmark_name, args.approximate_benchmark, args.experiment, BISECTION, metric=args.metric, precision=args.precision)
-    specs_monotonic = Specs(args.benchmark_name, args.approximate_benchmark, args.experiment, MONOTONIC, metric=args.metric, precision=args.precision)
-    print(f'{specs_monotonic= }')
+    specs_bisection = Specs(args.benchmark_name, args.approximate_benchmark, args.experiment, BISECTION, metric=args.metric, precision=args.precision, optimization=args.optimization)
+    specs_monotonic = Specs(args.benchmark_name, args.approximate_benchmark, args.experiment, MONOTONIC, metric=args.metric, precision=args.precision, optimization=args.optimization)
+
     # result_mc = Result(specs_mc)
     result_bisection = Result(specs_bisection)
     result_monotonic = Result(specs_monotonic)
