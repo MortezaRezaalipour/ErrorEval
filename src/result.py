@@ -18,6 +18,7 @@ class Result:
         self.__experiment: str = specifications.experiment
         self.__strategy: str = specifications.strategy
         self.__metric: str = specifications.metric
+        self.__precision: int = specifications.precision
         self.__in_paths: List[str] = self.find_input_report_paths()
 
         self.__reports: List[Stats] = self.import_reports()
@@ -41,6 +42,9 @@ class Result:
     @property
     def metric(self):
         return self.__metric
+    @property
+    def precision(self):
+        return self.__precision
 
     @property
     def reports(self):

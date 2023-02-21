@@ -4,7 +4,7 @@ from src.config.config import *
 
 class Specs():
     def __init__(self, benchmark, approx_benchmark=None, experiment=None, strategy=MONOTONIC, metric=WAE,
-                 num_samples=None):
+                 num_samples=None, precision=2):
         self.__benchmark: str = benchmark
         self.__approximate_benchmark: str = approx_benchmark
 
@@ -12,6 +12,7 @@ class Specs():
         self.__strategy: str = strategy
 
         self.__metric: str = metric
+        self.__precision: int = precision
         self.__num_samples: str = num_samples
 
     @property
@@ -35,6 +36,10 @@ class Specs():
         return self.__metric
 
     @property
+    def precision(self):
+        return self.__precision
+
+    @property
     def num_samples(self):
         return self.__num_samples
 
@@ -45,5 +50,6 @@ class Specs():
                f'{self.experiment = }\n' \
                f'{self.strategy = }\n' \
                f'{self.metric = }\n' \
+               f'{self.precision = }\n' \
                f'{self.num_samples = }' \
                f''
