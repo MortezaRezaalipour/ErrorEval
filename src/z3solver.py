@@ -505,7 +505,6 @@ class Z3solver:
         elif re.search(MC, self.strategy):
             strategy_expressed += self.express_mc_strategy()
         elif re.search(KIND_BISECTION, self.strategy):
-            # print(f'You are choosing kind_bisection!')
             strategy_expressed += self.express_kind_bisection_strategy()
         else:
             print(f'ERROR!!! no strategy is specified!')
@@ -523,7 +522,7 @@ class Z3solver:
         elif self.metric == WHD:
             stats += f"stats['et'] = 0\n"
         elif self.metric == WRE:
-            stats += f"stats['et'] = \"{{:.{self.precision}f}}\".format(0)\n"
+            stats += f"stats['et'] = float(\"{{:.{self.precision}f}}\".format(0))\n"
 
         stats += f"stats['num_sats'] = 0\n" \
                  f"stats['num_unsats'] = 0\n" \
@@ -734,6 +733,13 @@ class Z3solver:
                   f"{TAB}{TAB}{TAB}print(f'ERROR!!! double-check failed! exiting...')\n" \
                   f"{TAB}{TAB}{TAB}exit()\n"
 
+        if self.metric == WRE:
+            if_sat += f"{TAB}{TAB}if returned_value[-1] == '?':\n" \
+                      f"{TAB}{TAB}{TAB}print('removing the last question mark!')\n" \
+                      f"{TAB}{TAB}{TAB}returned_value = abs(float(returned_value[:-1])) + 10 ** -({self.precision})\n" \
+                      f"{TAB}{TAB}else:\n" \
+                      f"{TAB}{TAB}{TAB}returned_value = abs(float(returned_value))\n"
+
         if self.metric == WAE:
             if_sat += f"{TAB}{TAB}if upper_bound - lower_bound <= 1:\n" \
                       f"{TAB}{TAB}{TAB}foundWCE = True\n" \
@@ -747,7 +753,7 @@ class Z3solver:
                       f"{TAB}{TAB}{TAB}foundWCE = True\n" \
                       f"{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n" \
                       f"{TAB}{TAB}else:\n" \
-                      f"{TAB}{TAB}{TAB}lower_bound = \"{{:.{self.precision}f}}\".format(returned_value)\n\n"
+                      f"{TAB}{TAB}{TAB}lower_bound = float(\"{{:.{self.precision}f}}\".format(returned_value))\n"
 
         if_sat += f"{TAB}{TAB}stats['num_sats'] += 1\n" \
                   f"{TAB}{TAB}stats['sat_runtime'] += (end_iteration - start_iteration)\n" \
@@ -885,7 +891,7 @@ class Z3solver:
                         f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n"
 
         if_unsat += f"{TAB}{TAB}else:\n" \
-                    f"{TAB}{TAB}{TAB}upper_bound = stats['et']\n" \
+                    f"{TAB}{TAB}{TAB}upper_bound = float(stats['et'])\n" \
                     f"{TAB}{TAB}stats['num_unsats'] += 1\n" \
                     f"{TAB}{TAB}stats['unsat_runtime'] += (end_iteration - start_iteration)\n" \
                     f"{TAB}s.pop()\n"

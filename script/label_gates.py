@@ -38,6 +38,7 @@ def main():
 
     print(f'labeling {args.metric.upper()} with {args.strategy.upper()}')
     z3py_obj.convert_gv_to_z3pyscript_maxerror_labeling(args.strategy)
+
     z3py_obj.run_z3pyscript_labeling()
     print(f'labeling is completed!')
 
