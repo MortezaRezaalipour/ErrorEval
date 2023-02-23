@@ -51,6 +51,7 @@ TAB = '\t'
 # strategies
 MONOTONIC = 'monotonic'
 BISECTION = 'bisection'
+KIND_BISECTION = 'kind'
 MC = 'mc'
 DEFAULT_STRATEGY = MONOTONIC
 

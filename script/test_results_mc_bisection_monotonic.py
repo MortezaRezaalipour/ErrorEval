@@ -49,38 +49,38 @@ def main():
     # 2) Collect all the results mc, bisection, and monotonic
     # specs_mc = Specs(args.benchmark_name, args.approximate_benchmark, args.experiment, MC, None, None)
     specs_bisection = Specs(args.benchmark_name, args.approximate_benchmark, args.experiment, BISECTION, metric=args.metric, precision=args.precision, optimization=args.optimization)
+    specs_kind = Specs(args.benchmark_name, args.approximate_benchmark, args.experiment, KIND_BISECTION, metric=args.metric, precision=args.precision, optimization=args.optimization)
     specs_monotonic = Specs(args.benchmark_name, args.approximate_benchmark, args.experiment, MONOTONIC, metric=args.metric, precision=args.precision, optimization=args.optimization)
 
     # result_mc = Result(specs_mc)
     result_bisection = Result(specs_bisection)
+    result_kind = Result(specs_kind)
     result_monotonic = Result(specs_monotonic)
 
 
-    # assert len(result_mc.reports) == len(result_bisection.reports) and len(result_mc.reports) == len(
-    #     result_monotonic.reports)
-    assert len(result_monotonic.reports) == len(
-        result_monotonic.reports)
+    assert (len(result_monotonic.reports) == len(result_monotonic.reports) and len(result_monotonic.reports) == len(result_kind.reports))
     print(f'TEST -> OK')
 
     count = 0
     for idx, report in enumerate(result_monotonic.reports):
-        # if (float(report.metric) <= float(result_bisection.reports[idx].metric) == float(result_monotonic.reports[idx].metric)):
-        if float(result_bisection.reports[idx].wce) == float(result_monotonic.reports[idx].wce):
+        if (float(result_bisection.reports[idx].wce) == float(result_monotonic.reports[idx].wce) and
+            float(result_bisection.reports[idx].wce) == float(result_kind.reports[idx].wce)):
             count += 1
         else:
             print(f'ERROR!')
             print(f'{result_monotonic.reports[idx].file_path = }')
             print(f'{result_bisection.reports[idx].file_path = }')
+            print(f'{result_kind.reports[idx].file_path = }')
             print(f'for file id{idx}')
             print(f'{float(report.wce) = }')
             print(f'{float(result_bisection.reports[idx].wce) = }')
             print(f'{float(result_monotonic.reports[idx].wce) = }')
+            print(f'{float(result_kind.reports[idx].wce) = }')
             break
     if count == len(result_monotonic.reports):
         print(f'TEST -> OK')
         with open(f'{args.benchmark_name}_{args.metric}', 'w') as f:
             f.write('PASSED!')
-
 
 if __name__ == "__main__":
     main()

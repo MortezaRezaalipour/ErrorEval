@@ -55,7 +55,7 @@ def main():
             break
     if count == len(result_optimize.reports):
         print(f'TEST -> OK')
-        with open(f'{args.benchmark_name}_{args.metric}', 'w') as f:
+        with open(f'{args.benchmark_name}_{args.metric}_optimization', 'w') as f:
             f.write('PASSED!')
 
 
