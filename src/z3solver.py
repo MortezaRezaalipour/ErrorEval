@@ -505,7 +505,7 @@ class Z3solver:
         elif re.search(MC, self.strategy):
             strategy_expressed += self.express_mc_strategy()
         elif re.search(KIND_BISECTION, self.strategy):
-            print(f'You are choosing kind_bisection!')
+            # print(f'You are choosing kind_bisection!')
             strategy_expressed += self.express_kind_bisection_strategy()
         else:
             print(f'ERROR!!! no strategy is specified!')
@@ -872,7 +872,7 @@ class Z3solver:
                         f"{TAB}{TAB}{TAB}if lower_bound == 0:\n" \
                         f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
                         f"{TAB}{TAB}{TAB}else:\n" \
-                        f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n"
+                        f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n"
         elif self.metric == WHD:
             pass
         elif self.metric == WRE:
@@ -882,7 +882,7 @@ class Z3solver:
                         f"{TAB}{TAB}{TAB}if lower_bound == 0:\n" \
                         f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
                         f"{TAB}{TAB}{TAB}else:\n" \
-                        f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n"
+                        f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n"
 
         if_unsat += f"{TAB}{TAB}else:\n" \
                     f"{TAB}{TAB}{TAB}upper_bound = stats['et']\n" \
