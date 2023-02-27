@@ -6,5 +6,6 @@ rm -rf output/report/*
 rm -rf output/ver/*
 rm -rf output/gv/*
 
-rm -rf test/z3/*
-rm -rf test/ver/*
+rm -rf test/*
+mkdir test/ver
+mkdir test/z3

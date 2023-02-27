@@ -587,28 +587,23 @@ class Z3solver:
             loop += f"{TAB}stats['et'] = (upper_bound + lower_bound) // 2\n"
         elif self.metric == WRE:
             loop += f"{TAB}stats['et'] = round(float(upper_bound + lower_bound) / 2, {self.precision})\n"
-        loop += f"{TAB}if stats['et'] not in stats['jumps']:\n" \
-                f"{TAB}{TAB}stats['jumps'].append(stats['et'])\n"
+
 
         # Check termination
         if self.metric == WAE:
             loop += f"{TAB}if upper_bound - lower_bound <= 1:\n" \
                     f"{TAB}{TAB}foundWCE = True\n" \
-                    f"{TAB}{TAB}if lower_bound == 0:\n" \
-                    f"{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
-                    f"{TAB}{TAB}else:\n" \
-                    f"{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n" \
+                    f"{TAB}{TAB}stats['wce'] = lower_bound\n" \
                     f"{TAB}{TAB}break\n"
         elif self.metric == WHD:
             pass
         elif self.metric == WRE:
             loop += f"{TAB}if round(upper_bound - lower_bound, 2) <= (10 ** -{self.precision}):\n" \
                     f"{TAB}{TAB}foundWCE = True\n" \
-                    f"{TAB}{TAB}if lower_bound == 0:\n" \
-                    f"{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
-                    f"{TAB}{TAB}else:\n" \
-                    f"{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n" \
+                    f"{TAB}{TAB}stats['wce'] = lower_bound\n" \
                     f"{TAB}{TAB}break\n"
+        loop += f"{TAB}if stats['et'] not in stats['jumps']:\n" \
+                f"{TAB}{TAB}stats['jumps'].append(stats['et'])\n"
 
         loop += f'{TAB}start_iteration = time.time()\n' \
                 f'{TAB}s.push()\n' \
@@ -650,8 +645,7 @@ class Z3solver:
         elif self.metric == WRE:
             loop += f"{TAB}stats['et'] = round(float(upper_bound + lower_bound) / 2, {self.precision})\n"
 
-        loop += f"{TAB}if stats['et'] not in stats['jumps']:\n" \
-                f"{TAB}{TAB}stats['jumps'].append(stats['et'])\n"
+
 
         # Check termination
         if self.metric == WAE:
@@ -672,6 +666,9 @@ class Z3solver:
                     f"{TAB}{TAB}else:\n" \
                     f"{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n" \
                     f"{TAB}{TAB}break\n"
+
+        loop += f"{TAB}if stats['et'] not in stats['jumps']:\n" \
+                f"{TAB}{TAB}stats['jumps'].append(stats['et'])\n"
 
         loop += f'{TAB}start_iteration = time.time()\n' \
                 f'{TAB}s.push()\n' \
@@ -786,7 +783,7 @@ class Z3solver:
         if self.metric == WAE:
             if_sat += f"{TAB}{TAB}if upper_bound - lower_bound <= 1:\n" \
                       f"{TAB}{TAB}{TAB}foundWCE = True\n" \
-                      f"{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n" \
+                      f"{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
                       f"{TAB}{TAB}else:\n" \
                       f"{TAB}{TAB}{TAB}lower_bound = returned_value\n"
         elif self.metric == WHD:
@@ -794,7 +791,7 @@ class Z3solver:
         elif self.metric == WRE:
             if_sat += f"{TAB}{TAB}if round(upper_bound - lower_bound, 2) <= (10 ** -{self.precision}):\n" \
                       f"{TAB}{TAB}{TAB}foundWCE = True\n" \
-                      f"{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n" \
+                      f"{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
                       f"{TAB}{TAB}else:\n" \
                       f"{TAB}{TAB}{TAB}lower_bound = float(\"{{:.{self.precision}f}}\".format(returned_value))\n"
 
@@ -935,7 +932,7 @@ class Z3solver:
                         f"{TAB}{TAB}{TAB}if lower_bound == 0:\n" \
                         f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
                         f"{TAB}{TAB}{TAB}else:\n" \
-                        f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n"
+                        f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n"
 
         if_unsat += f"{TAB}{TAB}else:\n" \
                     f"{TAB}{TAB}{TAB}upper_bound = float(stats['et'])\n" \
