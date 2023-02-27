@@ -1,7 +1,7 @@
 from src.argument import Arguments
 from src.verilog import Verilog
 from numpy import random
-
+import numpy as np
 
 def main():
     args = Arguments.parse()
@@ -9,8 +9,15 @@ def main():
 
     verilog_obj = Verilog(args.benchmark_name)
 
-    mymax = 2 ** verilog_obj.num_inputs - 1
-    rand_array = random.randint(0, mymax, size=args.num_samples)
+    my_max = 2 ** verilog_obj.num_inputs - 1
+    if 2 ** verilog_obj.num_inputs < args.num_samples:
+        print(f'Exhaustive Simulation...')
+        rand_array = np.array(range(my_max))
+    else:
+        print(f'Monte Carlo Simulation...')
+        rand_array = random.randint(0, my_max, size=args.num_samples)
+
+
     #TODO
     # keep in mind that we can have a class for random numbers
     # this way we can be able to generate random numbers with any possible distribution

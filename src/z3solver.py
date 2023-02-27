@@ -579,8 +579,7 @@ class Z3solver:
 
         loop += f's = Solver()\n'
 
-        loop += f'while(not foundWCE):\n' \
-                f'{TAB}start_iteration = time.time()\n'
+        loop += f'while(not foundWCE):\n'
 
         if self.metric == WAE:
             loop += f"{TAB}stats['et'] = (upper_bound + lower_bound) // 2\n"
@@ -588,8 +587,30 @@ class Z3solver:
             loop += f"{TAB}stats['et'] = (upper_bound + lower_bound) // 2\n"
         elif self.metric == WRE:
             loop += f"{TAB}stats['et'] = round(float(upper_bound + lower_bound) / 2, {self.precision})\n"
+        loop += f"{TAB}if stats['et'] not in stats['jumps']:\n" \
+                f"{TAB}{TAB}stats['jumps'].append(stats['et'])\n"
 
-        loop += f"{TAB}stats['jumps'].append(stats['et'])\n" \
+        # Check termination
+        if self.metric == WAE:
+            loop += f"{TAB}if upper_bound - lower_bound <= 1:\n" \
+                    f"{TAB}{TAB}foundWCE = True\n" \
+                    f"{TAB}{TAB}if lower_bound == 0:\n" \
+                    f"{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
+                    f"{TAB}{TAB}else:\n" \
+                    f"{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n" \
+                    f"{TAB}{TAB}break\n"
+        elif self.metric == WHD:
+            pass
+        elif self.metric == WRE:
+            loop += f"{TAB}if round(upper_bound - lower_bound, 2) <= (10 ** -{self.precision}):\n" \
+                    f"{TAB}{TAB}foundWCE = True\n" \
+                    f"{TAB}{TAB}if lower_bound == 0:\n" \
+                    f"{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
+                    f"{TAB}{TAB}else:\n" \
+                    f"{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n" \
+                    f"{TAB}{TAB}break\n"
+
+        loop += f'{TAB}start_iteration = time.time()\n' \
                 f'{TAB}s.push()\n' \
                 f'{TAB}s.add(f_exact(exact_out) == exact_out)\n' \
                 f'{TAB}s.add(f_approx(approx_out) == approx_out)\n'
@@ -619,8 +640,8 @@ class Z3solver:
 
         loop += f's = Solver()\n'
 
-        loop += f'while(not foundWCE):\n' \
-                f'{TAB}start_iteration = time.time()\n'
+        loop += f'while(not foundWCE):\n'
+
 
         if self.metric == WAE:
             loop += f"{TAB}stats['et'] = (upper_bound + lower_bound) // 2\n"
@@ -629,7 +650,30 @@ class Z3solver:
         elif self.metric == WRE:
             loop += f"{TAB}stats['et'] = round(float(upper_bound + lower_bound) / 2, {self.precision})\n"
 
-        loop += f"{TAB}stats['jumps'].append(stats['et'])\n" \
+        loop += f"{TAB}if stats['et'] not in stats['jumps']:\n" \
+                f"{TAB}{TAB}stats['jumps'].append(stats['et'])\n"
+
+        # Check termination
+        if self.metric == WAE:
+            loop += f"{TAB}if upper_bound - lower_bound <= 1:\n" \
+                    f"{TAB}{TAB}foundWCE = True\n" \
+                    f"{TAB}{TAB}if lower_bound == 0:\n" \
+                    f"{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
+                    f"{TAB}{TAB}else:\n" \
+                    f"{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n" \
+                    f"{TAB}{TAB}break\n"
+        elif self.metric == WHD:
+            pass
+        elif self.metric == WRE:
+            loop += f"{TAB}if round(upper_bound - lower_bound, 2) <= (10 ** -{self.precision}):\n" \
+                    f"{TAB}{TAB}foundWCE = True\n" \
+                    f"{TAB}{TAB}if lower_bound == 0:\n" \
+                    f"{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
+                    f"{TAB}{TAB}else:\n" \
+                    f"{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n" \
+                    f"{TAB}{TAB}break\n"
+
+        loop += f'{TAB}start_iteration = time.time()\n' \
                 f'{TAB}s.push()\n' \
                 f'{TAB}s.add(f_exact(exact_out) == exact_out)\n' \
                 f'{TAB}s.add(f_approx(approx_out) == approx_out)\n'
@@ -710,7 +754,6 @@ class Z3solver:
                   f"{TAB}{TAB}print(f'sat')\n" \
                   f"{TAB}{TAB}end_iteration = time.time()\n" \
                   f"{TAB}{TAB}returned_model = s.model()\n" \
-                  f"{TAB}{TAB}print(f'{{returned_model = }}')\n" \
                   f"{TAB}{TAB}print(f\"{{returned_model[f_exact].else_value() = }}\")\n" \
                   f"{TAB}{TAB}print(f\"{{returned_model[f_approx].else_value() = }}\")\n" \
                   f"{TAB}{TAB}print(f\"{{returned_model[f_error].else_value() = }}\")\n"
@@ -757,7 +800,6 @@ class Z3solver:
 
         if_sat += f"{TAB}{TAB}stats['num_sats'] += 1\n" \
                   f"{TAB}{TAB}stats['sat_runtime'] += (end_iteration - start_iteration)\n" \
-                  f"{TAB}{TAB}stats['jumps'].append(returned_value)\n" \
                   f"{TAB}{TAB}if stats['et'] == max:\n" \
                   f"{TAB}{TAB}{TAB}foundWCE = True\n" \
                   f"{TAB}{TAB}{TAB}stats['wce'] = stats['et']\n"
@@ -771,7 +813,6 @@ class Z3solver:
                   f"{TAB}{TAB}print(f'sat')\n" \
                   f"{TAB}{TAB}end_iteration = time.time()\n" \
                   f"{TAB}{TAB}returned_model = s.model()\n" \
-                  f"{TAB}{TAB}print(f'{{returned_model = }}')\n" \
                   f"{TAB}{TAB}print(f\"{{returned_model[f_exact].else_value() = }}\")\n" \
                   f"{TAB}{TAB}print(f\"{{returned_model[f_approx].else_value() = }}\")\n" \
                   f"{TAB}{TAB}print(f\"{{returned_model[f_error].else_value() = }}\")\n"
@@ -792,6 +833,13 @@ class Z3solver:
                   f"{TAB}{TAB}{TAB}print(f'ERROR!!! double-check failed! exiting...')\n" \
                   f"{TAB}{TAB}{TAB}exit()\n"
 
+        if_sat += f"{TAB}{TAB}if returned_value[-1] == '?':\n" \
+                  f"{TAB}{TAB}{TAB}print('removing the last question mark!')\n" \
+                  f"{TAB}{TAB}{TAB}returned_value = abs(float(returned_value[:-1])) + 10 ** -(2)\n" \
+                  f"{TAB}{TAB}else:\n" \
+                  f"{TAB}{TAB}{TAB}returned_value = abs(float(returned_value))\n"
+
+
         if self.metric == WAE:
             if_sat += f"{TAB}{TAB}if upper_bound - lower_bound <= 1:\n" \
                       f"{TAB}{TAB}{TAB}foundWCE = True\n" \
@@ -801,15 +849,14 @@ class Z3solver:
         elif self.metric == WHD:
             pass
         elif self.metric == WRE:
-            if_sat += f"{TAB}{TAB}if round(upper_bound - lower_bound, 2) <= (10 ** -{self.precision}):\n" \
+            if_sat += f'{TAB}{TAB}if round(upper_bound - lower_bound, 2) <= (10 ** - {self.precision}):\n' \
                       f"{TAB}{TAB}{TAB}foundWCE = True\n" \
                       f"{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n" \
                       f"{TAB}{TAB}else:\n" \
-                      f"{TAB}{TAB}{TAB}lower_bound = stats['et']\n"
+                      f"{TAB}{TAB}{TAB}lower_bound = float(stats['et'])\n"
 
         if_sat += f"{TAB}{TAB}stats['num_sats'] += 1\n" \
                   f"{TAB}{TAB}stats['sat_runtime'] += (end_iteration - start_iteration)\n" \
-                  f"{TAB}{TAB}stats['jumps'].append(returned_value)\n" \
                   f"{TAB}{TAB}if stats['et'] == max:\n" \
                   f"{TAB}{TAB}{TAB}foundWCE = True\n" \
                   f"{TAB}{TAB}{TAB}stats['wce'] = stats['et']\n"
@@ -888,7 +935,7 @@ class Z3solver:
                         f"{TAB}{TAB}{TAB}if lower_bound == 0:\n" \
                         f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
                         f"{TAB}{TAB}{TAB}else:\n" \
-                        f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n"
+                        f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n"
 
         if_unsat += f"{TAB}{TAB}else:\n" \
                     f"{TAB}{TAB}{TAB}upper_bound = float(stats['et'])\n" \
@@ -924,7 +971,7 @@ class Z3solver:
                         f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n"
 
         if_unsat += f"{TAB}{TAB}else:\n" \
-                    f"{TAB}{TAB}{TAB}upper_bound = stats['et']\n" \
+                    f"{TAB}{TAB}{TAB}upper_bound = float(stats['et'])\n" \
                     f"{TAB}{TAB}stats['num_unsats'] += 1\n" \
                     f"{TAB}{TAB}stats['unsat_runtime'] += (end_iteration - start_iteration)\n" \
                     f"{TAB}s.pop()\n"
