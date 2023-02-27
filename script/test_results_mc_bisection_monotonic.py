@@ -58,7 +58,10 @@ def main():
     result_monotonic = Result(specs_monotonic)
 
 
-    assert (len(result_monotonic.reports) == len(result_monotonic.reports) and len(result_monotonic.reports) == len(result_kind.reports))
+    print(f'{len(result_monotonic.reports) = }')
+    print(f'{len(result_bisection.reports) = }')
+    print(f'{len(result_kind.reports) = }')
+    assert (len(result_monotonic.reports) == len(result_bisection.reports) and len(result_monotonic.reports) == len(result_kind.reports))
     print(f'TEST -> OK')
 
     count = 0

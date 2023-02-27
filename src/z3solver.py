@@ -594,14 +594,16 @@ class Z3solver:
             loop += f"{TAB}if upper_bound - lower_bound <= 1:\n" \
                     f"{TAB}{TAB}foundWCE = True\n" \
                     f"{TAB}{TAB}stats['wce'] = lower_bound\n" \
-                    f"{TAB}{TAB}break\n"
+                    f"{TAB}{TAB}if stats['et'] in stats['jumps']:\n" \
+                    f"{TAB}{TAB}{TAB}break"
         elif self.metric == WHD:
             pass
         elif self.metric == WRE:
             loop += f"{TAB}if round(upper_bound - lower_bound, 2) <= (10 ** -{self.precision}):\n" \
                     f"{TAB}{TAB}foundWCE = True\n" \
                     f"{TAB}{TAB}stats['wce'] = lower_bound\n" \
-                    f"{TAB}{TAB}break\n"
+                    f"{TAB}{TAB}if stats['et'] in stats['jumps']:\n" \
+                    f"{TAB}{TAB}{TAB}break"
         loop += f"{TAB}if stats['et'] not in stats['jumps']:\n" \
                 f"{TAB}{TAB}stats['jumps'].append(stats['et'])\n"
 
@@ -783,7 +785,7 @@ class Z3solver:
         if self.metric == WAE:
             if_sat += f"{TAB}{TAB}if upper_bound - lower_bound <= 1:\n" \
                       f"{TAB}{TAB}{TAB}foundWCE = True\n" \
-                      f"{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
+                      f"{TAB}{TAB}{TAB}stats['wce'] = returned_value\n" \
                       f"{TAB}{TAB}else:\n" \
                       f"{TAB}{TAB}{TAB}lower_bound = returned_value\n"
         elif self.metric == WHD:
@@ -791,7 +793,7 @@ class Z3solver:
         elif self.metric == WRE:
             if_sat += f"{TAB}{TAB}if round(upper_bound - lower_bound, 2) <= (10 ** -{self.precision}):\n" \
                       f"{TAB}{TAB}{TAB}foundWCE = True\n" \
-                      f"{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
+                      f"{TAB}{TAB}{TAB}stats['wce'] = float(\"{{:.{self.precision}f}}\".format(returned_value))\n" \
                       f"{TAB}{TAB}else:\n" \
                       f"{TAB}{TAB}{TAB}lower_bound = float(\"{{:.{self.precision}f}}\".format(returned_value))\n"
 
