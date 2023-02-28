@@ -659,7 +659,8 @@ class Z3solver:
                     f"{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
                     f"{TAB}{TAB}else:\n" \
                     f"{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n" \
-                    f"{TAB}{TAB}break\n"
+                    f"{TAB}{TAB}if stats['et'] in stats['jumps']:\n" \
+                    f"{TAB}{TAB}{TAB}break\n"
         elif self.metric == WHD:
             pass
         elif self.metric == WRE:
@@ -669,7 +670,8 @@ class Z3solver:
                     f"{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
                     f"{TAB}{TAB}else:\n" \
                     f"{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n" \
-                    f"{TAB}{TAB}break\n"
+                    f"{TAB}{TAB}if stats['et'] in stats['jumps']:\n" \
+                    f"{TAB}{TAB}{TAB}break\n"
 
         loop += f"{TAB}if stats['et'] not in stats['jumps']:\n" \
                 f"{TAB}{TAB}stats['jumps'].append(stats['et'])\n"
