@@ -586,7 +586,8 @@ class Z3solver:
         elif self.metric == WHD:
             loop += f"{TAB}stats['et'] = (upper_bound + lower_bound) // 2\n"
         elif self.metric == WRE:
-            loop += f"{TAB}stats['et'] = round(float(upper_bound + lower_bound) / 2, {self.precision})\n"
+            loop += f"{TAB}import math\n"
+            loop += f"{TAB}stats['et'] = math.floor((float(upper_bound + lower_bound) / 2) * {10 ** self.precision}) / {10 ** self.precision}\n"
 
 
         # Check termination
@@ -645,7 +646,8 @@ class Z3solver:
         elif self.metric == WHD:
             loop += f"{TAB}stats['et'] = (upper_bound + lower_bound) // 2\n"
         elif self.metric == WRE:
-            loop += f"{TAB}stats['et'] = round(float(upper_bound + lower_bound) / 2, {self.precision})\n"
+            loop += f"{TAB}import math\n"
+            loop += f"{TAB}stats['et'] = math.floor((float(upper_bound + lower_bound) / 2) * {10 ** self.precision}) / {10 ** self.precision}\n"
 
 
 
