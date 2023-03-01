@@ -836,11 +836,12 @@ class Z3solver:
                   f"{TAB}{TAB}{TAB}print(f'ERROR!!! double-check failed! exiting...')\n" \
                   f"{TAB}{TAB}{TAB}exit()\n"
 
-        if_sat += f"{TAB}{TAB}if returned_value[-1] == '?':\n" \
-                  f"{TAB}{TAB}{TAB}print('removing the last question mark!')\n" \
-                  f"{TAB}{TAB}{TAB}returned_value = abs(float(returned_value[:-1])) + 10 ** -(2)\n" \
-                  f"{TAB}{TAB}else:\n" \
-                  f"{TAB}{TAB}{TAB}returned_value = abs(float(returned_value))\n"
+        if self.metric == WRE:
+            if_sat += f"{TAB}{TAB}if returned_value[-1] == '?':\n" \
+                      f"{TAB}{TAB}{TAB}print('removing the last question mark!')\n" \
+                      f"{TAB}{TAB}{TAB}returned_value = abs(float(returned_value[:-1])) + 10 ** -(2)\n" \
+                      f"{TAB}{TAB}else:\n" \
+                      f"{TAB}{TAB}{TAB}returned_value = abs(float(returned_value))\n"
 
 
         if self.metric == WAE:
