@@ -84,6 +84,7 @@ class Arguments:
 
         my_parser.add_argument('benchmark',
                                type=str,
+                               default=None,
                                help='benchmark-name')
 
         my_parser.add_argument('--samples', '-s',

@@ -13,7 +13,8 @@ OUTPUT_PATH = {
     'aig': ('output/aig', 'aig'),
     'dot': ('output/gv', 'dot'),
     'z3': ('output/z3', 'py'),
-    'report': ('output/report', 'csv')
+    'report': ('output/report', 'csv'),
+    'figure': ('output/figure', 'pdf')
 
 }
 

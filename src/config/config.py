@@ -82,3 +82,8 @@ N_SATS = 'Number of SAT calls'
 N_UNSATS = 'Number of UNSAT calls'
 JUMPS = 'Jumps'
 TEST = 'test'
+
+
+# PLOTTING
+SCATTER = 'scatter_plot'
+AVERAGE = 'average_plot'

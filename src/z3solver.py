@@ -590,6 +590,7 @@ class Z3solver:
             loop += f"{TAB}stats['et'] = math.floor((float(upper_bound + lower_bound) / 2) * {10 ** self.precision}) / {10 ** self.precision}\n"
 
 
+
         # Check termination
         if self.metric == WAE:
             loop += f"{TAB}if upper_bound - lower_bound <= 1:\n" \
@@ -600,7 +601,16 @@ class Z3solver:
         elif self.metric == WHD:
             pass
         elif self.metric == WRE:
-            loop += f"{TAB}if round(upper_bound - lower_bound, 2) <= (10 ** -{self.precision}):\n" \
+            loop += f"{TAB}if stats['et'] == lower_bound:\n" \
+                    f"{TAB}{TAB}if stats['et'] in stats['jumps']:\n" \
+                    f"{TAB}{TAB}{TAB}if lower_bound == 0:\n" \
+                    f"{TAB}{TAB}{TAB}{TAB}foundWCE = True\n" \
+                    f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
+                    f"{TAB}{TAB}{TAB}else:\n" \
+                    f"{TAB}{TAB}{TAB}{TAB}foundWCE = True\n" \
+                    f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n"
+
+            loop += f"{TAB}elif round(upper_bound - lower_bound, 2) <= (10 ** -{self.precision}):\n" \
                     f"{TAB}{TAB}foundWCE = True\n" \
                     f"{TAB}{TAB}stats['wce'] = lower_bound\n" \
                     f"{TAB}{TAB}if stats['et'] in stats['jumps']:\n" \
@@ -664,6 +674,14 @@ class Z3solver:
         elif self.metric == WHD:
             pass
         elif self.metric == WRE:
+            loop += f"{TAB}if stats['et'] == lower_bound:\n" \
+                    f"{TAB}{TAB}if stats['et'] in stats['jumps']:\n" \
+                    f"{TAB}{TAB}{TAB}if lower_bound == 0:\n" \
+                    f"{TAB}{TAB}{TAB}{TAB}foundWCE = True\n" \
+                    f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
+                    f"{TAB}{TAB}{TAB}else:\n" \
+                    f"{TAB}{TAB}{TAB}{TAB}foundWCE = True\n" \
+                    f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n"
             loop += f"{TAB}if round(upper_bound - lower_bound, 2) <= (10 ** -{self.precision}):\n" \
                     f"{TAB}{TAB}foundWCE = True\n" \
                     f"{TAB}{TAB}if lower_bound == 0:\n" \

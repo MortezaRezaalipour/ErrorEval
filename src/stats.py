@@ -1,7 +1,7 @@
 import csv
 import re
 from src.config.config import *
-
+from src.utils import *
 
 class Stats:
     def __init__(self, file_path: str):
@@ -9,7 +9,12 @@ class Stats:
         stores a csv file contents as a an object where each row of the csv file is an attribute
         :param file_path: the path to a csv file
         """
-        self.__name = None
+        full_name = get_pure_name(file_path)
+        idx = re.search(r'o\d+',full_name)
+        s, e = idx.span()
+        # print(full_name[:e])
+        self.__name = full_name[:e]
+
         self.__experiment = None
         self.__wce = None
         self.___runtime = None

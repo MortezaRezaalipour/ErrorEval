@@ -3,7 +3,7 @@ from src.config.config import *
 
 
 class Specs():
-    def __init__(self, benchmark, approx_benchmark=None, experiment=None, strategy=MONOTONIC, metric=WAE,
+    def __init__(self, benchmark=None, approx_benchmark=None, experiment=None, strategy=MONOTONIC, metric=WAE,
                  num_samples=None, precision=2, optimization=None):
         self.__benchmark: str = benchmark
         self.__approximate_benchmark: str = approx_benchmark
