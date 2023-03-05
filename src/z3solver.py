@@ -202,6 +202,7 @@ class Z3solver:
     def import_results(self):
         # print(f'importing results...')
         arr = []
+        print(f"{self.pyscript_results_out_path = }")
         with open(self.pyscript_results_out_path, 'r') as f:
             lines = f.readlines()
             for line in lines:
@@ -1231,7 +1232,7 @@ class Z3solver:
 
         for i in range(self.graph.num_outputs):
             output_declaration += f"exact_out{i}=Int('exact_out{i}')\n"
-            output_declaration += f"exact_out{i}={self.graph.output_dict[i]}*{2 ** i}\n"
+            output_declaration += f"exact_out{i}={self.graph.output_dict[i]}*{2 ** i}*2/2\n"
 
         output_declaration += f"exact_out = Int('exact_out')\n"
         output_declaration += f'exact_out='
@@ -1341,7 +1342,8 @@ class Z3solver:
 
     def run_z3pyscript_test(self):
         with open(self.z3_log_path, 'w') as f:
-            process = subprocess.run([PYTHON3, self.out_path], stdout=PIPE, stderr=PIPE)
+            # process = subprocess.run([PYTHON3, self.out_path], stdout=PIPE, stderr=PIPE)
+            process = subprocess.run([PYTHON3, self.out_path], stderr=PIPE)
 
         self.set_sample_results(self.import_results())
     # TODO: decorators (end)--------------------------

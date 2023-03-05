@@ -19,21 +19,27 @@ def main():
 
     verilog_obj.synthesize_to_gate_level()
     verilog_obj.unwrap_variables()
-
+    print(f'Synthesized to Gate-level!')
     convert_verilog_to_gv(args.benchmark_name)
-
+    print(f'Converted into a gv by Yosys!')
     graph_obj = Graph(args.benchmark_name)
     print(f'{graph_obj = }')
 
     graph_obj.export_graph()
 
-    my_max = 2 ** verilog_obj.num_inputs - 1
+    # TODO: Fix it later!
+    # To prevent ValueError: high is out of bounds for int64
+    if verilog_obj.num_inputs < 64:
+        my_max = 2 ** verilog_obj.num_inputs - 1
+    else:
+        my_max = 2 ** 63 - 1
+    print(verilog_obj.num_inputs)
     if 2 ** verilog_obj.num_inputs < args.num_samples:
         print(f'Exhaustive Simulation...')
         rand_array = np.array(range(my_max))
     else:
         print(f'Monte Carlo Simulation...')
-        rand_array = random.randint(0, my_max, size=args.num_samples)
+        rand_array = random.randint(0, my_max, size=args.num_samples, dtype=np.int64)
 
     verilog_obj.set_samples(rand_array)
     verilog_obj.create_test_bench()
@@ -61,6 +67,8 @@ def main():
 
         if count == len(verilog_obj.sample_results):
             print(f'TEST -> PASS')
+            with open(f'test/{args.benchmark_name}.txt', 'w') as v:
+                v.write('PASSED!')
         else:
             print(f'{count = }')
     else:

@@ -22,6 +22,7 @@ def main():
     # results_whd.draw_scatter_plot_all(TOTAL_RUNTIME)
 
     results_wae.avg_runtime(TOTAL_RUNTIME)
+    results_wre.avg_runtime(TOTAL_RUNTIME)
 
     results_wae.draw_avg_plot_all(N_SATS)
 

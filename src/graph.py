@@ -26,7 +26,7 @@ class Graph:
 
         folder, extension = OUTPUT_PATH['ver']
         self.__verilog_in_path = f'{folder}/{benchmark_name}.{extension}'
-
+        print(f'Converting the graph into a NeworkX object')
         self.__graph = self.import_graph()
 
         self.__sorted_node_list = None
