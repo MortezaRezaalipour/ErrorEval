@@ -38,15 +38,27 @@ REDUNDANT_FIELDS=[
 ]
 
 # random constants
-TMP = 'tmp'
-LOG = 'log'
+
 Z3BOOL = 'Bool'
+Z3XOR = 'Xor'
+Z3INT = 'Int'
+
+MITER = 'miter'
+EXACT = 'exact'
+APPROXIMATE = 'approx'
+XOR = 'xor'
+INT = 'int'
+
 PYTHON3 = 'python3'
 Z3 = 'z3py'
 SHAPE = 'shape'
 LABEL = 'label'
 PRUNED = 'pruned'
 TAB = '\t'
+
+
+TMP = 'tmp'
+LOG = 'log'
 
 # strategies
 MONOTONIC = 'monotonic'
@@ -87,3 +99,4 @@ TEST = 'test'
 # PLOTTING
 SCATTER = 'scatter_plot'
 AVERAGE = 'average_plot'
+

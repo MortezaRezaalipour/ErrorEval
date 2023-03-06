@@ -276,7 +276,12 @@ class Z3solver:
         abs_function = self.create_abs_function()
         exact_circuit_declaration = self.declare_original_circuit()
         exact_circuit_expression = self.express_original_circuit()
-        output_declaration = self.declare_original_output()
+        # TODO: Fix Later
+        if self.metric == WHD:
+            output_declaration = ''
+            print(f'ERROR!!! Right now testing is not possible on WHD!')
+        else:
+            output_declaration = self.declare_original_output()
         exact_function = self.declare_original_function()
         solver = self.declare_solver()
         sample_expression = self.express_samples()
@@ -330,12 +335,18 @@ class Z3solver:
         # exact_part
         original_circuit_declaration = self.declare_original_circuit()
         original_circuit_expression = self.express_original_circuit()
-        original_output_declaration = self.declare_original_output()
+        if self.metric == WHD:
+            original_output_declaration = 'Blah Blah Blah\n'
+        else:
+            original_output_declaration = self.declare_original_output()
 
         # approximate_part
         approximate_circuit_declaration = self.declare_approximate_circuit()
         approximate_circuit_expression = self.express_approximate_circuit()
-        approximate_output_declaration = self.declare_approximate_output()
+        if self.metric == WHD:
+            approximate_output_declaration = 'Blah Blah Blah\n'
+        else:
+            approximate_output_declaration = self.declare_approximate_output()
 
         # error distance function
         declare_error_distance_function = self.declare_error_distance_function()
@@ -438,11 +449,18 @@ class Z3solver:
         # exact_part
         original_circuit_declaration = self.declare_original_circuit()
         original_circuit_expression = self.express_original_circuit()
-        original_output_declaration = self.declare_original_output()
+        if self.metric == WHD:
+            original_output_declaration = f'\n'
+        else:
+            original_output_declaration = self.declare_original_output()
 
         approximate_circuit_declaration = self.declare_approximate_circuit()
         approximate_circuit_expression = self.express_approximate_circuit()
-        approximate_output_declaration = self.declare_approximate_output()
+
+        if self.metric == WHD:
+            xor_miter_declaration = self.declare_xor_miter()
+        else:
+            approximate_output_declaration = self.declare_approximate_output()
 
         # error distance function
         declare_error_distance_function = self.declare_error_distance_function()
@@ -450,10 +468,15 @@ class Z3solver:
 
         strategy = self.express_strategy()
 
-        self.set_z3pyscript(
-            import_string + abs_function + original_circuit_declaration + original_circuit_expression +
-            original_output_declaration + approximate_circuit_declaration + approximate_circuit_expression +
-            approximate_output_declaration + declare_error_distance_function + strategy)
+        if self.metric == WHD:
+            self.set_z3pyscript(
+                import_string + abs_function + original_circuit_declaration + original_circuit_expression +
+                approximate_circuit_expression + xor_miter_declaration + declare_error_distance_function + strategy)
+        else:
+            self.set_z3pyscript(
+                import_string + abs_function + original_circuit_declaration + original_circuit_expression +
+                original_output_declaration + approximate_circuit_declaration + approximate_circuit_expression +
+                approximate_output_declaration + declare_error_distance_function + strategy)
 
         self.export_z3pyscript()
 
@@ -488,12 +511,16 @@ class Z3solver:
                            f"f_approx = Function('f_approx', IntSort(), IntSort())\n"
             ed_function += f"f_error = Function('f_error', IntSort(), IntSort(), IntSort())\n"
         elif self.metric == WHD:
-            pass
+            ed_function += f"f_error = Function('f_error', IntSort(), "
+            for i in range(self.graph.num_outputs):
+                if i == self.graph.num_outputs - 1:
+                    ed_function += f"IntSort() )\n"
+                else:
+                    ed_function += f"IntSort(), "
         elif self.metric == WRE:
             ed_function += f"f_exact = Function('f_exact', IntSort(), IntSort())\n" \
                            f"f_approx = Function('f_approx', IntSort(), IntSort())\n"
             ed_function += f"f_error = Function('f_error', IntSort(), IntSort(), RealSort())\n"
-
         ed_function += f'\n'
         return ed_function
 
@@ -529,8 +556,11 @@ class Z3solver:
                  f"stats['num_unsats'] = 0\n" \
                  f"stats['sat_runtime'] = 0.0\n" \
                  f"stats['unsat_runtime'] = 0.0\n" \
-                 f"stats['jumps'] = []\n" \
-                 f"max = (2 ** {self.graph.num_outputs}) -1\n"
+                 f"stats['jumps'] = []\n"
+        if self.metric == WAE or self.metric == WRE:
+            stats += f"max = (2 ** {self.graph.num_outputs}) -1\n"
+        elif self.metric == WHD:
+            stats += f"max = {self.graph.num_outputs}\n"
         return stats
 
     def express_mc_while_loop(self):
@@ -574,9 +604,14 @@ class Z3solver:
 
     def express_kind_bisection_while_loop(self):
         loop = ''
-        loop += f'upper_bound = 2**({self.graph.num_outputs}) - 1\n' \
-                f'lower_bound = 0 \n' \
-                f'start_whole = time.time()\n'
+        if self.metric == WAE or self.metric == WRE:
+            loop += f'upper_bound = 2**({self.graph.num_outputs}) - 1\n' \
+                    f'lower_bound = 0 \n' \
+                    f'start_whole = time.time()\n'
+        else:
+            loop += f'upper_bound = {self.graph.num_outputs}\n' \
+                    f'lower_bound = 0 \n' \
+                    f'start_whole = time.time()\n'
 
         loop += f's = Solver()\n'
 
@@ -600,7 +635,14 @@ class Z3solver:
                     f"{TAB}{TAB}if stats['et'] in stats['jumps']:\n" \
                     f"{TAB}{TAB}{TAB}break\n"
         elif self.metric == WHD:
-            pass
+            loop += f"{TAB}if upper_bound - lower_bound <= 1:\n" \
+                    f"{TAB}{TAB}foundWCE = True\n" \
+                    f"{TAB}{TAB}if lower_bound == 0:\n" \
+                    f"{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
+                    f"{TAB}{TAB}else:\n" \
+                    f"{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n" \
+                    f"{TAB}{TAB}if stats['et'] in stats['jumps']:\n" \
+                    f"{TAB}{TAB}{TAB}break\n"
         elif self.metric == WRE:
             loop += f"{TAB}if stats['et'] == lower_bound:\n" \
                     f"{TAB}{TAB}if stats['et'] in stats['jumps']:\n" \
@@ -620,15 +662,35 @@ class Z3solver:
                 f"{TAB}{TAB}stats['jumps'].append(stats['et'])\n"
 
         loop += f'{TAB}start_iteration = time.time()\n' \
-                f'{TAB}s.push()\n' \
-                f'{TAB}s.add(f_exact(exact_out) == exact_out)\n' \
-                f'{TAB}s.add(f_approx(approx_out) == approx_out)\n'
+                f'{TAB}s.push()\n'
+        if self.metric == WAE or self.metric == WRE:
+            loop += f'{TAB}s.add(f_exact(exact_out) == exact_out)\n' \
+                    f'{TAB}s.add(f_approx(approx_out) == approx_out)\n'
 
         if self.metric == WAE:
             loop += f'{TAB}s.add(f_error(exact_out, approx_out) == exact_out - approx_out)\n' \
                     f"{TAB}s.add(z3_abs(f_error(exact_out, approx_out)) > stats['et'])\n"
         elif self.metric == WHD:
-            pass
+            if self.optimization == MAXIMIZE and (self.strategy != BISECTION):
+                pass
+            else:
+                loop += f"{TAB}s.add(f_error("
+                for i in range(self.graph.num_outputs):
+                    if i == self.graph.num_outputs - 1:
+                        loop += f"o{i}_{XOR}_{INT}) == "
+                    else:
+                        loop += f"o{i}_{XOR}_{INT}, "
+                for i in range(self.graph.num_outputs):
+                    if i == self.graph.num_outputs - 1:
+                        loop += f"o{i}_{XOR}_{INT})\n"
+                    else:
+                        loop += f"o{i}_{XOR}_{INT} +  "
+                loop += f"{TAB}s.add(f_error("
+                for i in range(self.graph.num_outputs):
+                    if i == self.graph.num_outputs - 1:
+                        loop += f"o{i}_{XOR}_{INT}) > stats['et'])\n"
+                    else:
+                        loop += f"o{i}_{XOR}_{INT}, "
             # TODO
         elif self.metric == WRE:
             loop += f'{TAB}s.add(f_error(exact_out, approx_out) == z3_abs(exact_out - approx_out) / (z3_abs(exact_out) + z3_abs(1.0))  )\n' \
@@ -643,9 +705,14 @@ class Z3solver:
 
     def express_bisection_while_loop(self):
         loop = ''
-        loop += f'upper_bound = 2**({self.graph.num_outputs}) - 1\n' \
-                f'lower_bound = 0 \n' \
-                f'start_whole = time.time()\n'
+        if self.metric == WAE or self.metric == WRE:
+            loop += f'upper_bound = 2**({self.graph.num_outputs}) - 1\n' \
+                    f'lower_bound = 0 \n' \
+                    f'start_whole = time.time()\n'
+        else:
+            loop += f'upper_bound = {self.graph.num_outputs}\n' \
+                    f'lower_bound = 0 \n' \
+                    f'start_whole = time.time()\n'
 
         loop += f's = Solver()\n'
 
@@ -673,7 +740,14 @@ class Z3solver:
                     f"{TAB}{TAB}if stats['et'] in stats['jumps']:\n" \
                     f"{TAB}{TAB}{TAB}break\n"
         elif self.metric == WHD:
-            pass
+            loop += f"{TAB}if upper_bound - lower_bound <= 1:\n" \
+                    f"{TAB}{TAB}foundWCE = True\n" \
+                    f"{TAB}{TAB}if lower_bound == 0:\n" \
+                    f"{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
+                    f"{TAB}{TAB}else:\n" \
+                    f"{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n" \
+                    f"{TAB}{TAB}if stats['et'] in stats['jumps']:\n" \
+                    f"{TAB}{TAB}{TAB}break\n"
         elif self.metric == WRE:
             loop += f"{TAB}if stats['et'] == lower_bound:\n" \
                     f"{TAB}{TAB}if stats['et'] in stats['jumps']:\n" \
@@ -696,15 +770,36 @@ class Z3solver:
                 f"{TAB}{TAB}stats['jumps'].append(stats['et'])\n"
 
         loop += f'{TAB}start_iteration = time.time()\n' \
-                f'{TAB}s.push()\n' \
-                f'{TAB}s.add(f_exact(exact_out) == exact_out)\n' \
-                f'{TAB}s.add(f_approx(approx_out) == approx_out)\n'
+                f'{TAB}s.push()\n'
+        if self.metric == WAE or self.metric == WRE:
+                loop += f'{TAB}s.add(f_exact(exact_out) == exact_out)\n' \
+                        f'{TAB}s.add(f_approx(approx_out) == approx_out)\n'
+
 
         if self.metric == WAE:
             loop += f'{TAB}s.add(f_error(exact_out, approx_out) == exact_out - approx_out)\n' \
                     f"{TAB}s.add(z3_abs(f_error(exact_out, approx_out)) > stats['et'])\n"
         elif self.metric == WHD:
-            pass
+            if self.optimization == MAXIMIZE and (self.strategy != BISECTION):
+                pass
+            else:
+                loop += f"{TAB}s.add(f_error("
+                for i in range(self.graph.num_outputs):
+                    if i == self.graph.num_outputs - 1:
+                        loop += f"o{i}_{XOR}_{INT}) == "
+                    else:
+                        loop += f"o{i}_{XOR}_{INT}, "
+                for i in range(self.graph.num_outputs):
+                    if i == self.graph.num_outputs - 1:
+                        loop += f"o{i}_{XOR}_{INT})\n"
+                    else:
+                        loop += f"o{i}_{XOR}_{INT} +  "
+                loop += f"{TAB}s.add(f_error("
+                for i in range(self.graph.num_outputs):
+                    if i == self.graph.num_outputs - 1:
+                        loop += f"o{i}_{XOR}_{INT}) > stats['et'])\n"
+                    else:
+                        loop += f"o{i}_{XOR}_{INT}, "
             # TODO
         elif self.metric == WRE:
             loop += f'{TAB}s.add(f_error(exact_out, approx_out) == z3_abs(exact_out - approx_out) / (z3_abs(exact_out) + z3_abs(1.0))  )\n' \
@@ -733,9 +828,10 @@ class Z3solver:
         loop += f"stats['jumps'].append(stats['et'])\n" \
                 f'while(not foundWCE):\n' \
                 f'{TAB}start_iteration = time.time()\n' \
-                f'{TAB}s.push()\n' \
-                f'{TAB}s.add(f_exact(exact_out) == exact_out)\n' \
-                f'{TAB}s.add(f_approx(approx_out) == approx_out)\n'
+                f'{TAB}s.push()\n'
+        if self.metric == WAE or self.metric == WRE:
+            loop += f'{TAB}s.add(f_exact(exact_out) == exact_out)\n' \
+                    f'{TAB}s.add(f_approx(approx_out) == approx_out)\n'
 
         if self.metric == WAE:
             if self.optimization == MAXIMIZE and (self.strategy != BISECTION):
@@ -751,7 +847,23 @@ class Z3solver:
             if self.optimization == MAXIMIZE and (self.strategy != BISECTION):
                 pass
             else:
-                pass
+                loop += f"{TAB}s.add(f_error("
+                for i in range(self.graph.num_outputs):
+                    if i == self.graph.num_outputs - 1:
+                        loop += f"o{i}_{XOR}_{INT}) == "
+                    else:
+                        loop += f"o{i}_{XOR}_{INT}, "
+                for i in range(self.graph.num_outputs):
+                    if i == self.graph.num_outputs - 1:
+                        loop += f"o{i}_{XOR}_{INT})\n"
+                    else:
+                        loop += f"o{i}_{XOR}_{INT} +  "
+                loop += f"{TAB}s.add(f_error("
+                for i in range(self.graph.num_outputs):
+                    if i == self.graph.num_outputs - 1:
+                        loop += f"o{i}_{XOR}_{INT}) > stats['et'])\n"
+                    else:
+                        loop += f"o{i}_{XOR}_{INT}, "
             # TODO
         elif self.metric == WRE:
             if self.optimization == MAXIMIZE and (self.strategy != BISECTION):
@@ -776,15 +888,20 @@ class Z3solver:
                   f"{TAB}{TAB}print(f'sat')\n" \
                   f"{TAB}{TAB}end_iteration = time.time()\n" \
                   f"{TAB}{TAB}returned_model = s.model()\n" \
-                  f"{TAB}{TAB}print(f\"{{returned_model[f_exact].else_value() = }}\")\n" \
-                  f"{TAB}{TAB}print(f\"{{returned_model[f_approx].else_value() = }}\")\n" \
                   f"{TAB}{TAB}print(f\"{{returned_model[f_error].else_value() = }}\")\n"
 
         if self.metric == WAE:
             if_sat += f"{TAB}{TAB}returned_value = abs(int(returned_model[f_error].else_value().as_long()))\n" \
                       f"{TAB}{TAB}returned_value_reval = abs(int(returned_model.evaluate(f_error(exact_out, approx_out)).as_long()))\n"
         elif self.metric == WHD:
-            pass
+            if_sat += f"{TAB}{TAB}returned_value = abs(int(returned_model[f_error].else_value().as_long()))\n"
+
+            if_sat += f"{TAB}{TAB}returned_value_reval = abs(int(returned_model.evaluate(f_error("
+            for i in range(self.graph.num_outputs):
+                if i == self.graph.num_outputs - 1:
+                    if_sat += f"o{i}_{XOR}_{INT})).as_long()))\n"
+                else:
+                    if_sat += f"o{i}_{XOR}_{INT}, "
             # TODO
         elif self.metric == WRE:
             if_sat += f"{TAB}{TAB}returned_value = ((returned_model[f_error].else_value().as_decimal({self.precision})))\n" \
@@ -812,7 +929,11 @@ class Z3solver:
                       f"{TAB}{TAB}else:\n" \
                       f"{TAB}{TAB}{TAB}lower_bound = returned_value\n"
         elif self.metric == WHD:
-            pass
+            if_sat += f"{TAB}{TAB}if upper_bound - lower_bound <= 1:\n" \
+                      f"{TAB}{TAB}{TAB}foundWCE = True\n" \
+                      f"{TAB}{TAB}{TAB}stats['wce'] = returned_value\n" \
+                      f"{TAB}{TAB}else:\n" \
+                      f"{TAB}{TAB}{TAB}lower_bound = returned_value\n"
         elif self.metric == WRE:
             if_sat += f"{TAB}{TAB}if round(upper_bound - lower_bound, 2) <= (10 ** -{self.precision}):\n" \
                       f"{TAB}{TAB}{TAB}foundWCE = True\n" \
@@ -835,15 +956,27 @@ class Z3solver:
                   f"{TAB}{TAB}print(f'sat')\n" \
                   f"{TAB}{TAB}end_iteration = time.time()\n" \
                   f"{TAB}{TAB}returned_model = s.model()\n" \
-                  f"{TAB}{TAB}print(f\"{{returned_model[f_exact].else_value() = }}\")\n" \
-                  f"{TAB}{TAB}print(f\"{{returned_model[f_approx].else_value() = }}\")\n" \
-                  f"{TAB}{TAB}print(f\"{{returned_model[f_error].else_value() = }}\")\n"
+                  f"{TAB}{TAB}print(f'{{returned_model = }}')\n"
+        if self.metric == WAE or self.metric == WRE:
+            f"{TAB}{TAB}print(f\"{{returned_model[f_exact].else_value() = }}\")\n" \
+            f"{TAB}{TAB}print(f\"{{returned_model[f_approx].else_value() = }}\")\n" \
+            f"{TAB}{TAB}print(f\"{{returned_model[f_error].else_value() = }}\")\n"
+        elif self.metric == WHD:
+            f"{TAB}{TAB}print(f\"{{returned_model[f_error].else_value() = }}\")\n"
+
 
         if self.metric == WAE:
             if_sat += f"{TAB}{TAB}returned_value = abs(int(returned_model[f_error].else_value().as_long()))\n" \
                       f"{TAB}{TAB}returned_value_reval = abs(int(returned_model.evaluate(f_error(exact_out, approx_out)).as_long()))\n"
         elif self.metric == WHD:
-            pass
+            if_sat += f"{TAB}{TAB}returned_value = abs(int(returned_model[f_error].else_value().as_long()))\n"
+
+            if_sat += f"{TAB}{TAB}returned_value_reval = abs(int(returned_model.evaluate(f_error("
+            for i in range(self.graph.num_outputs):
+                if i == self.graph.num_outputs - 1:
+                    if_sat += f"o{i}_{XOR}_{INT})).as_long()))\n"
+                else:
+                    if_sat += f"o{i}_{XOR}_{INT}, "
             # TODO
         elif self.metric == WRE:
             if_sat += f"{TAB}{TAB}returned_value = ((returned_model[f_error].else_value().as_decimal({self.precision})))\n" \
@@ -870,7 +1003,11 @@ class Z3solver:
                       f"{TAB}{TAB}else:\n" \
                       f"{TAB}{TAB}{TAB}lower_bound = stats['et']\n"
         elif self.metric == WHD:
-            pass
+            if_sat += f"{TAB}{TAB}if upper_bound - lower_bound <= 1:\n" \
+                      f"{TAB}{TAB}{TAB}foundWCE = True\n" \
+                      f"{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n" \
+                      f"{TAB}{TAB}else:\n" \
+                      f"{TAB}{TAB}{TAB}lower_bound = stats['et']\n"
         elif self.metric == WRE:
             if_sat += f'{TAB}{TAB}if round(upper_bound - lower_bound, 2) <= (10 ** - {self.precision}):\n' \
                       f"{TAB}{TAB}{TAB}foundWCE = True\n" \
@@ -892,16 +1029,32 @@ class Z3solver:
                   f"{TAB}{TAB}print(f'sat')\n" \
                   f"{TAB}{TAB}end_iteration = time.time()\n" \
                   f"{TAB}{TAB}returned_model = s.model()\n" \
-                  f"{TAB}{TAB}print(f'{{returned_model = }}')\n" \
+                  f"{TAB}{TAB}print(f'{{returned_model = }}')\n"
+        if self.metric == WAE or self.metric == WRE:
                   f"{TAB}{TAB}print(f\"{{returned_model[f_exact].else_value() = }}\")\n" \
                   f"{TAB}{TAB}print(f\"{{returned_model[f_approx].else_value() = }}\")\n" \
                   f"{TAB}{TAB}print(f\"{{returned_model[f_error].else_value() = }}\")\n"
+        elif self.metric == WHD:
+            f"{TAB}{TAB}print(f\"{{returned_model[f_error].else_value() = }}\")\n"
+
+
 
         if self.metric == WAE:
             if_sat += f"{TAB}{TAB}returned_value = abs(int(returned_model[f_error].else_value().as_long()))\n" \
                       f"{TAB}{TAB}returned_value_reval = abs(int(returned_model.evaluate(f_error(exact_out, approx_out)).as_long()))\n"
         elif self.metric == WHD:
-            pass
+            if_sat += f"{TAB}{TAB}returned_value = abs(int(returned_model[f_error].else_value().as_long()))\n"
+
+            if_sat +=  f"{TAB}{TAB}returned_value_reval = abs(int(returned_model.evaluate(f_error("
+            for i in range(self.graph.num_outputs):
+                if i == self.graph.num_outputs - 1:
+                    if_sat += f"o{i}_{XOR}_{INT})).as_long()))\n"
+                else:
+                    if_sat += f"o{i}_{XOR}_{INT}, "
+
+
+
+
         elif self.metric == WRE:
             if_sat += f"{TAB}{TAB}returned_value = ((returned_model[f_error].else_value().as_decimal({self.precision})))\n" \
                       f"{TAB}{TAB}returned_value_reval = ((returned_model.evaluate(f_error(exact_out, approx_out)).as_decimal({self.precision})))\n"
@@ -950,7 +1103,12 @@ class Z3solver:
                         f"{TAB}{TAB}{TAB}else:\n" \
                         f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n"
         elif self.metric == WHD:
-            pass
+            if_unsat += f"{TAB}{TAB}if upper_bound - lower_bound <= 1:\n" \
+                        f"{TAB}{TAB}{TAB}foundWCE = True\n" \
+                        f"{TAB}{TAB}{TAB}if lower_bound == 0:\n" \
+                        f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
+                        f"{TAB}{TAB}{TAB}else:\n" \
+                        f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n"
         elif self.metric == WRE:
             if_unsat += f"{TAB}{TAB}if round(upper_bound - lower_bound, 2) <= (10 ** -{self.precision}):\n" \
                         f"{TAB}{TAB}{TAB}foundWCE = True\n" \
@@ -983,7 +1141,12 @@ class Z3solver:
                         f"{TAB}{TAB}{TAB}else:\n" \
                         f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n"
         elif self.metric == WHD:
-            pass
+            if_unsat += f"{TAB}{TAB}if upper_bound - lower_bound <= 1:\n" \
+                        f"{TAB}{TAB}{TAB}foundWCE = True\n" \
+                        f"{TAB}{TAB}{TAB}if lower_bound == 0:\n" \
+                        f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = lower_bound\n" \
+                        f"{TAB}{TAB}{TAB}else:\n" \
+                        f"{TAB}{TAB}{TAB}{TAB}stats['wce'] = upper_bound\n"
         elif self.metric == WRE:
             if_unsat += f"{TAB}{TAB}if round(upper_bound - lower_bound, 2) <= (10 ** -{self.precision}):\n" \
                         f"{TAB}{TAB}{TAB}foundWCE = True\n" \
@@ -1230,6 +1393,8 @@ class Z3solver:
         output_declaration = ''
         # print(f'{self.graph.output_dict = }')
 
+
+
         for i in range(self.graph.num_outputs):
             output_declaration += f"exact_out{i}=Int('exact_out{i}')\n"
             output_declaration += f"exact_out{i}={self.graph.output_dict[i]}*{2 ** i}*2/2\n"
@@ -1264,6 +1429,39 @@ class Z3solver:
 
         output_declaration += f'\n'
         return output_declaration
+
+    def declare_xor_miter(self):
+
+        xor_miter_declaration = f''
+        # o0_xor = Bool('o0_xor')
+        # o1_xor = Bool('o1_xor')
+        # o2_xor = Bool('o2_xor')
+        for i in range(self.graph.num_outputs):
+            xor_miter_declaration += f"{MITER}_o{i}_{XOR} = {Z3BOOL}('o{i}_{XOR}')\n"
+
+
+        # o0_xor = Xor(g27, a27)
+        # o1_xor = Xor(g105, a105)
+        # o2_xor = Xor(g99, a99)
+        for i in range(self.graph.num_outputs):
+            xor_miter_declaration += f"o{i}_{XOR} = {Z3XOR}({self.graph.output_dict[i]}, app_{self.graph.output_dict[i]})\n"
+
+
+        # o0_xor_int = Int('o0_xor_int')
+        # o0_xor_int = o0_xor * 2 / 2
+        # o1_xor_int = Int('o1_xor_int')
+        # o1_xor_int = o1_xor * 2 / 2
+        # o2_xor_int = Int('o2_xor_int')
+        # o2_xor_int = o2_xor * 2 / 2
+        for i in range(self.graph.num_outputs):
+            xor_miter_declaration += f"o{i}_{XOR}_{INT} = {Z3INT}('o{i}_{XOR}_{INT}')\n" \
+                                     f"o{i}_{XOR}_{INT} = o{i}_{XOR} * 2/2\n"
+
+        return xor_miter_declaration
+
+
+
+
 
     def declare_original_function(self):
         exact_function = ''
@@ -1347,3 +1545,5 @@ class Z3solver:
 
         self.set_sample_results(self.import_results())
     # TODO: decorators (end)--------------------------
+
+
