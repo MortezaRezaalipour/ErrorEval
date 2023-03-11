@@ -70,17 +70,17 @@ later...
 ### Verilog Benchmarks
 
 
-Circuits expressed in Verilog are the primary inputs to the framework and are located at **main/input/ver** directory
+Circuits expressed in Verilog are the primary inputs to the framework and must be placed at **main/input/ver** directory
 All the circuits that have the word "app" in their name are approximate circuits.
 
 ### Launch
-Head to the **main/** directory and launch **ErrorVal.py** according to the following command:
+Head to the **main/** directory and launch **ErrorEval.py** according to the following command:
 
-`$ python3 ErrorVal.py benchmark-name -app approximate-benchmark-name -met metric-name`
+`$ python3 ErrorEval.py benchmark-name -app approximate-benchmark-name -met metric-name`
 
 - _example: assuming that *abs_diff_i20_o9.v* and *abs_diff_i20_o9_app1.v* are available at *input/ver* directory and the desired metric is WAE_
 
-`$ python3 ErrorVal.py input/ver/abs_diff_i20_o9.v -app input/ver/abs_diff_i20_o9_app1.v -met WAE`
+`$ python3 ErrorEval.py input/ver/abs_diff_i20_o9.v -app input/ver/abs_diff_i20_o9_app1.v -met WAE`
 
 After launcing the command above the csv report file will be generated in the "output/report/" directory.
 
