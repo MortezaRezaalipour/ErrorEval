@@ -1,9 +1,18 @@
-abs_diff_8_0.1_app1_wae_mc_50.py
-adder_i16_o9_p30_g34_tg115.py
+*.py
+*.txt
+*.sh
+
+# Exclusions
+!requirements.txt
+!main.py
+!clean.sh
+!input/
+!readme_img/
+!script/
+!src/
+
+# Folders
 venv/
-yosys_graph.log
-lsoracle_log.txt
-log.txt
 output/
 test/
 .idea/
