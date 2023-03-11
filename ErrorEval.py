@@ -40,7 +40,8 @@ def main():
                             experiment=args.experiment)
 
     z3py_obj_qor.convert_gv_to_z3pyscript_maxerror_qor(args.strategy)
-
+    print(f'{z3py_obj_qor.graph.num_inputs = }')
+    print(f'{z3py_obj_qor.approximate_graph.num_inputs = }')
     print(f'evaluating the metric {args.metric.upper()} with {args.strategy.upper()}...')
 
     z3py_obj_qor.export_z3pyscript()
