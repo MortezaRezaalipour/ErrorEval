@@ -1,5 +1,6 @@
 import re
 import subprocess
+import os
 from .config.path import *
 from .config.config import *
 
@@ -39,3 +40,20 @@ def convert_verilog_to_gv(file_name: str) -> None:
     with open(f'yosys_graph.log', 'w') as y:
         subprocess.call([YOSYS, '-p', yosys_command], stdout=y)
     fix_direction(file_name)
+
+
+def setup_folder_structure():
+    # Setting up the folder structure
+    directories = []
+    directories.append(OUTPUT_PATH['ver'][0])
+    directories.append(OUTPUT_PATH['aig'][0])
+    directories.append(OUTPUT_PATH['gv'][0])
+    directories.append(OUTPUT_PATH['z3'][0])
+    directories.append(OUTPUT_PATH['report'][0])
+    directories.append(OUTPUT_PATH['figure'][0])
+    directories.append(TEST_PATH['tb'][0])
+    directories.append(TEST_PATH['z3'][0])
+
+    for dir in directories:
+        if ~os.path.exists(dir):
+            os.makedirs(dir, exist_ok=True)

@@ -4,7 +4,7 @@
 
 # Exclusions
 !requirements.txt
-!main.py
+!ErrorEval.py
 !clean.sh
 !input/
 !readme_img/

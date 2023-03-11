@@ -1,4 +1,27 @@
-# translators
+# ErrorEval
+
+Description:
+Approximate computing is a widely adopted strategy
+to exploit the error resilience of applications for which full
+accuracy is not a crucial requirement. The energy consumption
+of these applications may benefit greatly from the implementation
+on inexact hardware, where small and controlled errors allow
+a reduction of the area and power of the underlying circuits.
+One of the major challenges in approximate computing is to
+validate the obtained approximate design, to verify whether it
+actually complies with the error constraints. The employment
+of SMT/SAT solvers for error evaluation is a viable solution
+to these problems: their efficiency can be exploited to provide
+results that are guaranteed to be valid, as opposed to statistical
+approaches such as Monte Carlo sampling. In this paper, we
+present a novel SMT-based algorithm for error evaluation, which
+can be applied to any type of approximate circuit and for
+any worst-case error metric. Its core idea is to exploit the
+information returned by the solver in order to improve error-
+evaluation efficiency, and furthermore to explore the error space
+monotonically.
+
+
 
 This project contains three translators for circuit representation in different formats, a testbench generator for circuits expressed in Verilog, and a verifier for testing.
 

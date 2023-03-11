@@ -9,3 +9,7 @@ rm -rf output/gv/*
 rm -rf test/*
 mkdir test/ver
 mkdir test/z3
+
+rm yosys_graph.log
+rm log.txt
+rm lsoracle_log.txt
