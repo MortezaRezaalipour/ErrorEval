@@ -1,6 +1,7 @@
 *.py
 *.txt
 *.sh
+*.log
 
 # Exclusions
 !requirements.txt
