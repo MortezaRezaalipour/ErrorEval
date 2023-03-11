@@ -70,8 +70,8 @@ later...
 ### Verilog Benchmarks
 
 
-    Circuits expressed in Verilog are the primary inputs to the framework and are located at **main/input/ver** directory
-    All the circuits that have the word "app" in their name are approximate circuits.
+Circuits expressed in Verilog are the primary inputs to the framework and are located at **main/input/ver** directory
+All the circuits that have the word "app" in their name are approximate circuits.
 
 ### Launch
 Head to the **main/** directory and launch **ErrorVal.py** according to the following command:
@@ -86,7 +86,7 @@ After launcing the command above the csv report file will be generated in the "o
 
 ## NOTE:
 
-All the results that are present in the report folder obtained using a machine with the following specs:
+We have launched all the experiment using a machine with the following specs:
 
 - Machine-name: ml-edge
 
@@ -95,4 +95,4 @@ All the results that are present in the report folder obtained using a machine w
 - RAM: 256GBs
 
 - OS: Linux Ubuntu 20.04LTS
-#ErrorEval
+
