@@ -62,8 +62,11 @@ later...
 
 `$ export PYTHONPATH="$PWD"`
 
+- Install the following tools:
 
-
+1. **Yosys**: link (https://github.com/YosysHQ/yosys)
+2. **LSOracle**: link (https://github.com/lnis-uofu/LSOracle)
+3. **Icarus Verilog**: link (https://github.com/steveicarus/iverilog)
 
 ## How to use:
 
