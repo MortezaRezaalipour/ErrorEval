@@ -102,7 +102,7 @@ We have launched all the experiments using a machine with the following specs:
 ## Citing ErrorEval
 
 You can cite ErrorEval by simply copying the following text:
-
+```
 @inproceedings{10.1145/3587135.3591438,
 author = {Rezaalipour, Morteza and Ferretti, Lorenzo and Scarabottolo, Ilaria and Constantinides, George A. and Pozzi, Laura},
 title = {ErrorEval: an Open-Source Worst-Case-Error Evaluation Framework for Approximate Computing},
@@ -120,6 +120,8 @@ keywords = {Approximate Computing, Error Evaluation, SAT Solver},
 location = {Bologna, Italy},
 series = {CF '23}
 }
+```
+
 
 M. Rezaalipour, L. Ferretti, I. Scarabottolo, G. A. Constantinides, L. Pozzi, _ErrorEval: an Open-Source Worst-Case-Error Evaluation Framework for Approximate Computing_, OSHW'23
 
