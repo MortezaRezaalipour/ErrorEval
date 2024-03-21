@@ -85,11 +85,11 @@ Head to the **main/** directory and launch **ErrorEval.py** according to the fol
 
 `$ python3 ErrorEval.py input/ver/abs_diff_i20_o9.v -app input/ver/abs_diff_i20_o9_app1.v -met WAE`
 
-After launcing the command above the csv report file will be generated in the "output/report/" directory.
+After launching the command above the csv report file will be generated in the "output/report/" directory.
 
 ## NOTE:
 
-We have launched all the experiment using a machine with the following specs:
+We have launched all the experiments using a machine with the following specs:
 
 - Machine-name: ml-edge
 
@@ -98,4 +98,28 @@ We have launched all the experiment using a machine with the following specs:
 - RAM: 256GBs
 
 - OS: Linux Ubuntu 20.04LTS
+
+## Citing ErrorEval
+
+You can cite ErrorEval by simply copying the following text:
+
+@inproceedings{10.1145/3587135.3591438,
+author = {Rezaalipour, Morteza and Ferretti, Lorenzo and Scarabottolo, Ilaria and Constantinides, George A. and Pozzi, Laura},
+title = {ErrorEval: an Open-Source Worst-Case-Error Evaluation Framework for Approximate Computing},
+year = {2023},
+isbn = {9798400701405},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3587135.3591438},
+doi = {10.1145/3587135.3591438},
+abstract = {Approximate Computing is a design paradigm that allows for a small loss in accuracy in an application in exchange for improved efficiency and/or reduced power consumption. Approximate Logic Synthesis (ALS) is a process through which an inexact (approximate) version of a circuit is generated, assuring that the error introduced by approximation does not exceed a certain threshold [1].},
+booktitle = {Proceedings of the 20th ACM International Conference on Computing Frontiers},
+pages = {393–394},
+numpages = {2},
+keywords = {Approximate Computing, Error Evaluation, SAT Solver},
+location = {Bologna, Italy},
+series = {CF '23}
+}
+
+M. Rezaalipour, L. Ferretti, I. Scarabottolo, G. A. Constantinides, L. Pozzi, _ErrorEval: an Open-Source Worst-Case-Error Evaluation Framework for Approximate Computing_, OSHW'23
 
